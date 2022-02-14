@@ -9,6 +9,12 @@
 > -   :house: [Internal]
 > -   :nail_care: [Polish]
 
+## 3.14.0
+
+#### :bug: Bug Fix
+
+-  Images not printed on print button click
+
 ## 3.13.5
 
 #### :bug: Bug Fix

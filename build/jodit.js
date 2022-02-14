@@ -1,7 +1,7 @@
 /*!
- * jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
+ * @speedy4all/jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
  * Author: Chupurnov <chupurnov@gmail.com> (https://xdsoft.net/)
- * Version: v3.13.6
+ * Version: v3.14.0
  * Url: https://xdsoft.net/jodit/
  * License(s): MIT
  */
@@ -15785,7 +15785,7 @@ var View = (function (_super) {
         _this.isView = true;
         _this.mods = {};
         _this.components = new Set();
-        _this.version = "3.13.6";
+        _this.version = "3.14.0";
         _this.async = new async_1.Async();
         _this.buffer = storage_1.Storage.makeStorage();
         _this.storage = storage_1.Storage.makeStorage(true, _this.componentName);
@@ -15932,10 +15932,10 @@ var View = (function (_super) {
         configurable: true
     });
     View.prototype.getVersion = function () {
-        return "3.13.6";
+        return "3.14.0";
     };
     View.getVersion = function () {
-        return "3.13.6";
+        return "3.14.0";
     };
     View.prototype.initOptions = function (options) {
         this.options = (0, helpers_1.ConfigProto)(options || {}, (0, helpers_1.ConfigProto)(this.options || {}, View.defaultOptions));
@@ -37364,6 +37364,11 @@ config_1.Config.prototype.controls.print = {
         };
         var mywindow = iframe.contentWindow;
         if (mywindow) {
+            var printDocument = function () {
+                if (false) {}
+                mywindow.focus();
+                mywindow.print();
+            };
             editor.e
                 .on(mywindow, 'onbeforeunload onafterprint', afterFinishPrint)
                 .on(editor.ow, 'mousemove', afterFinishPrint);
@@ -37380,10 +37385,13 @@ config_1.Config.prototype.controls.print = {
                     '</body></html>');
                 mywindow.document.close();
             }
-            setTimeout(function () {
+            if (editor.value.indexOf('<img') > -1) {
+                mywindow.window.addEventListener('load', printDocument);
+            }
+            else {
                 mywindow.focus();
                 mywindow.print();
-            }, 500);
+            }
         }
     },
     mode: consts.MODE_SOURCE + consts.MODE_WYSIWYG,

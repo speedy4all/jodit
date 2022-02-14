@@ -37,6 +37,15 @@ Config.prototype.controls.print = {
 
 		const mywindow = iframe.contentWindow;
 		if (mywindow) {
+
+			const printDocument = () => {
+				if (!isProd) {
+					console.log('Print document');
+				}
+				mywindow.focus();
+				mywindow.print();
+			};
+
 			editor.e
 				.on(mywindow, 'onbeforeunload onafterprint', afterFinishPrint)
 				.on(editor.ow, 'mousemove', afterFinishPrint);
@@ -60,10 +69,13 @@ Config.prototype.controls.print = {
 				);
 				mywindow.document.close();
 			}
-			setTimeout(() => {
+
+			if (editor.value.indexOf('<img') > -1) {
+				mywindow.window.addEventListener('load', printDocument);
+			} else {
 				mywindow.focus();
 				mywindow.print();
-			}, 500);
+			}
 		}
 	},
 	mode: consts.MODE_SOURCE + consts.MODE_WYSIWYG,

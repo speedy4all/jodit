@@ -1,7 +1,7 @@
 /*!
- * jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
+ * @speedy4all/jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
  * Author: Chupurnov <chupurnov@gmail.com> (https://xdsoft.net/)
- * Version: v3.13.6
+ * Version: v3.14.0
  * Url: https://xdsoft.net/jodit/
  * License(s): MIT
  */
@@ -11254,7 +11254,7 @@ class View extends component/* Component */.wA {
         this.isView = true;
         this.mods = {};
         this.components = new Set();
-        this.version = "3.13.6";
+        this.version = "3.14.0";
         this.async = new Async();
         this.buffer = Storage.makeStorage();
         this.storage = Storage.makeStorage(true, this.componentName);
@@ -11352,10 +11352,10 @@ class View extends component/* Component */.wA {
         return this.__isFullSize;
     }
     getVersion() {
-        return "3.13.6";
+        return "3.14.0";
     }
     static getVersion() {
-        return "3.13.6";
+        return "3.14.0";
     }
     initOptions(options) {
         this.options = (0,helpers.ConfigProto)(options || {}, (0,helpers.ConfigProto)(this.options || {}, View.defaultOptions));
@@ -27121,6 +27121,11 @@ config/* Config.prototype.controls.print */.D.prototype.controls.print = {
         };
         const mywindow = iframe.contentWindow;
         if (mywindow) {
+            const printDocument = () => {
+                if (false) {}
+                mywindow.focus();
+                mywindow.print();
+            };
             editor.e
                 .on(mywindow, 'onbeforeunload onafterprint', afterFinishPrint)
                 .on(editor.ow, 'mousemove', afterFinishPrint);
@@ -27137,10 +27142,13 @@ config/* Config.prototype.controls.print */.D.prototype.controls.print = {
                     '</body></html>');
                 mywindow.document.close();
             }
-            setTimeout(() => {
+            if (editor.value.indexOf('<img') > -1) {
+                mywindow.window.addEventListener('load', printDocument);
+            }
+            else {
                 mywindow.focus();
                 mywindow.print();
-            }, 500);
+            }
         }
     },
     mode: constants.MODE_SOURCE + constants.MODE_WYSIWYG,
