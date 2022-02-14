@@ -31387,8 +31387,10 @@ config/* Config.prototype.controls.print */.D.prototype.controls.print = {
                     '</body></html>');
                 mywindow.document.close();
             }
-            mywindow.focus();
-            mywindow.print();
+            setTimeout(() => {
+                mywindow.focus();
+                mywindow.print();
+            }, 500);
         }
     },
     mode: constants.MODE_SOURCE + constants.MODE_WYSIWYG,

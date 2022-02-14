@@ -37380,8 +37380,10 @@ config_1.Config.prototype.controls.print = {
                     '</body></html>');
                 mywindow.document.close();
             }
-            mywindow.focus();
-            mywindow.print();
+            setTimeout(function () {
+                mywindow.focus();
+                mywindow.print();
+            }, 500);
         }
     },
     mode: consts.MODE_SOURCE + consts.MODE_WYSIWYG,

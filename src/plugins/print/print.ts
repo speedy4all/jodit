@@ -60,9 +60,10 @@ Config.prototype.controls.print = {
 				);
 				mywindow.document.close();
 			}
-
-			mywindow.focus();
-			mywindow.print();
+			setTimeout(() => {
+				mywindow.focus();
+				mywindow.print();
+			}, 500);
 		}
 	},
 	mode: consts.MODE_SOURCE + consts.MODE_WYSIWYG,
