@@ -4,7 +4,7 @@
 
 An excellent WYSIWYG editor written in pure TypeScript without the use of additional libraries. Its file editor and image editor.
 
-[![Build Status](https://github.com/xdan/jodit/workflows/Run%20tests/badge.svg)](https://github.com/xdan/jodit/actions/workflows/tests.yml)
+[![Run tests](https://github.com/speedy4all/jodit/actions/workflows/tests.yml/badge.svg)](https://github.com/speedy4all/jodit/actions/workflows/tests.yml)
 [![npm version](https://badge.fury.io/js/jodit.svg)](https://badge.fury.io/js/jodit)
 [![npm](https://img.shields.io/npm/dm/jodit.svg)](https://www.npmjs.com/package/jodit)
 
