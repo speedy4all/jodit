@@ -5,15 +5,15 @@
 An excellent WYSIWYG editor written in pure TypeScript without the use of additional libraries. Its file editor and image editor.
 
 [![Run tests](https://github.com/speedy4all/jodit/actions/workflows/tests.yml/badge.svg)](https://github.com/speedy4all/jodit/actions/workflows/tests.yml)
-[![npm version](https://badge.fury.io/js/jodit.svg)](https://badge.fury.io/js/jodit)
-[![npm](https://img.shields.io/npm/dm/jodit.svg)](https://www.npmjs.com/package/jodit)
+[![npm version](https://badge.fury.io/js/@speedy4all/jodit.svg)](https://badge.fury.io/js/@speedy4all/jodit)
+[![npm](https://img.shields.io/npm/dm/@speedy4all/jodit.svg)](https://www.npmjs.com/package/@speedy4all/jodit)
 
 -   [Demo and Official site](https://xdsoft.net/jodit/)
 -   [PRO Version](https://xdsoft.net/jodit/pro/)
 -   [Playground - play with options](https://xdsoft.net/jodit/play.html)
 -   [Documentation](https://xdsoft.net/jodit/docs/)
 -   [Download & Changes](https://github.com/xdan/jodit/releases)
--   [Changelog](https://github.com/xdan/jodit/blob/master/CHANGELOG.MD)
+-   [Changelog](https://github.com/speedy4all/jodit/blob/master/CHANGELOG.MD)
 -   [Examples](https://xdan.github.io/jodit/examples/)
 
 ## Get Started
