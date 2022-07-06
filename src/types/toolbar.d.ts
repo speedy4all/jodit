@@ -16,12 +16,13 @@ import type {
 	Nullable,
 	IViewBased,
 	IJodit,
-	IMods,
+	IPoint,
 	IBound
 } from './';
 import type { IFileBrowser } from './file-browser';
 
 import type { IUIButton, IUIElement, IUIList } from './ui';
+import { IMods } from './';
 
 interface IControlType<
 	T = IJodit | IViewBased | IFileBrowser,
@@ -34,7 +35,7 @@ interface IControlType<
 	hotkeys?: string | string[];
 	data?: IDictionary;
 
-	update?: (button: B, editor: T) => void;
+	update?: (button: B) => void;
 	isInput?: boolean;
 
 	/**
@@ -43,7 +44,7 @@ interface IControlType<
 	 * @see copyformat plugin
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('.selectorclass', {
+	 * var editor = new Jodit('.selectorclass', {
 	 *     buttons: {
 	 *          checkbox: {
 	 *              data: {
@@ -81,7 +82,7 @@ interface IControlType<
 	 * @see copyformat plugin
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('.selectorclass', {
+	 * var editor = new Jodit('.selectorclass', {
 	 *     buttons: {
 	 *          checkbox: {
 	 *              data: {
@@ -116,7 +117,7 @@ interface IControlType<
 	 * (or array value) (see .[[Jodit.execCommand]] or define 'exec' function. See example
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor2', {
+	 * new Jodit('#editor2', {
 	 *     buttons: Jodit.defaultOptions.buttons.concat([{
 	 *        name: 'listsss',
 	 *        iconURL: 'stuf/dummy.png',
@@ -163,7 +164,7 @@ interface IControlType<
 	 * String name for existing icons.
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *  buttons: [
 	 *      {
 	 *          icon: 'source',
@@ -209,13 +210,13 @@ interface IControlType<
 	 * The method which will be called for each element of button.list
 	 */
 	template?: (jodit: T, key: string, value: string) => string;
-	childTemplate?: (jodit: T, key: string, value: string, button: IToolbarButton) => string;
+	childTemplate?: (jodit: T, key: string, value: string) => string;
 
 	/**
 	 * After click on the button it will show popup element which consist value that this function returned
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *    buttons: [
 	 *      {
 	 *          icon: "insertCode",
@@ -246,8 +247,6 @@ interface IControlType<
 	) => string | HTMLElement | IUIElement | false;
 
 	defaultValue?: string | string[];
-
-	mods?: IMods['mods'];
 }
 
 interface IControlTypeStrong extends IControlType {
@@ -298,6 +297,8 @@ interface IToolbarButton extends IUIButton {
 }
 
 interface IToolbarCollection extends IUIList {
+	jodit: IViewBased;
+
 	setDirection(direction: 'rtl' | 'ltr'): void;
 
 	firstButton: Nullable<IToolbarButton>;
@@ -312,6 +313,8 @@ interface IToolbarCollection extends IUIList {
 }
 
 export interface IStatusBar extends IComponent, IMods {
+	jodit: IViewBased;
+
 	show(): void;
 	hide(): void;
 	isShown: boolean;

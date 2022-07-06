@@ -15,17 +15,16 @@ import type {
 	Nullable
 } from 'jodit/types/';
 import { IS_IE } from 'jodit/core/constants';
-import { isString } from 'jodit/core/helpers/checker/is-string';
+import { isString } from 'jodit/core/helpers/checker';
 import { attr, error } from 'jodit/core/helpers/utils';
-import { Dom } from 'jodit/core/dom/dom';
-import { camelCase } from 'jodit/core/helpers/string/camel-case';
-import { toArray } from 'jodit/core/helpers/array/to-array';
-import { UIElement } from 'jodit/core/ui/element';
-import { Component } from 'jodit/core/component/component';
+import { Dom } from 'jodit/core/dom';
+import { camelCase } from 'jodit/core/helpers/string';
+import { toArray } from 'jodit/core/helpers/array';
+import { UIElement } from 'jodit/core/ui';
 
 let temp = 1;
 
-const $$temp = (): number => {
+const $$temp = () => {
 	temp++;
 	return temp;
 };
@@ -46,17 +45,17 @@ const $$temp = (): number => {
  */
 export function $$<K extends HTMLTagNames>(
 	selector: K,
-	root: HTMLElement | HTMLDocument | DocumentFragment
+	root: HTMLElement | HTMLDocument
 ): Array<HTMLElementTagNameMap[K]>;
 
 export function $$<T extends HTMLElement>(
 	selector: string,
-	root: HTMLElement | HTMLDocument | DocumentFragment
+	root: HTMLElement | HTMLDocument
 ): T[];
 
 export function $$<T extends Element>(
 	selector: string | HTMLTagNames,
-	root: HTMLElement | HTMLDocument | DocumentFragment
+	root: HTMLElement | HTMLDocument
 ): T[] {
 	let result: NodeList;
 
@@ -127,7 +126,7 @@ export const getXPathByElement = (
 export const refs = <T extends HTMLElement>(
 	root: HTMLElement | IUIElement
 ): IDictionary<T> => {
-	if (Component.isInstanceOf(root, UIElement)) {
+	if (root instanceof UIElement) {
 		root = root.container;
 	}
 

@@ -9,8 +9,7 @@
  */
 
 import type { IUIInput, IUIInputValidator } from 'jodit/types';
-import { isURL } from 'jodit/core/helpers/checker/is-url';
-import { trim } from 'jodit/core/helpers/string/trim';
+import { isURL, trim } from 'jodit/core/helpers';
 
 /**
  * Input is required

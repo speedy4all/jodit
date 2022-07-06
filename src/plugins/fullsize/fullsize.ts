@@ -13,8 +13,7 @@ import './fullsize.less';
 import type { IViewWithToolbar, IControlType, IViewBased } from 'jodit/types';
 import { Config } from 'jodit/config';
 import * as consts from 'jodit/core/constants';
-import { css } from 'jodit/core/helpers/utils/css';
-import { isJoditObject } from 'jodit/core/helpers/checker/is-jodit-object';
+import { css, isJoditObject } from 'jodit/core/helpers';
 
 declare module 'jodit/config' {
 	interface Config {
@@ -22,13 +21,13 @@ declare module 'jodit/config' {
 		 * Open WYSIWYG in full screen
 		 * @example
 		 * ```javascript
-		 * var editor = Jodit.make({
+		 * var editor = new jodit({
 		 *     fullsize: true // fullsize editor
 		 * });
 		 * ```
 		 * @example
 		 * ```javascript
-		 * var editor = Jodit.make();
+		 * var editor = new Jodit();
 		 * editor.e.fire('toggleFullSize');
 		 * editor.e.fire('toggleFullSize', true); // fullsize
 		 * editor.e.fire('toggleFullSize', false); // usual mode
@@ -51,8 +50,9 @@ Config.prototype.controls.fullsize = {
 		editor.toggleFullSize();
 	},
 
-	update(button, editor) {
-		const mode = editor.isFullSize ? 'shrink' : 'fullsize';
+	update(button) {
+		const editor = button.j,
+			mode = editor.isFullSize ? 'shrink' : 'fullsize';
 
 		button.state.activated = editor.isFullSize;
 
@@ -81,7 +81,7 @@ export function fullsize(editor: IViewWithToolbar): void {
 		oldWidth: number = 0,
 		wasToggled = false;
 
-	const resize = (): void => {
+	const resize = () => {
 			const { container, events } = editor;
 
 			if (events) {
@@ -105,7 +105,7 @@ export function fullsize(editor: IViewWithToolbar): void {
 		/**
 		 * Change editor's state between FullSize and normal
 		 */
-		toggle = (enable?: boolean): void => {
+		toggle = (enable?: boolean) => {
 			const { container, events } = editor;
 
 			if (!container) {

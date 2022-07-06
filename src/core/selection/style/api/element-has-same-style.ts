@@ -5,9 +5,7 @@
  */
 
 import type { IStyle } from 'jodit/types';
-import { css } from 'jodit/core/helpers/utils/css';
-import { isVoid } from 'jodit/core/helpers/checker/is-void';
-import { normalizeCssValue } from 'jodit/core/helpers/normalize/normalize-css-value';
+import { css, isVoid, normalizeCssValue } from 'jodit/core/helpers';
 import { Dom } from 'jodit/core/dom';
 
 /**

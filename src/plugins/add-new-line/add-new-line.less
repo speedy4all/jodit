@@ -9,8 +9,7 @@
 :root {
 	--color-new-line: var(--color-border);
 	--width-icon: 30px;
-	--height-icon: 30px;
-	--offset-handle: calc(100% - var(--width-icon));
+	--height-icon: calc(var(--padding-default) * 2);
 }
 
 .jodit-add-new-line {
@@ -30,7 +29,7 @@
 
 	&::after {
 		display: block;
-		width: 100%;
+		width: calc(100% - var(--width-icon));
 		height: 1px;
 		background-color: var(--color-new-line);
 		content: '';
@@ -38,7 +37,7 @@
 
 	span {
 		position: absolute;
-		left: var(--offset-handle);
+		right: 0;
 
 		display: flex;
 		width: var(--width-icon);

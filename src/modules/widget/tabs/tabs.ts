@@ -15,7 +15,6 @@ import './tabs.less';
 import type { IDictionary, IJodit, IUIButton } from 'jodit/types';
 import { $$, isFunction } from 'jodit/core/helpers';
 import { Button, UIElement } from 'jodit/core/ui';
-import { Component } from 'jodit/core/component';
 
 export interface TabOption {
 	icon?: string;
@@ -31,23 +30,23 @@ export interface TabOption {
  *
  * @example
  * ```javascript
- * let tabs = Jodit.modules.TabsWidget(editor, [
- *    {name: 'Images', content: '<div>Images</div>'},
- *    {name: 'Title 2': Jodit.modules.Helpers.dom('<div>Some content</div>')},
- *    {name: 'Color Picker': ColorPickerWidget(editor, function (color) {
+ * let tabs = widget.c('Tabs', {
+ *    'Images': '<div>Images</div>',
+ *    'Title 2': Jodit.modules.Helpers.dom('<div>Some content</div>'),
+ *    'Color Picker': ColorPickerWidget(editor, function (color) {
  *         box.style.color = color;
- *     }, box.style.color)},
- * ]);
+ *     }, box.style.color),
+ * });
  * ```
  */
 export const TabsWidget = (
-	jodit: IJodit,
+	editor: IJodit,
 	tabs: TabOption[],
 	state?: { __activeTab: string }
 ): HTMLDivElement => {
-	const box = jodit.c.div('jodit-tabs'),
-		tabBox = jodit.c.div('jodit-tabs__wrapper'),
-		buttons = jodit.c.div('jodit-tabs__buttons'),
+	const box: HTMLDivElement = editor.c.div('jodit-tabs'),
+		tabBox: HTMLDivElement = editor.c.div('jodit-tabs__wrapper'),
+		buttons: HTMLDivElement = editor.c.div('jodit-tabs__buttons'),
 		nameToTab: IDictionary<{
 			button: IUIButton;
 			tab: HTMLElement;
@@ -55,36 +54,14 @@ export const TabsWidget = (
 		buttonList: IUIButton[] = [];
 
 	let firstTab: string = '',
-		tabCount: number = 0;
+		tabcount: number = 0;
 
 	box.appendChild(buttons);
 	box.appendChild(tabBox);
 
-	const setActive = (tab: string): void => {
-		if (!nameToTab[tab]) {
-			return;
-		}
-
-		buttonList.forEach(b => {
-			b.state.activated = false;
-		});
-
-		$$('.jodit-tab', tabBox).forEach(a => {
-			a.classList.remove('jodit-tab_active');
-		});
-
-		nameToTab[tab].button.state.activated = true;
-		nameToTab[tab].tab.classList.add('jodit-tab_active');
-	};
-
 	tabs.forEach(({ icon, name, content }) => {
-		const tab = jodit.c.div('jodit-tab'),
-			button = Button(jodit, icon || name, name);
-
-		// Stop lose the focus
-		jodit.e.on(button.container, 'mousedown', (e: MouseEvent) =>
-			e.preventDefault()
-		);
+		const tab = editor.c.div('jodit-tab'),
+			button = Button(editor, icon || name, name);
 
 		if (!firstTab) {
 			firstTab = name;
@@ -100,21 +77,28 @@ export const TabsWidget = (
 
 		if (!isFunction(content)) {
 			tab.appendChild(
-				Component.isInstanceOf(content, UIElement)
-					? content.container
-					: content
+				content instanceof UIElement ? content.container : content
 			);
 		} else {
-			tab.appendChild(jodit.c.div('jodit-tab_empty'));
+			tab.appendChild(editor.c.div('jodit-tab_empty'));
 		}
 
 		tabBox.appendChild(tab);
 
 		button.onAction(() => {
-			setActive(name);
+			buttonList.forEach(b => {
+				b.state.activated = false;
+			});
+
+			$$('.jodit-tab', tabBox).forEach(a => {
+				a.classList.remove('jodit-tab_active');
+			});
+
+			button.state.activated = true;
+			tab.classList.add('jodit-tab_active');
 
 			if (isFunction(content)) {
-				content.call(jodit);
+				content.call(editor);
 			}
 
 			if (state) {
@@ -129,15 +113,15 @@ export const TabsWidget = (
 			tab
 		};
 
-		tabCount += 1;
+		tabcount += 1;
 	});
 
-	if (!tabCount) {
+	if (!tabcount) {
 		return box;
 	}
 
 	$$('a', buttons).forEach(a => {
-		a.style.width = (100 / tabCount).toFixed(10) + '%';
+		a.style.width = (100 / tabcount).toFixed(10) + '%';
 	});
 
 	const tab =
@@ -145,24 +129,8 @@ export const TabsWidget = (
 			? firstTab
 			: state.__activeTab;
 
-	setActive(tab);
-
-	if (state) {
-		let __activeTab = state.__activeTab;
-
-		Object.defineProperty(state, '__activeTab', {
-			configurable: true,
-			enumerable: false,
-			get() {
-				return __activeTab;
-			},
-			set(value: string) {
-				__activeTab = value;
-
-				setActive(value);
-			}
-		});
-	}
+	nameToTab[tab].button.state.activated = true;
+	nameToTab[tab].tab.classList.add('jodit-tab_active');
 
 	return box;
 };

@@ -11,9 +11,9 @@
 import './block.less';
 
 import type { IUIElement, IViewBased } from 'jodit/types';
-import { UIGroup } from 'jodit/core/ui/group/group';
+import { UIGroup } from 'jodit/core/ui/group';
 import { attr } from 'jodit/core/helpers/utils';
-import { component } from 'jodit/core/decorators/component/component';
+import { component } from 'jodit/core/decorators';
 
 @component
 export class UIBlock extends UIGroup {

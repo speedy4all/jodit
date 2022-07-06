@@ -4,17 +4,27 @@
  * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
  */
 
-import type { CanUndef, IDictionary } from 'jodit/types';
+import type { IDictionary } from 'jodit/types';
 
 import 'classlist-polyfill';
 import 'es6-promise/auto';
 import 'core-js/es/symbol';
-import 'core-js/es/array/find-index';
-import 'core-js/es/array/from';
+
+if (!Array.from) {
+	Array.from = <T>(object: T[]): T[] => {
+		if (object instanceof Set) {
+			const res: T[] = [];
+			object.forEach(a => res.push(a));
+			return res;
+		}
+
+		return [].slice.call(object);
+	};
+}
 
 // for ie11
 if (!Array.prototype.includes) {
-	Array.prototype.includes = function (value: any): boolean {
+	Array.prototype.includes = function (value: any) {
 		return this.indexOf(value) > -1;
 	};
 }
@@ -59,13 +69,13 @@ if (typeof Object.assign !== 'function') {
 }
 
 if (!Array.prototype.find) {
-	Array.prototype.find = function <T>(value: T): CanUndef<T> {
+	Array.prototype.find = function (value: any) {
 		return this.indexOf(value) > -1 ? value : undefined;
 	};
 }
 
 if (!String.prototype.endsWith) {
-	String.prototype.endsWith = function (value: any): boolean {
+	String.prototype.endsWith = function (value: any) {
 		return this[this.length - 1] === value;
 	};
 }

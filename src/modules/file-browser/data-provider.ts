@@ -106,14 +106,12 @@ export default class DataProvider implements IFileBrowserDataProvider {
 
 		const promise = ajax.send();
 
-		promise
-			.finally(() => {
-				ajax.destruct();
-				ai.delete(name);
+		promise.finally(() => {
+			ajax.destruct();
+			ai.delete(name);
 
-				this.progressHandler(100);
-			})
-			.catch(() => null);
+			this.progressHandler(100);
+		});
 
 		return promise
 			.then(resp => resp.json())
@@ -157,7 +155,7 @@ export default class DataProvider implements IFileBrowserDataProvider {
 				}
 
 				if (process) {
-					const respData = process.call(
+					const respData: IFileBrowserAnswer = process.call(
 						self,
 						resp
 					) as IFileBrowserAnswer;
@@ -193,7 +191,7 @@ export default class DataProvider implements IFileBrowserDataProvider {
 	/**
 	 * Load items list by path and source
 	 */
-	items(
+	async items(
 		path: string,
 		source: string,
 		mods: IFileBrowserDataProviderItemsMods = {}
@@ -264,11 +262,11 @@ export default class DataProvider implements IFileBrowserDataProvider {
 	async tree(path: string, source: string): Promise<ISourcesFiles> {
 		path = normalizeRelativePath(path);
 
+		await this.permissions(path, source);
+
 		if (!this.o.folder) {
 			return Promise.reject('Set Folder Api options');
 		}
-
-		await this.permissions(path, source);
 
 		this.o.folder.data.path = path;
 		this.o.folder.data.source = source;

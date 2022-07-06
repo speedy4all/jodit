@@ -10,7 +10,7 @@
 
 import { IViewOptions, IViewWithToolbar } from './view';
 import type { Config } from 'jodit/config';
-import type { CustomCommand, ICreate, IDestructible, IHistory, IStatusBar, Modes } from './';
+import type { CustomCommand, ICreate, IObserver, IStatusBar, Modes } from './';
 import type { IUploader } from './uploader';
 import type { IFileBrowser } from './file-browser';
 import { ISelect } from './select';
@@ -23,7 +23,7 @@ interface IWorkPlace {
 	statusbar: IStatusBar;
 	iframe?: HTMLIFrameElement | void;
 	editorWindow: Window;
-	history: IHistory & IDestructible;
+	observer: IObserver;
 	options: IViewOptions;
 }
 
@@ -31,32 +31,16 @@ interface IJodit extends IViewWithToolbar {
 	isJodit: true;
 
 	options: Config;
-
-	history: IHistory;
-
-	/**
-	 * @deprecated Instead use `Jodit.history`
-	 */
-	observer: IHistory;
-
+	observer: IObserver;
 	editor: HTMLElement;
 	element: HTMLElement;
 
 	getNativeEditorValue(): string;
-	getEditorValue(removeSelectionMarkers?: boolean, consumer?: string): string;
+	getEditorValue(
+		removeSelectionMarkers?: boolean,
+		consumer?: string
+	): string;
 	setEditorValue(value?: string): void;
-
-	synchronizeValues(): void;
-	/**
-	 * This is an internal method, do not use it in your applications.
-	 * @private
-	 */
-	__imdSynchronizeValues(): void;
-
-	/**
-	 * Only getter
-	 */
-	getElementValue(): string;
 
 	getReadOnly(): boolean;
 	setReadOnly(enable: boolean): void;
@@ -101,7 +85,7 @@ interface IJodit extends IViewWithToolbar {
 	 *
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('#editor');
+	 * var editor = new Jodit('#editor');
 	 * console.log(editor.getRealMode());
 	 * ```
 	 */

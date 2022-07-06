@@ -223,8 +223,5 @@ module.exports = {
 	'Find Previous': 'Öncekini Bul',
 	'Find Next': 'Sonrakini Bul',
 	'Insert className': 'Sınıf adı girin',
-	'Line height': 'Çizgi yüksekliği',
-	Spellchecking: 'Yazım denetimi',
-	'Press Alt for custom resizing':
-		'Özel yeniden boyutlandırma için Alt tuşuna basın'
+	'Line height': 'Çizgi yüksekliği'
 };

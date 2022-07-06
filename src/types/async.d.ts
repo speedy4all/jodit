@@ -61,17 +61,7 @@ export interface IAsync extends IDestructible {
 		firstCallImmediately?: boolean
 	): CallbackFunction;
 
-	requestIdleCallback(fn: IdleRequestCallback, options?: {timeout: number}): number;
-	requestIdlePromise(options?: {timeout: number}): RejectablePromise<number>;
+	requestIdleCallback(fn: IdleRequestCallback): number;
+	requestIdlePromise(): RejectablePromise<number>;
 	cancelIdleCallback(request: number): void;
-
-	/**
-	 * Smart wrapper for `requestAnimationFrame`
-	 */
-	requestAnimationFrame(callback: FrameRequestCallback): number;
-
-	/**
-	 * Smart wrapper for `cancelAnimationFrame`
-	 */
-	cancelAnimationFrame(request: number): void;
 }

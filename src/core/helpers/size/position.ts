@@ -9,7 +9,7 @@
  */
 
 import type { IBound, IViewBased } from 'jodit/types';
-import { isJoditObject } from '../checker/is-jodit-object';
+import { isJoditObject } from '../checker';
 
 export function position(elm: HTMLElement): IBound;
 export function position(elm: HTMLElement, jodit: IViewBased): IBound;

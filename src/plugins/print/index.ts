@@ -8,5 +8,5 @@
  * @module plugins/print
  */
 
-export * from './preview/preview';
+export * from './preview';
 export * from './print';

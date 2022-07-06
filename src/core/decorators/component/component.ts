@@ -10,9 +10,19 @@
  * @module decorators/component
  */
 
+import { isFunction } from 'jodit/core/helpers';
+
 interface ComponentCompatible {
+	className?: () => string;
 	new (...constructorArgs: any[]): any;
 }
+
+/**
+ * Safe access to ClassName
+ */
+const cn = (elm: ComponentCompatible): string | number => {
+	return isFunction(elm.className) ? elm.className() : NaN;
+};
 
 /**
  * Decorate components and set status isReady after constructor
@@ -25,24 +35,26 @@ export function component<T extends ComponentCompatible>(
 		constructor(...args: any[]) {
 			super(...args);
 
-			const isRootConstructor =
-				this.constructor === newConstructorFunction;
+			const isSamePrototype =
+				Object.getPrototypeOf(this) ===
+				newConstructorFunction.prototype;
 
-			// We can add a decorator to multiple classes in a chain.
-			// Status should be set only as root
-			if (isRootConstructor) {
-				// In some es/minimizer builds, JS instantiates the original class rather than the new constructor
-				if (!(this instanceof newConstructorFunction)) {
-					Object.setPrototypeOf(
-						this,
-						newConstructorFunction.prototype
-					);
-				}
+			/** For strange minimizer */
+			const isSameClassName =
+				cn(this as unknown as ComponentCompatible) ===
+				cn(newConstructorFunction.prototype);
 
+			if (!isProd && isSamePrototype && !isSameClassName) {
+				throw new Error('Need use decorator only for components');
+			}
+
+			if (isSamePrototype || isSameClassName) {
 				this.setStatus('ready');
 			}
 		}
 	}
+
+	newConstructorFunction.prototype.constructor = constructorFunction;
 
 	return newConstructorFunction;
 }

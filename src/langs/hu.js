@@ -225,7 +225,5 @@ module.exports = {
 	'Find Previous': 'Megtalálja Előző',
 	'Find Next': 'Következő Keresése',
 	'Insert className': 'Helyezze be az osztály nevét',
-	'Line height': 'Vonal magassága',
-	Spellchecking: 'Helyesírás-ellenőrzés',
-	'Press Alt for custom resizing': 'Nyomja meg az Alt egyéni átméretezés'
+	'Line height': 'Vonal magassága'
 };

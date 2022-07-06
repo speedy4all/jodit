@@ -94,16 +94,8 @@ export class TextAreaEditor
 		this.instance.setSelectionRange(start, end);
 	}
 
-	get isFocused(): boolean {
-		return this.instance === this.j.od.activeElement;
-	}
-
 	focus(): void {
 		this.instance.focus();
-	}
-
-	blur(): void {
-		this.instance.blur();
 	}
 
 	setPlaceHolder(title: string): void {
@@ -123,7 +115,7 @@ export class TextAreaEditor
 	}
 
 	replaceUndoManager(): void {
-		const { history } = this.jodit;
+		const { observer } = this.jodit;
 
 		this.j.e.on(
 			this.instance,
@@ -131,9 +123,9 @@ export class TextAreaEditor
 			(e: KeyboardEvent): false | void => {
 				if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
 					if (e.shiftKey) {
-						history.redo();
+						observer.redo();
 					} else {
-						history.undo();
+						observer.undo();
 					}
 
 					this.setSelectionRange(this.getValue().length);

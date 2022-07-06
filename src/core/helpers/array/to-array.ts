@@ -8,7 +8,7 @@
  * @module helpers/array
  */
 
-import { reset } from '../utils/reset';
+import { reset } from '../utils/utils';
 import { isNativeFunction } from '../checker/is-native-function';
 
 /**

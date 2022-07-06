@@ -14,7 +14,7 @@ import { isVoid } from 'jodit/core/helpers/checker/is-void';
 
 export abstract class Mods implements IMods {
 	abstract mods: IMods['mods'];
-	abstract readonly componentName: string;
+	abstract componentName: string;
 	abstract container: HTMLElement;
 
 	abstract setMod(name: string, value: ModType): this;

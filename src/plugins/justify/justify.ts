@@ -17,8 +17,9 @@ Config.prototype.controls.align = {
 	name: 'left',
 	tooltip: 'Align',
 
-	update(button, editor: IJodit): void {
-		const control = button.control,
+	update(button): void {
+		const editor = button.j as IJodit,
+			control = button.control,
 			current = editor.s.current();
 
 		if (current) {

@@ -11,7 +11,9 @@
 import { isString } from 'jodit/core/helpers/checker/is-string';
 import { $$ } from 'jodit/core/helpers/utils';
 import { trim } from 'jodit/core/helpers/string/trim';
-import { Dom } from 'jodit/core/dom/dom';
+import { Dom } from 'jodit/core/dom';
+import { attr } from 'jodit/core/helpers/utils';
+
 /**
  * Extract plain text from HTML text
  */
@@ -45,4 +47,38 @@ export function stripTags(
 	});
 
 	return trim(tmp.innerText) || '';
+}
+
+/**
+ * Removes dangerous constructs from HTML
+ */
+export function safeHTML(
+	box: HTMLElement,
+	options: {
+		removeOnError: boolean;
+		safeJavaScriptLink: boolean;
+	}
+): void {
+	if (!Dom.isElement(box)) {
+		return;
+	}
+
+	const removeOnError = (elm: HTMLElement) => attr(elm, 'onerror', null),
+		safeLink = (elm: HTMLElement) => {
+			const href = elm.getAttribute('href');
+
+			if (href && href.trim().indexOf('javascript') === 0) {
+				attr(elm, 'href', location.protocol + '//' + href);
+			}
+		};
+
+	if (options.removeOnError) {
+		removeOnError(box);
+		$$('[onerror]', box).forEach(removeOnError);
+	}
+
+	if (options.safeJavaScriptLink) {
+		safeLink(box);
+		$$<HTMLAnchorElement>('a[href^="javascript"]', box).forEach(safeLink);
+	}
 }

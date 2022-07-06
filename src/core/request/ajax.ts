@@ -23,6 +23,7 @@ import type {
 import { Config } from 'jodit/config';
 
 import {
+	error,
 	isPlainObject,
 	parseQuery,
 	buildQuery,
@@ -30,7 +31,6 @@ import {
 	isFunction,
 	ConfigProto
 } from 'jodit/core/helpers';
-import * as error from 'jodit/core/helpers/utils/error';
 import { Response } from './response';
 
 import './config';
@@ -83,19 +83,14 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 	}
 
 	abort(): Ajax {
-		if (this.isFulfilled) {
-			return this;
-		}
-
 		try {
-			this.isFulfilled = true;
 			this.xhr.abort();
 		} catch {}
 
 		return this;
 	}
 
-	private isFulfilled = false;
+	private resolved = false;
 
 	private activated = false;
 
@@ -106,14 +101,13 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 
 		const request = this.prepareRequest();
 
-		return this.j.async.promise(async (resolve, reject) => {
-			const onReject = (): void => {
-				this.isFulfilled = true;
-				reject(error.connection('Connection error'));
+		return this.j.async.promise((resolve, reject) => {
+			const onReject = () => {
+				reject(error('Connection error'));
 			};
 
-			const onResolve = (): void => {
-				this.isFulfilled = true;
+			const onResolve = () => {
+				this.resolved = true;
 
 				resolve(
 					new Response<T>(
@@ -126,11 +120,7 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 			};
 
 			xhr.onload = onResolve;
-			xhr.onabort = (): void => {
-				this.isFulfilled = true;
-				reject(error.abort('Abort connection'));
-			};
-
+			xhr.onabort = onReject;
 			xhr.onerror = onReject;
 			xhr.ontimeout = onReject;
 
@@ -148,15 +138,14 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 				this.options.onProgress?.(percentComplete);
 			};
 
-			xhr.onreadystatechange = (): void => {
+			xhr.onreadystatechange = () => {
 				this.options.onProgress?.(10);
 
 				if (xhr.readyState === XMLHttpRequest.DONE) {
 					if (o.successStatuses.includes(xhr.status)) {
 						onResolve();
-					} else if (xhr.statusText) {
-						this.isFulfilled = true;
-						reject(error.connection(xhr.statusText));
+					} else {
+						reject(error(xhr.statusText || 'Connection error'));
 					}
 				}
 			};
@@ -171,17 +160,11 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 				xhr.setRequestHeader('Content-type', o.contentType);
 			}
 
-			let { headers } = o;
-			if (isFunction(headers)) {
-				headers = await headers.call(this);
-			}
+			const { headers } = o;
 
 			if (headers && xhr.setRequestHeader) {
 				Object.keys(headers).forEach(key => {
-					xhr.setRequestHeader(
-						key,
-						(headers as IDictionary<string>)[key]
-					);
+					xhr.setRequestHeader(key, headers[key]);
 				});
 			}
 
@@ -194,7 +177,7 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 
 	prepareRequest(): IRequest {
 		if (!this.o.url) {
-			throw error.error('Need URL for AJAX request');
+			throw error('Need URL for AJAX request');
 		}
 
 		let url: string = this.o.url;
@@ -209,7 +192,7 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 				const urlData = parseQuery(url);
 
 				url =
-					url.substring(0, qIndex) +
+					url.substr(0, qIndex) +
 					'?' +
 					buildQuery({ ...urlData, ...(data as IDictionary) });
 			} else {
@@ -230,9 +213,9 @@ export class Ajax<T extends object = any> implements IAjax<T> {
 	}
 
 	destruct(): void {
-		if (this.activated && !this.isFulfilled) {
+		if (this.activated && !this.resolved) {
 			this.abort();
-			this.isFulfilled = true;
+			this.resolved = true;
 		}
 	}
 }

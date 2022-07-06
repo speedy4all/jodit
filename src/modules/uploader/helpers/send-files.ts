@@ -58,7 +58,7 @@ export function sendFiles(
 					promises.push(
 						uploader.j.async.promise((resolve, reject) => {
 							reader.onerror = reject;
-							reader.onloadend = (): void => {
+							reader.onloadend = () => {
 								const resp = {
 									baseurl: '',
 									files: [reader.result],
@@ -96,7 +96,6 @@ export function sendFiles(
 			file = fileList[i];
 
 			if (file) {
-				const hasRealExtension = /\.[\d\w]+$/.test(file.name);
 				const mime = file.type.match(/\/([a-z0-9]+)/i) as string[];
 
 				const extension: string =
@@ -106,7 +105,7 @@ export function sendFiles(
 					fileList[i].name ||
 					Math.random().toString().replace('.', '');
 
-				if (!hasRealExtension && extension) {
+				if (extension) {
 					let extForReg = extension;
 
 					if (['jpeg', 'jpg'].includes(extForReg)) {
@@ -120,14 +119,7 @@ export function sendFiles(
 					}
 				}
 
-				const [key, iFile, name] = o.processFileName.call(
-					uploader,
-					o.filesVariableName(i),
-					fileList[i],
-					newName
-				);
-
-				form.append(key, iFile, name);
+				form.append(o.filesVariableName(i), fileList[i], newName);
 			}
 		}
 

@@ -64,7 +64,7 @@ export const Prompt = (
 
 	cancelButton.onAction(dialog.close);
 
-	const onclick = (): void => {
+	const onclick = () => {
 		if (
 			!callback ||
 			!isFunction(callback) ||

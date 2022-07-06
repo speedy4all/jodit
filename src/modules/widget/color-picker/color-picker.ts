@@ -53,7 +53,7 @@ export const ColorPickerWidget = (
 		iconPalette: string = editor.o.textIcons
 			? `<span>${editor.i18n('palette')}</span>`
 			: Icon.get('palette'),
-		eachColor = (colors: string[] | IDictionary<string[]>): string => {
+		eachColor = (colors: string[] | IDictionary<string[]>) => {
 			const stack: string[] = [];
 
 			if (isPlainObject(colors)) {
@@ -119,7 +119,6 @@ export const ColorPickerWidget = (
 
 	editor.e.on(form, 'mousedown touchend', (e: MouseEvent) => {
 		e.stopPropagation();
-		e.preventDefault();
 
 		let target = e.target as HTMLElement;
 
@@ -149,6 +148,8 @@ export const ColorPickerWidget = (
 		if (callback && isFunction(callback)) {
 			callback(color);
 		}
+
+		e.preventDefault();
 	});
 
 	editor.e.fire('afterGenerateColorPicker', form, extra, callback, valueHex);

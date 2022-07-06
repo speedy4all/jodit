@@ -17,16 +17,15 @@ import type {
 	IControlType,
 	IControlTypeStrong,
 	IControlTypeStrongList,
-	IPopup,
 	IToolbarButton,
 	IToolbarCollection,
 	IViewBased,
 	Nullable
 } from 'jodit/types';
 import { UIButton, UIButtonState } from 'jodit/core/ui/button';
-import { autobind, component, watch } from 'jodit/core/decorators';
+import { component, watch } from 'jodit/core/decorators';
 import { Dom } from 'jodit/core/dom';
-import { Popup } from 'jodit/core/ui/popup/popup';
+import { Popup } from 'jodit/core/ui/popup/';
 import { makeCollection } from 'jodit/modules/toolbar/factory';
 import {
 	isFunction,
@@ -39,9 +38,9 @@ import {
 	isArray,
 	keys
 } from 'jodit/core/helpers';
-import { Icon } from 'jodit/core/ui/icon';
+import { Icon } from 'jodit/core/ui';
 import { ToolbarCollection } from 'jodit/modules/toolbar/collection/collection';
-import { STATUSES } from 'jodit/core/component/statuses';
+import { STATUSES } from 'jodit/core/component';
 import { findControlType } from 'jodit/core/ui/helpers/get-control-type';
 
 @component
@@ -54,7 +53,7 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 		return 'ToolbarButton';
 	}
 
-	override readonly state = {
+	override state = {
 		...UIButtonState(),
 		theme: 'toolbar',
 		currentValue: '',
@@ -87,8 +86,8 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 		state.disabled = this.calculateDisabledStatus(tc);
 		state.activated = this.calculateActivatedStatus(tc);
 
-		if (isFunction(control.update) && tc) {
-			control.update(this, tc.jodit);
+		if (isFunction(control.update)) {
+			control.update(this);
 		}
 
 		super.update();
@@ -160,7 +159,7 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 	}
 
 	/** @override */
-	protected override onChangeTabIndex(): void {
+	override onChangeTabIndex(): void {
 		attr(this.button, 'tabindex', this.state.tabIndex);
 	}
 
@@ -192,6 +191,8 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 				'chevron'
 			)}</span>`
 		);
+
+		this.j.e.on(this.trigger, 'click', this.onTriggerClick.bind(this));
 
 		return container;
 	}
@@ -273,12 +274,6 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 
 			this.update();
 		});
-
-		if (control.mods) {
-			Object.keys(control.mods).forEach(mod => {
-				control.mods && this.setMod(mod, control.mods[mod]);
-			});
-		}
 	}
 
 	/**
@@ -330,12 +325,7 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 	/**
 	 * Click on trigger button
 	 */
-	@watch('trigger:click')
 	protected onTriggerClick(e: MouseEvent): void {
-		if (this.openedPopup) {
-			this.closePopup();
-			return;
-		}
 		const { control: ctr } = this;
 
 		e.buffer = {
@@ -347,7 +337,7 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 		}
 
 		if (isFunction(ctr.popup)) {
-			const popup = this.openPopup();
+			const popup = new Popup(this.j);
 			popup.parentElement = this;
 
 			if (
@@ -361,26 +351,14 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 				const target =
 					this.toolbar?.getTarget(this) ?? this.target ?? null;
 
-				const elm = ctr.popup(
-					this.j,
-					target,
-					ctr,
-					this.closePopup,
-					this
-				);
+				const elm = ctr.popup(this.j, target, ctr, popup.close, this);
 
 				if (elm) {
 					popup
 						.setContent(
 							isString(elm) ? this.j.c.fromHTML(elm) : elm
 						)
-						.open(
-							() => position(this.container),
-							false,
-							this.j.o.allowTabNavigation
-								? this.container
-								: undefined
-						);
+						.open(() => position(this.container));
 				}
 			}
 
@@ -398,8 +376,6 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 		}
 	}
 
-	private openedPopup: Nullable<IPopup> = null;
-
 	/**
 	 * Create and open popup list
 	 */
@@ -409,7 +385,7 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 				findControlType(key, controls);
 
 		const list = control.list,
-			menu = this.openPopup(),
+			menu = new Popup(this.j),
 			toolbar = makeCollection(this.j);
 
 		menu.parentElement = this;
@@ -436,12 +412,9 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 				};
 			}
 
-			const { childTemplate } = control;
 			const childControl: IControlTypeStrong = {
 				name: key.toString(),
-				template:
-					childTemplate &&
-					((j, k, v): string => childTemplate(j, k, v, this)),
+				template: control.childTemplate,
 				exec: control.exec,
 				data: control.data,
 				command: control.command,
@@ -465,51 +438,13 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 			this.target
 		);
 
-		menu.setContent(toolbar.container).open(
-			() => position(this.container),
-			false,
-			this.j.o.allowTabNavigation ? this.container : undefined
-		);
+		menu.setContent(toolbar.container).open(() => position(this.container));
 
 		this.state.activated = true;
-	}
 
-	@autobind
-	protected onOutsideClick(e: MouseEvent): void {
-		if (!this.openedPopup) {
-			return;
-		}
-
-		if (
-			!e ||
-			!Dom.isNode(e.target) ||
-			(!Dom.isOrContains(this.container, e.target) &&
-				!this.openedPopup.isOwnClick(e))
-		) {
-			this.closePopup();
-		}
-	}
-
-	private openPopup(): IPopup {
-		this.closePopup();
-		this.openedPopup = new Popup(this.j, false);
-		this.j.e
-			.on(this.ow, 'mousedown touchstart', this.onOutsideClick)
-			.on('escape closeAllPopups', this.onOutsideClick);
-		return this.openedPopup;
-	}
-
-	@autobind
-	private closePopup(): void {
-		if (this.openedPopup) {
-			this.j.e
-				.off(this.ow, 'mousedown touchstart', this.onOutsideClick)
-				.off('escape closeAllPopups', this.onOutsideClick);
+		this.j.e.on(menu, 'afterClose', () => {
 			this.state.activated = false;
-			this.openedPopup.close();
-			this.openedPopup.destruct();
-			this.openedPopup = null;
-		}
+		});
 	}
 
 	/**
@@ -566,10 +501,5 @@ export class ToolbarButton<T extends IViewBased = IViewBased>
 
 			this.j.e.fire('closeAllPopups');
 		}
-	}
-
-	override destruct(): any {
-		this.closePopup();
-		return super.destruct();
 	}
 }

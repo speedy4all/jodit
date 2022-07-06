@@ -23,9 +23,8 @@ import type {
 	Nullable,
 	PopupStrategy
 } from 'jodit/types';
-import { Dom } from 'jodit/core/dom/dom';
+import { Dom } from 'jodit/core/dom';
 import {
-	assert,
 	attr,
 	css,
 	isFunction,
@@ -35,10 +34,9 @@ import {
 	position,
 	ucfirst
 } from 'jodit/core/helpers';
-import { UIElement } from 'jodit/core/ui/element';
-import { autobind, throttle } from 'jodit/core/decorators';
-import { Component } from 'jodit/core/component/component';
 import { eventEmitter, getContainer } from 'jodit/core/global';
+import { UIElement } from 'jodit/core/ui';
+import { autobind, throttle } from 'jodit/core/decorators';
 
 type getBoundFunc = () => IBound;
 
@@ -64,7 +62,7 @@ export class Popup extends UIElement implements IPopup {
 
 	/** @override */
 	override updateParentElement(target: IUIElement): this {
-		if (target !== this && Component.isInstanceOf<Popup>(target, Popup)) {
+		if (target !== this && target instanceof Popup) {
 			this.childrenPopups.forEach(popup => {
 				if (!target.closest(popup) && popup.isOpened) {
 					popup.close();
@@ -93,8 +91,9 @@ export class Popup extends UIElement implements IPopup {
 
 		let elm: HTMLElement;
 
-		if (Component.isInstanceOf(content, UIElement)) {
+		if (content instanceof UIElement) {
 			elm = content.container;
+			// @ts-ignore
 			content.parentElement = this;
 		} else if (isString(content)) {
 			elm = this.j.c.fromHTML(content);
@@ -114,11 +113,7 @@ export class Popup extends UIElement implements IPopup {
 	/**
 	 * Open popup near with some bound
 	 */
-	open(
-		getBound: getBoundFunc,
-		keepPosition: boolean = false,
-		parentContainer?: HTMLElement
-	): this {
+	open(getBound: getBoundFunc, keepPosition: boolean = false): this {
 		markOwner(this.jodit, this.container);
 
 		this.calculateZIndex();
@@ -130,14 +125,10 @@ export class Popup extends UIElement implements IPopup {
 			? getBound
 			: this.getKeepBound(getBound);
 
-		if (parentContainer) {
-			parentContainer.appendChild(this.container);
-		} else {
-			const popupContainer = getContainer(this.jodit, Popup);
+		const parentContainer = getContainer(this.jodit, Popup);
 
-			if (parentContainer !== this.container.parentElement) {
-				popupContainer.appendChild(this.container);
-			}
+		if (parentContainer !== this.container.parentElement) {
+			parentContainer.appendChild(this.container);
 		}
 
 		this.updatePosition();
@@ -163,16 +154,14 @@ export class Popup extends UIElement implements IPopup {
 			return false;
 		};
 
-		const { j } = this;
-
-		if (checkView(j)) {
+		if (checkView(this.j)) {
 			return;
 		}
 
 		let pe = this.parentElement;
 
 		while (pe) {
-			if (checkView(j)) {
+			if (checkView(pe.j)) {
 				return;
 			}
 
@@ -365,6 +354,7 @@ export class Popup extends UIElement implements IPopup {
 		this.j.e.fire('beforePopupClose', this);
 
 		this.removeGlobalListeners();
+
 		Dom.safeRemove(this.container);
 
 		return this;
@@ -375,24 +365,25 @@ export class Popup extends UIElement implements IPopup {
 	 */
 	@autobind
 	private closeOnOutsideClick(e: MouseEvent): void {
-		if (!this.isOpened || this.isOwnClick(e)) {
+		if (!this.isOpened) {
 			return;
 		}
 
-		this.close();
-	}
-
-	isOwnClick(e: MouseEvent): boolean {
 		const target =
 			(isFunction(e.composedPath) && e.composedPath()[0]) || e.target;
 
 		if (!target) {
-			return false;
+			this.close();
+			return;
 		}
 
 		const box = UIElement.closestElement(target as Node, Popup);
 
-		return Boolean(box && (this === box || box.closest(this)));
+		if (box && (this === box || box.closest(this))) {
+			return;
+		}
+
+		this.close();
 	}
 
 	private addGlobalListeners(): void {
@@ -435,15 +426,11 @@ export class Popup extends UIElement implements IPopup {
 
 		this.j.e
 			.off('closeAllPopups', this.close)
+
 			.off('resize', up)
 			.off(this.container, 'scroll mousewheel', up)
 			.off(ow, 'scroll', up)
 			.off(ow, 'resize', up);
-
-		assert(
-			this.j.container.isConnected,
-			'The container must be built into the DOM'
-		);
 
 		Dom.up(this.j.container, box => {
 			box && this.j.e.off(box, 'scroll mousewheel', up);

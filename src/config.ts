@@ -26,11 +26,6 @@ import * as consts from './core/constants';
  * Default Editor's Configuration
  */
 export class Config implements IViewOptions {
-	/**
-	 * Timeout of all asynchronous methods
-	 */
-	defaultTimeout: number = 100;
-
 	namespace: string = '';
 
 	/**
@@ -50,6 +45,20 @@ export class Config implements IViewOptions {
 	 * ```
 	 */
 	safePluginsList: string[] = ['about', 'enter', 'backspace'];
+
+	/**
+	 * When this option is enabled, the editor's content will be placed in an iframe and isolated from the rest of the page.
+	 *
+	 * @example
+	 * ```javascript
+	 * new Jodit('#editor', {
+	 *    iframe = true;
+	 *    iframeStyle = 'html{margin: 0px;}body{padding:10px;background:transparent;color:#000;position:relative;z-index:2;\
+	 *    user-select:auto;margin:0px;overflow:hidden;}body:after{content:"";clear:both;display:block}';
+	 * });
+	 * ```
+	 */
+	iframe: boolean = false;
 
 	commandToHotkeys!: IDictionary<string | string[]>;
 
@@ -163,6 +172,12 @@ export class Config implements IViewOptions {
 	saveModeInStorage: boolean = false;
 
 	/**
+	 * Options specifies whether the editor is to have its spelling and grammar checked or not
+	 * @see {@link http://www.w3schools.com/tags/att_global_spellcheck.asp}
+	 */
+	spellcheck: boolean = true;
+
+	/**
 	 * Class name that can be appended to the editor
 	 *
 	 * @see {@link Jodit.defaultOptions.iframeCSSLinks|iframeCSSLinks}
@@ -170,7 +185,7 @@ export class Config implements IViewOptions {
 	 *
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor', {
+	 * new Jodit('#editor', {
 	 *    editorCssClass: 'some_my_class'
 	 * });
 	 * ```
@@ -189,7 +204,7 @@ export class Config implements IViewOptions {
 	 *
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor', {
+	 * new Jodit('#editor', {
 	 * 		style: {
 	 * 		 font: '12px Arial'
 	 * 		}
@@ -203,7 +218,7 @@ export class Config implements IViewOptions {
 	 *
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('#editor');
+	 * var editor = new Jodit('#editor');
 	 * document.getElementById('editor').addEventListener('change', function () {
 	 *      console.log(this.value);
 	 * })
@@ -218,7 +233,7 @@ export class Config implements IViewOptions {
 	 * 'rtl' – Indicates a Right-To-Left text direction (like in Arabic).
 	 * @example
 	 * ```javascript
-	 * Jodit.make('.editor', {
+	 * new Jodit('.editor', {
 	 *    direction: 'rtl'
 	 * })
 	 * ```
@@ -235,7 +250,7 @@ export class Config implements IViewOptions {
 	 * <!-- include in you page lang file -->
 	 * <script src="jodit/lang/de.js"></script>
 	 * <script>
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *    language: 'de'
 	 * });
 	 * </script>
@@ -249,7 +264,7 @@ export class Config implements IViewOptions {
 	 * @example
 	 * ```html
 	 * <script>
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *    debugLanguage: true
 	 * });
 	 *
@@ -264,7 +279,7 @@ export class Config implements IViewOptions {
 	 *
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('#editor', {
+	 * var editor = new Jodit('#editor', {
 	 *     language: 'ru',
 	 *     i18n: {
 	 *         ru: {
@@ -333,7 +348,7 @@ export class Config implements IViewOptions {
 	 * Jodit.MODE_SOURCE syntax highlighting source editor
 	 * @example
 	 * ```javascript
-	 * var editor = Jodit.make('#editor', {
+	 * var editor = new Jodit('#editor', {
 	 *     defaultMode: Jodit.MODE_SPLIT
 	 * });
 	 * console.log(editor.getRealMode())
@@ -350,7 +365,7 @@ export class Config implements IViewOptions {
 	 * The colors in HEX representation to select a color for the background and for the text in colorpicker
 	 * @example
 	 * ```javascript
-	 *  Jodit.make('#editor', {
+	 *  new Jodit('#editor', {
 	 *     colors: ['#ff0000', '#00ff00', '#0000ff']
 	 * })
 	 * ```
@@ -448,7 +463,7 @@ export class Config implements IViewOptions {
 	 * The default tab color picker
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor2', {
+	 *  new Jodit('#editor2', {
 	 *     colorPickerDefaultTab: 'color'
 	 * })
 	 * ```
@@ -475,11 +490,11 @@ export class Config implements IViewOptions {
 	 * Do not init these plugins
 	 * @example
 	 * ```typescript
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *    disablePlugins: 'table,iframe'
 	 * });
 	 * //or
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *    disablePlugins: ['table', 'iframe']
 	 * });
 	 * ```
@@ -490,7 +505,7 @@ export class Config implements IViewOptions {
 	 * Init and download extra plugins
 	 * @example
 	 * ```typescript
-	 * var editor = Jodit.make('.editor', {
+	 * var editor = new Jodit('.editor', {
 	 *    extraPlugins: ['emoji']
 	 * });
 	 * ```
@@ -504,7 +519,7 @@ export class Config implements IViewOptions {
 	basePath?: string;
 
 	/**
-	 * These buttons list will be added to option.buttons
+	 * This buttons list will be added to option.buttons
 	 */
 	extraButtons: Array<string | IControlType> = [];
 
@@ -548,47 +563,8 @@ export class Config implements IViewOptions {
 
 	/**
 	 * Default attributes for created inside editor elements
-	 * @example
-	 * ```js
-	 * const editor2 = Jodit.make('#editor', {
-	 * 	createAttributes: {
-	 * 		div: {
-	 * 			class: 'test'
-	 * 		},
-	 * 		ul: function (ul) {
-	 * 			ul.classList.add('ui-test');
-	 * 		}
-	 * 	}
-	 * });
-	 *
-	 * const div2 = editor2.createInside.div();
-	 * expect(div2.className).equals('test');
-	 *
-	 * const ul = editor2.createInside.element('ul');
-	 * expect(ul.className).equals('ui-test');
-	 * ```
-	 * Or JSX in React
-	 * @example
-	 * ```jsx
-	 * import React, {useState, useRef} from 'react';
-	 * import JoditEditor from "jodit-react";
-	 *
-	 * const config = {
-	 * 	createAttributes: {
-	 * 		div: {
-	 * 			class: 'align-center'
-	 * 		}
-	 * 	}
-	 * };
-	 *
-	 * <JoditEditor config={config}/>
-	 * ```
 	 */
-	createAttributes: IDictionary<Attributes | NodeFunction> = {
-		table: {
-			style: 'border-collapse:collapse;width: 100%;'
-		}
-	};
+	createAttributes: IDictionary<Attributes | NodeFunction> = {};
 
 	/**
 	 * The width of the editor, accepted as the biggest. Used to the responsive version of the editor
@@ -610,7 +586,7 @@ export class Config implements IViewOptions {
 	 * Note - this is not the width of the device, the width of the editor
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor', {
+	 * new Jodit('#editor', {
 	 *     buttons: ['bold', 'italic', 'source'],
 	 *     buttonsMD: ['bold', 'italic'],
 	 *     buttonsXS: ['bold', 'fullsize'],
@@ -618,31 +594,32 @@ export class Config implements IViewOptions {
 	 * ```
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor2', {
+	 * new Jodit('#editor2', {
 	 *     buttons: [{
-	 *         name: 'empty',
+	 *         name: 'enty',
 	 *         icon: 'source',
-	 *         exec: function (editor) {
-	 *             const dialog = new Jodit.modules.Dialog({}),
-	 *                 text = editor.c.element('textarea');
-	 *
+	 *         exec: function () {
+	 *             var dialog = new Jodit.modules.Dialog(this),
+	 *                 div = document.createElement('div'),
+	 *                 text = document.createElement('textarea');
+	 *             div.textContent = this.val();
 	 *             dialog.setHeader('Source code');
 	 *             dialog.setContent(text);
 	 *             dialog.setSize(400, 300);
-	 *
-	 *             Jodit.modules.Helpers.css(elm, {
-	 *                 width: '100%',
-	 *                 height: '100%'
-	 *             })
-
-	 *             dialog.open();
+	 *             dom(text)
+	 *                 .css({
+	 *                     width: '100%',
+	 *                     height: '100%'
+	 *                 })
+	 *                 .val(div.innerHTML.replace(/<br>/g, '\n'));
+	 *             dialog.{@link module:Dialog~open|open}();
 	 *         }
 	 *     }]
 	 * });
 	 * ```
 	 * @example
 	 * ```javascript
-	 * Jodit.make('#editor2', {
+	 * new Jodit('#editor2', {
 	 *     buttons: Jodit.defaultOptions.buttons.concat([{
 	 *        name: 'listsss',
 	 *        iconURL: 'stuf/dummy.png',
@@ -677,7 +654,15 @@ export class Config implements IViewOptions {
 			buttons: []
 		},
 		{
+			group: 'indent',
+			buttons: []
+		},
+		{
 			group: 'font',
+			buttons: []
+		},
+		{
+			group: 'color',
 			buttons: []
 		},
 		'---',
@@ -700,14 +685,6 @@ export class Config implements IViewOptions {
 		},
 		{
 			group: 'insert',
-			buttons: []
-		},
-		{
-			group: 'indent',
-			buttons: []
-		},
-		{
-			group: 'color',
 			buttons: []
 		},
 		{
@@ -750,16 +727,15 @@ export class Config implements IViewOptions {
 		'|',
 		'font',
 		'fontsize',
+		'brush',
+		'paragraph',
+		'align',
 		'---',
 		'image',
 		'table',
 		'|',
 		'link',
 		'\n',
-		'brush',
-		'paragraph',
-		'align',
-		'|',
 		'hr',
 		'copyformat',
 		'fullsize',
@@ -809,17 +785,12 @@ export class Config implements IViewOptions {
 		'brush',
 		'paragraph',
 		'eraser',
-		'|',
-		'fontsize',
 		'---',
 		'image',
 		'\n',
 		'align',
 		'undo',
 		'redo',
-		'|',
-		'link',
-		'table',
 		'---',
 		'dots'
 	];

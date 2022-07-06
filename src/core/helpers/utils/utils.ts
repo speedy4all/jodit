@@ -13,17 +13,18 @@ import type {
 	IControlType,
 	IDictionary,
 	IViewBased,
+	Nullable,
 	IJodit,
 	RejectablePromise
 } from 'jodit/types';
 import { isFunction } from '../checker/is-function';
 import { isPromise } from '../checker/is-promise';
-import { isVoid } from '../checker/is-void';
-import { isPlainObject } from '../checker/is-plain-object';
-import { isString } from '../checker/is-string';
+import { get } from './get';
 import { dataBind } from './data-bind';
+import { isVoid } from '../checker/is-void';
+import { isPlainObject, isString } from '../checker';
 import { css } from './css';
-import { CamelCaseToKebabCase } from '../string/kebab-case';
+import { CamelCaseToKebabCase } from '../string';
 
 /**
  * Call function with parameters
@@ -50,7 +51,7 @@ export function attr(elm: Element, key: string): null | string;
 /**
  * Remove attribute
  */
-export function attr(elm: Element, key: string, value: null): void;
+export function attr(elm: Element, key: string, value: null): null | string;
 
 /**
  * Set attribute
@@ -148,6 +149,48 @@ export function callPromise(
 	return callback();
 }
 
+const map: IDictionary = {};
+
+/**
+ * Reset Vanila JS native function
+ * @example
+ * ```js
+ * reset('Array.from')(Set([1,2,3])) // [1, 2, 3]
+ * ```
+ */
+export const reset = function <T extends Function>(key: string): Nullable<T> {
+	if (!(key in map)) {
+		const iframe = document.createElement('iframe');
+
+		try {
+			iframe.src = 'about:blank';
+			document.body.appendChild(iframe);
+
+			if (!iframe.contentWindow) {
+				return null;
+			}
+
+			const func = get(key, iframe.contentWindow),
+				bind = get(
+					key.split('.').slice(0, -1).join('.'),
+					iframe.contentWindow
+				);
+
+			if (isFunction(func)) {
+				map[key] = func.bind(bind);
+			}
+		} catch (e) {
+			if (!isProd) {
+				throw e;
+			}
+		} finally {
+			iframe.parentNode?.removeChild(iframe);
+		}
+	}
+
+	return map[key] ?? null;
+};
+
 /**
  * Allow load image in promise
  */
@@ -157,11 +200,11 @@ export const loadImage = (
 ): RejectablePromise<HTMLImageElement> =>
 	jodit.async.promise<HTMLImageElement>((res, rej) => {
 		const image = new Image(),
-			onError = (): void => {
+			onError = () => {
 				jodit.e.off(image);
 				rej?.();
 			},
-			onSuccess = (): void => {
+			onSuccess = () => {
 				jodit.e.off(image);
 				res(image);
 			};
@@ -203,7 +246,7 @@ export const memorizeExec = <T extends IJodit = IJodit>(
 ): void | false => {
 	const key = `button${control.command}`;
 
-	let value = (control.args && control.args[0]) ?? dataBind(editor, key);
+	let value = (control.args && control.args[0]) || dataBind(editor, key);
 
 	if (isVoid(value)) {
 		return false;
@@ -215,5 +258,5 @@ export const memorizeExec = <T extends IJodit = IJodit>(
 		value = preProcessValue(value);
 	}
 
-	editor.execCommand(control.command as string, false, value ?? undefined);
+	editor.execCommand(control.command as string, false, value || undefined);
 };

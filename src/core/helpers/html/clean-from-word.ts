@@ -8,7 +8,7 @@
  * @module helpers/html
  */
 
-import { Dom } from 'jodit/core/dom/dom';
+import { Dom } from 'jodit/core/dom';
 import { trim } from 'jodit/core/helpers/string/trim';
 import { toArray } from 'jodit/core/helpers/array/to-array';
 
@@ -34,7 +34,7 @@ export function cleanFromWord(html: string): string {
 		const marks: Node[] = [];
 
 		if (div.firstChild) {
-			Dom.each(div, node => {
+			Dom.all(div, node => {
 				if (!node) {
 					return;
 				}
@@ -82,7 +82,7 @@ export function cleanFromWord(html: string): string {
 			});
 		}
 
-		Dom.safeRemove.apply(null, marks);
+		marks.forEach(Dom.safeRemove);
 
 		convertedString = div.innerHTML;
 	} catch (e) {}

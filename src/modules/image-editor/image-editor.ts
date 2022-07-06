@@ -30,32 +30,28 @@ import { Dom } from 'jodit/core/dom';
 import { Button } from 'jodit/core/ui/button';
 import { form } from './templates/form';
 import { component, debounce, throttle, autobind } from 'jodit/core/decorators';
-import './config';
 
-interface onSave {
-	(
-		/**
-		 * new filename
-		 */
-		newname: string | void,
-
-		/*
-		 * Bound box for resize and crop operation
-		 */
-		box: ImageEditorActionBox,
-
-		/**
-		 * called after success operation
-		 */
-		success: () => void,
-
-		/**
-		 * called after failed operation
-		 */
-		failed: (error: Error) => void
-	): void;
+declare module 'jodit/config' {
+	interface Config {
+		imageeditor: ImageEditorOptions;
+	}
 }
 
+Config.prototype.imageeditor = {
+	min_width: 20,
+	min_height: 20,
+	closeAfterSave: false,
+	width: '85%',
+	height: '85%',
+	crop: true,
+	resize: true,
+	resizeUseRatio: true,
+	resizeMinWidth: 20,
+	resizeMinHeight: 20,
+	cropUseRatio: true,
+	cropDefaultWidth: '70%',
+	cropDefaultHeight: '70%'
+};
 const jie = 'jodit-image-editor';
 
 const TABS = {
@@ -70,7 +66,7 @@ const TABS = {
 @component
 export class ImageEditor extends ViewComponent {
 	/** @override */
-	override className(): string {
+	className(): string {
 		return 'ImageEditor';
 	}
 
@@ -102,24 +98,27 @@ export class ImageEditor extends ViewComponent {
 	private diff_x: number = 0;
 	private diff_y: number = 0;
 
-	private readonly buttons: IDictionary<IUIButton>;
-	private readonly editor: HTMLElement;
-	private readonly resize_box: HTMLElement;
-	private readonly crop_box: HTMLElement;
+	private buttons: IDictionary<IUIButton>;
+
+	private editor: HTMLElement;
+
+	private resize_box: HTMLElement;
+
+	private crop_box: HTMLElement;
 
 	private sizes: HTMLElement;
 
-	private readonly resizeHandler: HTMLElement;
-	private readonly cropHandler: HTMLElement;
+	private resizeHandler: HTMLElement;
+	private cropHandler: HTMLElement;
 
-	private readonly cropBox = {
+	private cropBox = {
 		x: 0,
 		y: 0,
 		w: 0,
 		h: 0
 	};
 
-	private readonly resizeBox = {
+	private resizeBox = {
 		w: 0,
 		h: 0
 	};
@@ -147,7 +146,7 @@ export class ImageEditor extends ViewComponent {
 		return valueNbr || 0;
 	};
 
-	private calcCropBox = (): void => {
+	private calcCropBox = () => {
 		const node = this.crop_box.parentNode as HTMLElement,
 			w = node.offsetWidth * 0.8,
 			h = node.offsetHeight * 0.8;
@@ -174,7 +173,7 @@ export class ImageEditor extends ViewComponent {
 		});
 	};
 
-	private showCrop = (): void => {
+	private showCrop = () => {
 		if (!this.cropImage) {
 			return;
 		}
@@ -213,7 +212,7 @@ export class ImageEditor extends ViewComponent {
 		this.j.e.fire(this.cropHandler, 'updatesize');
 	};
 
-	private updateCropBox = (): void => {
+	private updateCropBox = () => {
 		if (!this.cropImage) {
 			return;
 		}
@@ -230,12 +229,12 @@ export class ImageEditor extends ViewComponent {
 			this.cropBox.w.toFixed(0) + 'x' + this.cropBox.h.toFixed(0);
 	};
 
-	private updateResizeBox = (): void => {
+	private updateResizeBox = () => {
 		this.resizeBox.w = this.image.offsetWidth || this.naturalWidth;
 		this.resizeBox.h = this.image.offsetHeight || this.naturalHeight;
 	};
 
-	private setHandlers = (): void => {
+	private setHandlers = () => {
 		const self: ImageEditor = this;
 
 		const { widthInput, heightInput } = refs<HTMLInputElement>(this.editor);
@@ -439,7 +438,7 @@ export class ImageEditor extends ViewComponent {
 
 	@debounce()
 	@autobind
-	private onChangeSizeInput(e: MouseEvent): void {
+	private onChangeSizeInput(e: MouseEvent) {
 		const self = this,
 			input = e.target as HTMLInputElement,
 			{ widthInput, heightInput } = refs<HTMLInputElement>(this.editor),
@@ -613,9 +612,16 @@ export class ImageEditor extends ViewComponent {
 
 	/**
 	 * Open image editor
+	 *
+	 * @param [save.name] - new filename
+	 * @param save.data - Bound box for resize and crop operation
+	 * @param save.data.action - resize or crop
+	 * @param save.data.box - Bound box
+	 * @param save.success - called after success operation
+	 * @param save.failed - called after failed operation
 	 * @example
 	 * ```javascript
-	 * var jodit = Jodit.make('.editor', {
+	 * var jodit = new Jodit('.editor', {
 	 *		 imageeditor: {
 	 *				 crop: false,
 	 *				 closeAfterSave: true,
@@ -636,7 +642,15 @@ export class ImageEditor extends ViewComponent {
 	 * ```
 	 */
 	@autobind
-	open(url: string, save: onSave): Promise<Dialog> {
+	open(
+		url: string,
+		save: (
+			newname: string | void,
+			box: ImageEditorActionBox,
+			success: () => void,
+			failed: (error: Error) => void
+		) => void
+	): Promise<Dialog> {
 		return this.j.async.promise<Dialog>((resolve: Function): void => {
 			const timestamp = new Date().getTime();
 
@@ -674,7 +688,7 @@ export class ImageEditor extends ViewComponent {
 				this.editor
 			);
 
-			const onload = (): void => {
+			const onload = () => {
 				if (this.isDestructed) {
 					return;
 				}
@@ -694,10 +708,7 @@ export class ImageEditor extends ViewComponent {
 
 				this.crop_box.appendChild(this.cropImage);
 
-				Dom.safeRemove.apply(
-					null,
-					$$('.jodit-icon_loader', this.editor)
-				);
+				$$('.jodit-icon_loader', this.editor).forEach(Dom.safeRemove);
 
 				if (this.activeTab === TABS.crop) {
 					this.showCrop();

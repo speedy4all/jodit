@@ -11,12 +11,9 @@
  */
 
 import type { IDictionary, IUIForm, IUIInput, IUISelect } from 'jodit/types';
-import { UIGroup } from 'jodit/core/ui/group/group';
-import { UIInput } from 'jodit/core/ui/form/inputs/input/input';
-import { UISelect } from 'jodit/core/ui/form/inputs/select/select';
+import { UIGroup, UIInput, UISelect } from 'jodit/core/ui';
 import { attr } from 'jodit/core/helpers/utils';
-import { component } from 'jodit/core/decorators/component/component';
-import { Component } from 'jodit/core/component/component';
+import { component } from 'jodit/core/decorators';
 
 @component
 export class UIForm extends UIGroup implements IUIForm {
@@ -32,8 +29,8 @@ export class UIForm extends UIGroup implements IUIForm {
 	}
 
 	validate(): boolean {
-		const inputs = this.allChildren.filter(elm =>
-			Component.isInstanceOf(elm, UIInput)
+		const inputs = this.allChildren.filter(
+			elm => elm instanceof UIInput
 		) as IUIInput[];
 
 		for (const input of inputs) {
@@ -42,8 +39,8 @@ export class UIForm extends UIGroup implements IUIForm {
 			}
 		}
 
-		const selects = this.allChildren.filter(elm =>
-			Component.isInstanceOf(elm, UISelect)
+		const selects = this.allChildren.filter(
+			elm => elm instanceof UISelect
 		) as IUISelect[];
 
 		for (const select of selects) {
@@ -57,8 +54,8 @@ export class UIForm extends UIGroup implements IUIForm {
 
 	onSubmit(handler: (data: IDictionary) => false | void): void {
 		this.j.e.on(this.container, 'submit', (): false => {
-			const inputs = this.allChildren.filter(elm =>
-				Component.isInstanceOf(elm, UIInput)
+			const inputs = this.allChildren.filter(
+				elm => elm instanceof UIInput
 			) as IUIInput[];
 
 			if (!this.validate()) {

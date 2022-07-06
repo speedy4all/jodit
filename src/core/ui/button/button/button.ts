@@ -17,15 +17,13 @@ import type {
 	IViewBased,
 	ButtonVariant
 } from 'jodit/types';
-import { UIElement } from 'jodit/core/ui/element';
-import { Dom } from 'jodit/core/dom/dom';
-import { attr } from 'jodit/core/helpers/utils';
-import { isString } from 'jodit/core/helpers/checker/is-string';
-import { isFunction } from 'jodit/core/helpers/checker/is-function';
-import { Icon } from 'jodit/core/ui/icon';
-import { UIList } from 'jodit/core/ui/group/list';
+import { UIElement } from 'jodit/core/ui';
+import { Dom } from 'jodit/core/dom';
+import { attr, isString, isFunction } from 'jodit/core/helpers';
+import { Icon } from 'jodit/core/ui';
+import { UIList } from 'jodit/core/ui';
 import { autobind, component, watch } from 'jodit/core/decorators';
-import { STATUSES } from 'jodit/core/component/statuses';
+import { STATUSES } from 'jodit/core/component';
 
 export const UIButtonState = (): IUIButtonState => ({
 	size: 'middle',
@@ -51,16 +49,16 @@ export const UIButtonState = (): IUIButtonState => ({
 @component
 export class UIButton extends UIElement implements IUIButton {
 	/** @override */
-	override className(): string {
+	className(): string {
 		return 'UIButton';
 	}
 
 	/**
 	 * Marker for buttons
 	 */
-	readonly isButton: true = true;
+	isButton: true = true;
 
-	readonly state = UIButtonState();
+	state = UIButtonState();
 
 	/**
 	 * Set state
@@ -150,7 +148,7 @@ export class UIButton extends UIElement implements IUIButton {
 	}
 
 	@watch('state.tabIndex')
-	protected onChangeTabIndex(): void {
+	onChangeTabIndex(): void {
 		attr(this.container, 'tabindex', this.state.tabIndex);
 	}
 
@@ -230,7 +228,7 @@ export class UIButton extends UIElement implements IUIButton {
 		return super.destruct();
 	}
 
-	private readonly actionHandlers: Function[] = [];
+	private actionHandlers: Function[] = [];
 
 	/**
 	 * Add action handler

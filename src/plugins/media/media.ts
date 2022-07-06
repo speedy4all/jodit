@@ -44,19 +44,16 @@ export function media(editor: IJodit): void {
 
 	const { mediaFakeTag, mediaBlocks, mediaInFakeBlock } = editor.options;
 
-	const wrap = (element: HTMLElement): void => {
+	const wrap = (element: HTMLElement) => {
 		if (
 			element.parentNode &&
 			attr(element.parentNode as HTMLElement, 'data-jodit_iframe_wrapper')
 		) {
 			element = element.parentNode as HTMLElement;
 		} else {
-			const wrapper = editor.createInside.element(mediaFakeTag, {
-				'data-jodit-temp': 1,
-				contenteditable: false,
-				draggable: true,
-				[`data-${keyFake}`]: 1
-			});
+			const wrapper = editor.createInside.fromHTML(
+				`<${mediaFakeTag} data-jodit-temp="1" contenteditable="false" draggable="true" data-${keyFake}="1"></${mediaFakeTag}>`
+			);
 
 			attr(wrapper, 'style', attr(element, 'style'));
 

@@ -8,9 +8,7 @@
  * @module types
  */
 
-import type { CanPromise, IDictionary, IViewComponent } from './types';
-import type { IViewBased } from 'jodit/types/view';
-import type { IAjax } from './ajax';
+import type { IDictionary, IViewComponent } from './types';
 
 interface IUploaderData {
 	messages?: string[];
@@ -41,35 +39,12 @@ export interface IUploaderOptions<T> {
 		| ((request: FormData | IDictionary<string> | string) => string);
 	insertImageAsBase64URI: boolean;
 	imagesExtensions: string[];
-	headers?:
-		| IDictionary<string>
-		| null
-		| ((this: IAjax<any>) => CanPromise<IDictionary<string> | null>);
+	headers?: IDictionary<string> | null;
 	data: null | object;
 	format: string;
 	method: string;
 
 	filesVariableName: (i: number) => string;
-
-	/**
-	 * The method can be used to change the name of the uploaded file
-	 * ```js
-	 * Jodit.make('#editor', {
-	 *  uploader: {
-	 *    url: 'some-connector.php',
-	 *    processFileName: (key, file, name) => {
-	 *      return [key, file, 'some-prefix_' + name];
-	 *    }
-	 *  }
-	 * });
-	 * ```
-	 */
-	processFileName(
-		this: T,
-		key: string,
-		file: File,
-		name: string
-	): [string, File, string];
 	pathVariableName: string;
 	withCredentials: boolean;
 
@@ -95,11 +70,8 @@ export interface IUploaderOptions<T> {
 }
 
 export interface IUploader extends IViewComponent {
-	readonly jodit: IViewBased;
-	readonly j: this['jodit'];
-
 	readonly options: IUploaderOptions<IUploader>;
-	readonly o: this['options'];
+	get o(): this['options'];
 
 	bind(
 		form: HTMLElement,

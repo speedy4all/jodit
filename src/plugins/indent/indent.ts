@@ -124,7 +124,7 @@ export function indent(editor: IJodit): void {
 			editor.s.restore();
 		});
 
-		editor.synchronizeValues();
+		editor.setEditorValue();
 
 		return false;
 	};

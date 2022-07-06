@@ -8,7 +8,7 @@
  * @module helpers/utils
  */
 
-import { isString } from '../checker/is-string';
+import { isString } from '../checker';
 
 /**
  * Try define user language

@@ -15,7 +15,7 @@ import type {
 	IControlType,
 	IJodit
 } from 'jodit/types';
-import { isArray } from 'jodit/core/helpers/checker/is-array';
+import { isArray } from 'jodit/core/helpers/checker';
 
 export const isButtonGroup = (
 	item: ButtonsGroup | string | IControlType

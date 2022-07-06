@@ -21,12 +21,7 @@ import type { IViewBased } from 'jodit/types/view';
 import type { ButtonsOption } from 'jodit/types/toolbar';
 import type { IElms, IMods } from 'jodit/types/traits';
 
-export interface IUIElement
-	extends IViewComponent,
-		IContainer,
-		IDestructible,
-		IMods,
-		IElms {
+export interface IUIElement extends IViewComponent, IContainer, IDestructible, IMods, IElms {
 	parentElement: Nullable<IUIElement>;
 	container: HTMLElement;
 	name: string;
@@ -137,7 +132,7 @@ export interface IUIInput extends IUIElement {
 		icon: string;
 		label: string;
 		ref: string;
-		type: 'text' | 'number' | 'checkbox' | 'url' | 'file' | 'hidden';
+		type: 'text' | 'number' |'checkbox' | 'url' | 'file' | 'hidden';
 		placeholder: string;
 		required: boolean;
 		validators: string[];
@@ -187,6 +182,7 @@ export interface IUIRange extends IUIInput {
 		max: number;
 	};
 }
+
 
 export interface IUICheckBox extends IUIInput {
 	readonly state: IUIInput['state'] & {

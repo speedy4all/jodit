@@ -8,14 +8,14 @@
  * @module helpers/html
  */
 
-import { Dom } from 'jodit/core/dom/dom';
+import { Dom } from 'jodit/core/dom';
 import { $$ } from 'jodit/core/helpers/utils';
-import { trim } from '../string/trim';
+import { trim } from '../string';
 
-function normalizeCSS(s: string): string {
+function normalizeCSS(s: string) {
 	return s
 		.replace(/mso-[a-z-]+:[\s]*[^;]+;/gi, '')
-		.replace(/mso-[a-z-]+:[\s]*[^";']+$/gi, '')
+		.replace(/mso-[a-z-]+:[\s]*[^";]+$/gi, '')
 		.replace(/border[a-z-]*:[\s]*[^;]+;/gi, '')
 		.replace(/([0-9.]+)(pt|cm)/gi, (match, units, metrics) => {
 			switch (metrics.toLowerCase()) {
@@ -30,11 +30,6 @@ function normalizeCSS(s: string): string {
 		});
 }
 
-/**
- * If the HTML has CSS rules with selectors,
- * it applies them to the selectors in the HTML itself
- * and then removes the selector styles, leaving only the inline ones.
- */
 export function applyStyles(html: string): string {
 	if (html.indexOf('<html ') === -1) {
 		return html;
@@ -49,7 +44,8 @@ export function applyStyles(html: string): string {
 	document.body.appendChild(iframe);
 
 	let convertedString: string = '',
-		collection: HTMLElement[] = [];
+		collection: HTMLElement[] = [],
+		rules: CSSStyleRule[] = [];
 
 	try {
 		const iframeDoc: Document | null =
@@ -61,51 +57,39 @@ export function applyStyles(html: string): string {
 			iframeDoc.write(html);
 			iframeDoc.close();
 
-			try {
-				for (let i = 0; i < iframeDoc.styleSheets.length; i += 1) {
-					const rules: CSSStyleRule[] = (
-						iframeDoc.styleSheets[i] as any
-					).cssRules;
+			if (iframeDoc.styleSheets.length) {
+				rules = (
+					iframeDoc.styleSheets[
+						iframeDoc.styleSheets.length - 1
+					] as any
+				).cssRules;
+			}
 
-					for (let idx = 0; idx < rules.length; idx += 1) {
-						if (rules[idx].selectorText === '') {
-							continue;
-						}
-
-						collection = $$(
-							rules[idx].selectorText,
-							iframeDoc.body
-						);
-
-						collection.forEach((elm: HTMLElement) => {
-							elm.style.cssText = normalizeCSS(
-								rules[idx].style.cssText +
-									';' +
-									elm.style.cssText
-							);
-						});
-					}
+			for (let idx = 0; idx < rules.length; idx += 1) {
+				if (rules[idx].selectorText === '') {
+					continue;
 				}
-			} catch (e) {
-				if (!isProd) {
-					throw e;
-				}
+
+				collection = $$(rules[idx].selectorText, iframeDoc.body);
+
+				collection.forEach((elm: HTMLElement) => {
+					elm.style.cssText = normalizeCSS(
+						rules[idx].style.cssText + ';' + elm.style.cssText
+					);
+				});
 			}
 
 			Dom.each(iframeDoc.body, node => {
 				if (Dom.isElement(node)) {
 					const elm = node as HTMLElement;
-					const css = elm.getAttribute('style');
+					const css = elm.style.cssText;
 
 					if (css) {
 						elm.style.cssText = normalizeCSS(css);
 					}
 
-					if (
-						elm.hasAttribute('style') &&
-						!elm.getAttribute('style')
-					) {
-						elm.removeAttribute('style');
+					if (elm.hasAttribute('lang')) {
+						elm.removeAttribute('lang');
 					}
 				}
 			});

@@ -225,7 +225,5 @@ module.exports = {
 	'Find Previous': 'Vorige Zoeken',
 	'Find Next': 'Volgende Zoeken',
 	'Insert className': 'Voeg de klassenaam in',
-	'Line height': 'Lijnhoogte',
-	Spellchecking: 'Spellingcontrole',
-	'Press Alt for custom resizing': 'Druk op Alt voor aangepaste grootte'
+	'Line height': 'Lijnhoogte'
 };

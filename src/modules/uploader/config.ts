@@ -15,8 +15,7 @@ import type {
 	IUploaderOptions
 } from 'jodit/types';
 import { Config } from 'jodit/config';
-import { isArray } from 'jodit/core/helpers/checker/is-array';
-import { isJoditObject } from 'jodit/core/helpers/checker/is-jodit-object';
+import { isArray, isJoditObject } from 'jodit/core/helpers';
 
 declare module 'jodit/config' {
 	interface Config {
@@ -68,15 +67,6 @@ Config.prototype.uploader = {
 			: '';
 	},
 
-	processFileName(
-		this: IUploader,
-		key: string,
-		file: File,
-		name: string
-	): [string, File, string] {
-		return [key, file, name];
-	},
-
 	process(this: IUploader, resp: IUploaderAnswer): IUploaderData {
 		return resp.data;
 	},
@@ -125,7 +115,7 @@ Config.prototype.uploader = {
 	},
 
 	contentType(this: IUploader, requestData: any) {
-		return (this.ow as any).FormData !== undefined &&
+		return (this.j.ow as any).FormData !== undefined &&
 			typeof requestData !== 'string'
 			? false
 			: 'application/x-www-form-urlencoded; charset=UTF-8';

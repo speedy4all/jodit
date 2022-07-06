@@ -8,11 +8,11 @@
  * @module plugins/inline-popup
  */
 
+import type { Table } from '../../../../modules';
 import type { IControlType } from 'jodit/types';
-import type { Table } from 'jodit/modules/table/table';
-import { isJoditObject, isString } from 'jodit/core/helpers/checker';
-import { css } from 'jodit/core/helpers/utils/css';
-import { ColorPickerWidget, TabsWidget } from 'jodit/modules/widget';
+import { isJoditObject, isString } from '../../../../core/helpers/checker';
+import { css } from '../../../../core/helpers';
+import { ColorPickerWidget, TabsWidget } from '../../../../modules/widget';
 
 const cmd = (control: IControlType): string =>
 	control.args && isString(control.args[0])
@@ -34,7 +34,7 @@ export default [
 				return false;
 			}
 
-			const makeColorPicker = (key: string): HTMLElement =>
+			const makeColorPicker = (key: string) =>
 				ColorPickerWidget(
 					editor,
 					(value: string) => {
@@ -43,7 +43,7 @@ export default [
 						});
 
 						editor.lock();
-						editor.synchronizeValues();
+						editor.setEditorValue();
 						close();
 						editor.unlock();
 					},
@@ -64,8 +64,8 @@ export default [
 	{
 		name: 'valign',
 		list: ['Top', 'Middle', 'Bottom', 'Normal'],
-		childTemplate: (_, __, value: string): string => value,
-		exec: (editor, table, { control }): void => {
+		childTemplate: (_, __, value: string) => value,
+		exec: (editor, table, { control }) => {
 			const command = cmd(control);
 
 			editor
@@ -105,7 +105,7 @@ export default [
 			tableaddcolumnbefore: 'Insert column before',
 			tableaddcolumnafter: 'Insert column after'
 		},
-		exec: (editor, table, { control }): void => {
+		exec: (editor, table, { control }) => {
 			if (!isJoditObject(editor)) {
 				return;
 			}
@@ -122,7 +122,7 @@ export default [
 			tableaddrowbefore: 'Insert row above',
 			tableaddrowafter: 'Insert row below'
 		},
-		exec: (editor, table, { control }): void => {
+		exec: (editor, table, { control }) => {
 			if (!isJoditObject(editor)) {
 				return;
 			}
@@ -142,7 +142,7 @@ export default [
 			tablebincolumn: 'Delete column',
 			tableempty: 'Empty cell'
 		},
-		exec: (editor, table, { control }): void => {
+		exec: (editor, table, { control }) => {
 			if (!isJoditObject(editor)) {
 				return;
 			}

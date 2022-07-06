@@ -36,7 +36,7 @@ export class pasteStorage extends Plugin {
 
 	private dialog: Dialog | null = null;
 
-	private paste = (): void => {
+	private paste = () => {
 		this.j.s.focus();
 		this.j.s.insertHTML(this.list[this.currentIndex]);
 
@@ -48,12 +48,12 @@ export class pasteStorage extends Plugin {
 		}
 
 		this.dialog && this.dialog.close();
-		this.j.synchronizeValues();
+		this.j.setEditorValue();
 
 		this.j.e.fire('afterPaste');
 	};
 
-	private onKeyDown = (e: KeyboardEvent): void => {
+	private onKeyDown = (e: KeyboardEvent) => {
 		let index: number = this.currentIndex;
 		if ([KEY_UP, KEY_DOWN, KEY_ENTER].indexOf(e.key) === -1) {
 			return;
@@ -87,7 +87,7 @@ export class pasteStorage extends Plugin {
 		e.preventDefault();
 	};
 
-	private selectIndex = (index: number): void => {
+	private selectIndex = (index: number) => {
 		if (this.listBox) {
 			toArray(
 				this.listBox.childNodes as NodeListOf<HTMLAnchorElement>
@@ -104,7 +104,7 @@ export class pasteStorage extends Plugin {
 		this.currentIndex = index;
 	};
 
-	private showDialog = (): void => {
+	private showDialog = () => {
 		if (this.list.length < 2) {
 			return;
 		}
@@ -140,7 +140,7 @@ export class pasteStorage extends Plugin {
 		}, 100);
 	};
 
-	private createDialog(): void {
+	private createDialog() {
 		this.dialog = new Dialog({
 			language: this.j.o.language
 		});

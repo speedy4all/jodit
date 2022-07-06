@@ -21,8 +21,7 @@ export const SPACE_REG_EXP_START = (): RegExp => /^[\s\n\t\r\uFEFF\u200b]+/g;
 export const SPACE_REG_EXP_END = (): RegExp => /[\s\n\t\r\uFEFF\u200b]+$/g;
 
 export const IS_BLOCK =
-	/^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|CANVAS|DD|DFN|DIV|DL|DT|FIELDSET|FIGCAPTION|FIGURE|FOOTER|FORM|H[1-6]|HEADER|HGROUP|HR|LI|MAIN|NAV|NOSCRIPT|OUTPUT|P|PRE|RUBY|SCRIPT|STYLE|OBJECT|OL|SECTION|IFRAME|JODIT|JODIT-MEDIA|UL|TR|TD|TH|TBODY|THEAD|TFOOT|TABLE|BODY|HTML|VIDEO)$/i;
-
+	/^(ARTICLE|SCRIPT|STYLE|OBJECT|FOOTER|HEADER|NAV|SECTION|IFRAME|JODIT|JODIT-MEDIA|PRE|DIV|P|LI|UL|OL|H[1-6]|BLOCKQUOTE|TR|TD|TH|TBODY|THEAD|TABLE|BODY|HTML|FIGCAPTION|FIGURE|DT|DD|DL|DFN|FORM)$/i;
 export const IS_INLINE = /^(STRONG|SPAN|I|EM|B|SUP|SUB|A|U)$/i;
 
 export const INSEPARABLE_TAGS: Array<keyof HTMLElementTagNameMap> = [
@@ -48,7 +47,6 @@ export const KEY_BACKSPACE = 'Backspace';
 export const KEY_TAB = 'Tab';
 export const KEY_ENTER = 'Enter';
 export const KEY_ESC = 'Escape';
-export const KEY_ALT = 'Alt';
 
 export const KEY_LEFT = 'ArrowLeft';
 export const KEY_UP = 'ArrowUp';
@@ -108,7 +106,6 @@ export const IS_IE =
  */
 export const TEXT_PLAIN = IS_IE ? 'text' : 'text/plain';
 export const TEXT_HTML = IS_IE ? 'html' : 'text/html';
-export const TEXT_RTF = IS_IE ? 'rtf' : 'text/rtf';
 
 export const MARKER_CLASS = 'jodit-selection_marker';
 
@@ -199,15 +196,7 @@ export const BASE_PATH: string = ((): string => {
 	}
 
 	const script = document.currentScript as HTMLScriptElement,
-		removeScriptName = (s: string): string => {
-			const parts = s.split('/');
-
-			if (/\.js/.test(parts[parts.length - 1])) {
-				return parts.slice(0, parts.length - 1).join('/') + '/';
-			}
-
-			return s;
-		};
+		removeScriptName = (s: string) => s.replace(/\/[^/]+.js$/, '/');
 
 	if (script) {
 		return removeScriptName(script.src);
@@ -223,5 +212,3 @@ export const BASE_PATH: string = ((): string => {
 })();
 
 export const TEMP_ATTR = 'data-jodit-temp';
-
-export const lang: IDictionary<IDictionary<string>> = {};

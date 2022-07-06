@@ -17,9 +17,8 @@ import type {
 	IViewBased
 } from 'jodit/types';
 import { UIElement } from 'jodit/core/ui/element';
-import { attr } from 'jodit/core/helpers/utils';
-import { toArray } from 'jodit/core/helpers/array/to-array';
-import { Dom } from 'jodit/core/dom/dom';
+import { attr, toArray } from 'jodit/core/helpers';
+import { Dom } from 'jodit/core/dom';
 import { autobind, component, debounce, watch } from 'jodit/core/decorators';
 import { Icon } from 'jodit/core/ui/icon';
 import { inputValidators } from 'jodit/core/ui/form/validators';
@@ -280,7 +279,7 @@ export class UIInput extends UIElement implements IUIInput {
 	/**
 	 * Set `focused` mod on change focus
 	 */
-	private onChangeFocus(): void {
+	private onChangeFocus() {
 		this.setMod('focused', this.isFocused);
 	}
 }

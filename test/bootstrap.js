@@ -156,15 +156,15 @@ function mockAjax() {
 						break;
 					}
 					case 'fileUpload': {
-						const file = ajax.options.data.getName('files[0]');
+						const file = ajax.options.data.get('files[0]');
 						resolve({
 							success: true,
 							time: '2018-03-31 23:38:54',
 							data: {
 								baseurl: 'https://xdsoft.net/jodit/files/',
 								messages: [],
-								files: [file],
-								isImages: [/\.(png|jpg|gif)$/.test(file)],
+								files: [file.name],
+								isImages: [/\.(png|jpg|gif)$/.test(file.name)],
 								code: 220
 							}
 						});
@@ -300,16 +300,11 @@ if (typeof window.chai !== 'undefined') {
 	mockAjax();
 	window.FormData = function () {
 		this.data = {};
-		this.names = {};
-		this.append = function (key, value, name) {
+		this.append = function (key, value) {
 			this.data[key] = value;
-			this.names[key] = name;
 		};
 		this.get = function (key) {
 			return this.data[key];
-		};
-		this.getName = function (key) {
-			return this.names[key];
 		};
 	};
 }
@@ -374,8 +369,7 @@ Jodit.defaultOptions.events.afterInit = function (editor) {
 		editor.container.setAttribute('data-test-case', window.mochaTestName);
 };
 Jodit.defaultOptions.filebrowser.saveStateInStorage = false;
-Jodit.defaultOptions.history.timeout = 0;
-Jodit.defaultOptions.defaultTimeout = 0;
+Jodit.defaultOptions.observer.timeout = 0;
 Jodit.defaultOptions.filebrowser.defaultTimeout = 0;
 Jodit.modules.View.defaultOptions.defaultTimeout = 0;
 
@@ -493,7 +487,7 @@ function appendTestArea(id, noput) {
  * @return {Jodit}
  */
 function getJodit(options, element) {
-	const editor = Jodit.make(element || appendTestArea(), options);
+	const editor = new Jodit(element || appendTestArea(), options);
 
 	window.scrollTo(
 		0,
@@ -669,15 +663,11 @@ function sortAttributes(html) {
 		});
 
 		attrs.forEach(function (elm, i) {
-			newTag = newTag
-				.replace(
-					'attribute:' + (i + 1),
-					elm.name.trim() + '="' + elm.value + '"'
-				)
-				.replace(/[ ]{2,}/, ' ');
+			newTag = newTag.replace(
+				'attribute:' + (i + 1),
+				elm.name + '="' + elm.value + '"'
+			);
 		});
-
-		newTag = newTag.replace(/<([^>]+)\s+>/, '<$1>');
 
 		tags.push({
 			name: tagMatch[0],
@@ -1192,36 +1182,3 @@ if (typeof window.chai !== 'undefined') {
 Object.defineProperty(navigator, 'userAgent', {
 	value: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 YaBrowser/18.9.0.3363 Yowser/2.5 Safari/537.36'
 });
-
-/**
- *
- * @param {string} str1
- * @param {string} str2
- * @return {string[]}
- */
-function strCompare(str1, str2, len = 30) {
-	for (let i = 0; i < Math.max(str1.length, str2.length); i += 1) {
-		if (str1[i] !== str2[i]) {
-			console.log(str1.substring(i - len, i + len));
-			console.log(str2.substring(i - len, i + len));
-
-			return false;
-		}
-	}
-
-	return true;
-}
-
-function decorate(decorators, target, key) {
-	let r = Object.getOwnPropertyDescriptor(target, key);
-
-	for (let i = decorators.length - 1; i >= 0; i--) {
-		const d = decorators[i];
-
-		if (d) {
-			r = d(target, key, r) || r;
-		}
-	}
-
-	r && Object.defineProperty(target, key, r);
-}

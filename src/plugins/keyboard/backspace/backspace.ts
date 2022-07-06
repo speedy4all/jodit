@@ -13,12 +13,12 @@ import { Plugin } from 'jodit/core/plugin';
 import { Dom } from 'jodit/core/dom';
 import { INVISIBLE_SPACE } from 'jodit/core/constants';
 import { isFunction, trim } from 'jodit/core/helpers';
+import { normalizeCursorPosition } from 'jodit/plugins/keyboard/helpers';
 import { cases } from './cases';
 import type { DeleteMode } from './interface';
 import { checkNotCollapsed } from './cases/check-not-collapsed';
 
 import './config';
-import { moveNodeInsideStart } from 'jodit/src/core/selection/helpers';
 
 export class Backspace extends Plugin {
 	/** @override */
@@ -90,7 +90,7 @@ export class Backspace extends Plugin {
 
 		if (
 			!trim(jodit.editor.textContent || '') &&
-			!jodit.editor.querySelector('img,table,jodit,iframe,hr') &&
+			!jodit.editor.querySelector('img') &&
 			(!current || !Dom.closest(current, 'table', jodit.editor))
 		) {
 			jodit.editor.innerHTML = '';
@@ -130,7 +130,7 @@ export class Backspace extends Plugin {
 				return;
 			}
 
-			moveNodeInsideStart(jodit, fakeNode, backspace);
+			normalizeCursorPosition(jodit, fakeNode, backspace);
 
 			if (
 				cases.some(
@@ -157,7 +157,7 @@ export class Backspace extends Plugin {
 	/**
 	 * Remove node and replace cursor position out of it
 	 */
-	private safeRemoveEmptyNode(fakeNode: Node): void {
+	private safeRemoveEmptyNode(fakeNode: Node) {
 		const { range } = this.j.s;
 
 		if (range.startContainer === fakeNode) {

@@ -91,20 +91,14 @@ export class PluginSystem implements IPluginSystem {
 		const extrasList: IExtraPlugin[] = jodit.o.extraPlugins.map(s =>
 				isString(s) ? { name: s } : s
 			),
-			disableList = splitArray(jodit.o.disablePlugins).map(s => {
-				const name = this.normalizeName(s);
-
-				if (!isProd && !this._items.has(name)) {
-					console.error(TypeError(`Unknown plugin disabled:${name}`));
-				}
-
-				return name;
-			}),
+			disableList = splitArray(jodit.o.disablePlugins).map(s =>
+				this.normalizeName(s)
+			),
 			doneList: string[] = [],
 			promiseList: IDictionary<PluginInstance | undefined> = {},
 			plugins: PluginInstance[] = [],
 			pluginsMap: IDictionary<PluginInstance> = {},
-			makeAndInit = ([name, plugin]: [string, PluginType]): void => {
+			makeAndInit = ([name, plugin]: [string, PluginType]) => {
 				if (
 					disableList.includes(name) ||
 					doneList.includes(name) ||
@@ -203,7 +197,7 @@ export class PluginSystem implements IPluginSystem {
 		instance: PluginInstance,
 		doneList: string[],
 		promiseList: IDictionary<PluginInstance | undefined>
-	): void {
+	) {
 		const initPlugin = (name: string, plugin: PluginInstance): boolean => {
 			if (isInitable(plugin)) {
 				const req = (plugin as IPlugin).requires;
@@ -224,7 +218,7 @@ export class PluginSystem implements IPluginSystem {
 
 					doneList.push(name);
 				} else {
-					if (!isProd && !promiseList[name]) {
+					if (!isProd) {
 						console.log('Await plugin: ', name);
 					}
 
@@ -264,7 +258,7 @@ export class PluginSystem implements IPluginSystem {
 	private addListenerOnBeforeDestruct(
 		jodit: IJodit,
 		plugins: PluginInstance[]
-	): void {
+	) {
 		jodit.e.on('beforeDestruct', () => {
 			plugins.forEach(instance => {
 				if (isDestructable(instance)) {
@@ -282,7 +276,7 @@ export class PluginSystem implements IPluginSystem {
 	 * Download plugins
 	 */
 	private load(jodit: IJodit, pluginList: IExtraPlugin[]): Promise<any> {
-		const reflect = (p: Promise<any>): Promise<any> =>
+		const reflect = (p: Promise<any>) =>
 			p.then(
 				(v: any) => ({ v, status: 'fulfilled' }),
 				(e: any) => ({ e, status: 'rejected' })

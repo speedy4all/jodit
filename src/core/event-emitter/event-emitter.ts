@@ -12,18 +12,14 @@
 
 import type {
 	CallbackFunction,
-	CanArray,
-	CanUndef,
 	EventHandlerBlock,
-	IEventEmitter,
-	IEventEmitterOnOptions
+	IEventEmitter
 } from 'jodit/types';
 import { defaultNameSpace, EventHandlersStore } from './store';
-import { isString, isStringArray } from 'jodit/core/helpers/checker/is-string';
+import { isString } from 'jodit/core/helpers/checker/is-string';
 import { isFunction } from 'jodit/core/helpers/checker/is-function';
 import { isArray } from 'jodit/core/helpers/checker/is-array';
 import { error } from 'jodit/core/helpers/utils/error';
-import { splitArray } from 'jodit/core/helpers/array/split-array';
 
 /**
  * The module editor's event manager
@@ -54,14 +50,16 @@ export class EventEmitter implements IEventEmitter {
 	private doc: Document = document;
 
 	private eachEvent(
-		events: CanArray<string>,
+		events: string,
 		callback: (event: string, namespace: string) => void
-	): void {
-		const eventParts = splitArray(events).map(e => e.trim());
+	) {
+		const eventParts: string[] = events.split(/[\s,]+/);
 
-		eventParts.forEach(eventNameSpace => {
-			const eventAndNameSpace = eventNameSpace.split('.');
-			const namespace = eventAndNameSpace[1] || defaultNameSpace;
+		eventParts.forEach((eventNameSpace: string) => {
+			const eventAndNameSpace: string[] = eventNameSpace.split('.');
+
+			const namespace: string = eventAndNameSpace[1] || defaultNameSpace;
+
 			callback.call(this, eventAndNameSpace[0], namespace);
 		});
 	}
@@ -72,12 +70,11 @@ export class EventEmitter implements IEventEmitter {
 		}
 
 		if (subject[this.__key] === undefined) {
-			const store = new EventHandlersStore();
+			const store: EventHandlersStore = new EventHandlersStore();
 
 			Object.defineProperty(subject, this.__key, {
 				enumerable: false,
 				configurable: true,
-				writable: true,
 				value: store
 			});
 		}
@@ -85,20 +82,15 @@ export class EventEmitter implements IEventEmitter {
 		return subject[this.__key];
 	}
 
-	private removeStoreFromSubject(subject: any): void {
+	private clearStore(subject: any) {
 		if (subject[this.__key] !== undefined) {
-			Object.defineProperty(subject, this.__key, {
-				enumerable: false,
-				configurable: true,
-				writable: true,
-				value: undefined
-			});
+			delete subject[this.__key];
 		}
 	}
 
 	private prepareEvent = (
 		event: TouchEvent | MouseEvent | ClipboardEvent
-	): void => {
+	) => {
 		if (event.cancelBubble) {
 			return;
 		}
@@ -141,10 +133,10 @@ export class EventEmitter implements IEventEmitter {
 	private triggerNativeEvent(
 		element: Document | Element | HTMLElement | Window,
 		event: string | Event | MouseEvent
-	): void {
-		const evt = this.doc.createEvent('HTMLEvents');
+	) {
+		const evt: Event = this.doc.createEvent('HTMLEvents');
 
-		if (isString(event)) {
+		if (typeof event === 'string') {
 			evt.initEvent(event, true, true);
 		} else {
 			evt.initEvent(event.type, event.bubbles, event.cancelable);
@@ -197,65 +189,71 @@ export class EventEmitter implements IEventEmitter {
 	currents: string[] = [];
 
 	/**
-	 * Sets the handler for the specified event ( Event List ) for a given element
+	 * Sets the handler for the specified event ( Event List ) for a given element .
+	 *
+	 * @param subjectOrEvents - The object for which to set an event handler
+	 * @param eventsOrCallback - List of events, separated by a space or comma
+	 * @param handlerOrSelector - The event handler
+	 * @param selector - Selector for capturing
+	 * @param onTop - Set handler in first
 	 *
 	 * @example
 	 * ```javascript
 	 * // set global handler
-	 * editor.events.on('beforeCommand', function (command) {
+	 * parent.on('beforeCommand', function (command) {
 	 *     alert('command');
 	 * });
 	 * ```
 	 * * @example
 	 * ```javascript
 	 * // set global handler
-	 * editor.events.on(document.body, 'click', function (e) {
+	 * parent.on(document.body, 'click', function (e) {
 	 *     alert(this.href);
-	 * });
+	 * }, 'a');
 	 * ```
 	 */
 	on(
-		events: CanArray<string>,
+		events: string,
 		callback: CallbackFunction,
-		options?: IEventEmitterOnOptions
+		ignore?: void,
+		onTop?: boolean
 	): this;
 
 	on(
-		subjects: CanArray<HTMLElement | Window | object>,
-		events: CanArray<string>,
-		callback: CallbackFunction,
-		options?: IEventEmitterOnOptions
+		subjects: HTMLElement | HTMLElement[],
+		events: string,
+		handle: CallbackFunction,
+		onTop?: boolean
+	): this;
+
+	on<T extends object>(
+		subjects: T[] | T,
+		events: string,
+		handle: CallbackFunction,
+		onTop?: boolean
 	): this;
 
 	on(
-		eventsOrSubjects:
-			| CanArray<string>
-			| CanArray<HTMLElement | Window | object>,
-		callbackOrEvents: CallbackFunction | CanArray<string>,
-		optionsOrCallback: IEventEmitterOnOptions | CallbackFunction | void,
-		opts?: IEventEmitterOnOptions
+		subjectOrEvents: HTMLElement | HTMLElement[] | object | string,
+		eventsOrCallback: string | CallbackFunction,
+		handlerOrSelector?: CallbackFunction | void,
+		onTop: boolean = false
 	): this {
-		let subjects: CanArray<HTMLElement | Window | object>;
-		let events: CanArray<string>;
-		let callback: CallbackFunction;
-		let options: CanUndef<IEventEmitterOnOptions>;
+		const subject = isString(subjectOrEvents) ? this : subjectOrEvents;
 
-		if (isString(eventsOrSubjects) || isStringArray(eventsOrSubjects)) {
-			subjects = this;
-			events = eventsOrSubjects;
-			callback = callbackOrEvents as CallbackFunction;
-			options = optionsOrCallback as IEventEmitterOnOptions;
-		} else {
-			subjects = eventsOrSubjects;
-			events = callbackOrEvents as CanArray<string>;
-			callback = optionsOrCallback as CallbackFunction;
-			options = opts;
+		const events: string = isString(eventsOrCallback)
+			? eventsOrCallback
+			: (subjectOrEvents as string);
+
+		let callback = handlerOrSelector as CallbackFunction;
+
+		if (callback === undefined && isFunction(eventsOrCallback)) {
+			callback = eventsOrCallback as CallbackFunction;
 		}
 
-		if (
-			!(isString(events) || isStringArray(events)) ||
-			events.length === 0
-		) {
+		const store: EventHandlersStore = this.getStore(subject);
+
+		if (!isString(events) || events === '') {
 			throw error('Need events names');
 		}
 
@@ -263,17 +261,13 @@ export class EventEmitter implements IEventEmitter {
 			throw error('Need event handler');
 		}
 
-		if (isArray(subjects)) {
-			subjects.forEach(subj => {
-				this.on(subj, events, callback, options);
+		if (isArray(subject)) {
+			subject.forEach((subj: object) => {
+				this.on(subj, events, callback, onTop);
 			});
 
 			return this;
 		}
-
-		const subject = subjects;
-
-		const store = this.getStore(subject);
 
 		const isDOMElement = isFunction(
 				(subject as HTMLElement).addEventListener
@@ -314,7 +308,7 @@ export class EventEmitter implements IEventEmitter {
 		}
 
 		this.eachEvent(events, (event: string, namespace: string): void => {
-			if (event.length === 0) {
+			if (event === '') {
 				throw error('Need event name');
 			}
 
@@ -325,7 +319,7 @@ export class EventEmitter implements IEventEmitter {
 					syntheticCallback
 				};
 
-				store.set(event, namespace, block, options?.top);
+				store.set(event, namespace, block, onTop);
 
 				if (isDOMElement) {
 					const options: AddEventListenerOptions | false = [
@@ -354,36 +348,29 @@ export class EventEmitter implements IEventEmitter {
 	}
 
 	one(
-		eventsOrSubjects:
-			| CanArray<string>
-			| CanArray<HTMLElement | Window | object>,
-		callbackOrEvents: CallbackFunction | CanArray<string>,
-		optionsOrCallback: IEventEmitterOnOptions | CallbackFunction | void,
-		opts?: IEventEmitterOnOptions
+		subjectOrEvents: HTMLElement | HTMLElement[] | object | string,
+		eventsOrCallback: string | CallbackFunction,
+		handlerOrSelector?: CallbackFunction | void,
+		onTop: boolean = false
 	): this {
-		let subjects: CanArray<HTMLElement | Window | object>;
-		let events: CanArray<string>;
-		let callback: CallbackFunction;
-		let options: CanUndef<IEventEmitterOnOptions>;
+		const subject = isString(subjectOrEvents) ? this : subjectOrEvents;
 
-		if (isString(eventsOrSubjects) || isStringArray(eventsOrSubjects)) {
-			subjects = this;
-			events = eventsOrSubjects;
-			callback = callbackOrEvents as CallbackFunction;
-			options = optionsOrCallback as IEventEmitterOnOptions;
-		} else {
-			subjects = eventsOrSubjects;
-			events = callbackOrEvents as CanArray<string>;
-			callback = optionsOrCallback as CallbackFunction;
-			options = opts;
+		const events: string = isString(eventsOrCallback)
+			? eventsOrCallback
+			: (subjectOrEvents as string);
+
+		let callback = handlerOrSelector as CallbackFunction;
+
+		if (callback === undefined && isFunction(eventsOrCallback)) {
+			callback = eventsOrCallback as CallbackFunction;
 		}
 
-		const newCallback = (...args: any): void => {
-			this.off(subjects, events, newCallback);
+		const newCallback = (...args: any) => {
+			this.off(subject, events, newCallback);
 			return callback(...args);
 		};
 
-		this.on(subjects, events, newCallback, options);
+		this.on(subject, events, newCallback, onTop);
 
 		return this;
 	}
@@ -419,62 +406,40 @@ export class EventEmitter implements IEventEmitter {
 	 * parent.e.off('someGlobalEvents');
 	 * ```
 	 */
-	off(events: CanArray<string>, callback?: CallbackFunction): this;
-
+	off(events: string, callback?: CallbackFunction): this;
+	off(subject: object, events?: string, handler?: CallbackFunction): this;
 	off(
-		subjects: CanArray<Window | HTMLElement | object>,
-		events?: CanArray<string>,
-		callback?: CallbackFunction
-	): this;
-
-	off(
-		eventsOrSubjects:
-			| CanArray<string>
-			| CanArray<Window | HTMLElement | object>,
-		callbackOrEvents?: CallbackFunction | CanArray<string>,
+		subjectOrEvents: object | string,
+		eventsOrCallback?: string | CallbackFunction,
 		handler?: CallbackFunction
 	): this {
-		let subjects: CanArray<HTMLElement | Window | object>;
-		let events: CanArray<string>;
-		let callback: CanUndef<CallbackFunction>;
+		const subject: object = isString(subjectOrEvents)
+			? this
+			: subjectOrEvents;
+		const events: string = isString(eventsOrCallback)
+			? eventsOrCallback
+			: (subjectOrEvents as string);
 
-		if (isString(eventsOrSubjects) || isStringArray(eventsOrSubjects)) {
-			subjects = this;
-			events = eventsOrSubjects;
-			callback = callbackOrEvents as CallbackFunction;
-		} else {
-			subjects = eventsOrSubjects;
-			events = callbackOrEvents as CanArray<string>;
-			callback = handler;
-		}
+		const store: EventHandlersStore = this.getStore(subject);
 
-		if (isArray(subjects)) {
-			subjects.forEach(subj => {
-				this.off(subj, events, callback);
-			});
+		let callback: () => void = handler as () => void;
 
-			return this;
-		}
-
-		const subject = subjects;
-
-		const store = this.getStore(subject);
-
-		if (
-			!(isString(events) || isStringArray(events)) ||
-			events.length === 0
-		) {
+		if (!isString(events) || !events) {
 			store.namespaces().forEach((namespace: string) => {
 				this.off(subject, '.' + namespace);
 			});
-			this.removeStoreFromSubject(subject);
+
+			this.clearStore(subject);
+
 			return this;
 		}
 
-		const isDOMElement = isFunction(
-				(subject as HTMLElement).removeEventListener
-			),
-			removeEventListener = (block: EventHandlerBlock): void => {
+		if (callback === undefined && isFunction(eventsOrCallback)) {
+			callback = eventsOrCallback as () => void;
+		}
+
+		const isDOMElement = isFunction((subject as any).removeEventListener),
+			removeEventListener = (block: EventHandlerBlock) => {
 				if (isDOMElement) {
 					(subject as HTMLElement).removeEventListener(
 						block.event,
@@ -486,53 +451,46 @@ export class EventEmitter implements IEventEmitter {
 			removeCallbackFromNameSpace = (
 				event: string,
 				namespace: string
-			): void => {
-				if (event === '') {
+			) => {
+				if (event !== '') {
+					const blocks: EventHandlerBlock[] | void = store.get(
+						event,
+						namespace
+					);
+					if (blocks && blocks.length) {
+						if (!isFunction(callback)) {
+							blocks.forEach(removeEventListener);
+							blocks.length = 0;
+						} else {
+							const index: number | false = store.indexOf(
+								event,
+								namespace,
+								callback
+							);
+							if (index !== false) {
+								removeEventListener(blocks[index]);
+								blocks.splice(index, 1);
+							}
+						}
+					}
+				} else {
 					store.events(namespace).forEach((eventName: string) => {
 						if (eventName !== '') {
 							removeCallbackFromNameSpace(eventName, namespace);
 						}
 					});
-					return;
-				}
-
-				const blocks = store.get(event, namespace);
-
-				if (!blocks || !blocks.length) {
-					return;
-				}
-
-				if (!isFunction(callback)) {
-					blocks.forEach(removeEventListener);
-					blocks.length = 0;
-					store.clearEvents(namespace, event);
-				} else {
-					const index = store.indexOf(event, namespace, callback);
-
-					if (index !== false) {
-						removeEventListener(blocks[index]);
-						blocks.splice(index, 1);
-
-						if (!blocks.length) {
-							store.clearEvents(namespace, event);
-						}
-					}
 				}
 			};
 
-		this.eachEvent(events, (event, namespace): void => {
+		this.eachEvent(events, (event: string, namespace: string): void => {
 			if (namespace === defaultNameSpace) {
-				store.namespaces().forEach(namespace => {
-					removeCallbackFromNameSpace(event, namespace);
+				store.namespaces().forEach((name: string) => {
+					removeCallbackFromNameSpace(event, name);
 				});
 			} else {
 				removeCallbackFromNameSpace(event, namespace);
 			}
 		});
-
-		if (store.isEmpty()) {
-			this.removeStoreFromSubject(subject);
-		}
 
 		return this;
 	}
@@ -558,7 +516,7 @@ export class EventEmitter implements IEventEmitter {
 			throw error('Need event names');
 		}
 
-		const store = this.getStore(subject);
+		const store: EventHandlersStore = this.getStore(subject);
 
 		this.eachEvent(events, (event: string, namespace: string): void => {
 			const blocks: EventHandlerBlock[] | void = store.get(
@@ -582,7 +540,7 @@ export class EventEmitter implements IEventEmitter {
 
 	private __stopped: EventHandlerBlock[][] = [];
 
-	private removeStop(currentBlocks: EventHandlerBlock[]): void {
+	private removeStop(currentBlocks: EventHandlerBlock[]) {
 		if (currentBlocks) {
 			const index: number = this.__stopped.indexOf(currentBlocks);
 			index !== -1 && this.__stopped.splice(0, index + 1);
@@ -654,7 +612,7 @@ export class EventEmitter implements IEventEmitter {
 			throw error('Need events names');
 		}
 
-		const store = this.getStore(subject);
+		const store: EventHandlersStore = this.getStore(subject);
 
 		if (!isString(events) && isDOMElement) {
 			this.triggerNativeEvent(subject as HTMLElement, eventsList);
@@ -663,7 +621,10 @@ export class EventEmitter implements IEventEmitter {
 				if (isDOMElement) {
 					this.triggerNativeEvent(subject as HTMLElement, event);
 				} else {
-					const blocks = store.get(event, namespace);
+					const blocks: EventHandlerBlock[] | void = store.get(
+						event,
+						namespace
+					);
 
 					if (blocks) {
 						try {
@@ -740,6 +701,6 @@ export class EventEmitter implements IEventEmitter {
 		this.off(this);
 
 		this.getStore(this).clear();
-		this.removeStoreFromSubject(this);
+		delete (this as any)[this.__key];
 	}
 }

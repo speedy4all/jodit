@@ -10,7 +10,6 @@ const path = require('path');
 
 const { variables } = require('./variables');
 const { fileName } = require('./utils/filename');
-const { includePlugins } = require('./utils/include-plugins');
 
 /**
  * @param {boolean} onlyTS - build only TypeScript files
@@ -20,8 +19,6 @@ module.exports = (env, argv, dir = process.cwd(), onlyTS = false) => {
 
 	const { ES, mode, isTest, isProd, debug, ESNext, uglify, outputPath } =
 		vars;
-
-	const [pluginsEntries] = includePlugins(dir);
 
 	console.warn(`ES:${ES} Mode:${mode} Test:${isTest} Uglify:${uglify}`);
 
@@ -38,13 +35,9 @@ module.exports = (env, argv, dir = process.cwd(), onlyTS = false) => {
 		devtool: debug ? 'inline-source-map' : false,
 
 		entry: {
-			...(!isProd || (!uglify && !ESNext)
-				? { vdom: ['./src/core/vdom/index'] }
-				: {}),
 			jodit: debug
 				? ['webpack-hot-middleware/client.js', './src/index']
-				: ['./src/index'],
-			...pluginsEntries
+				: ['./src/index']
 		},
 
 		output: {
@@ -55,15 +48,7 @@ module.exports = (env, argv, dir = process.cwd(), onlyTS = false) => {
 		},
 
 		resolve: {
-			extensions: [
-				'.js',
-				'.ts',
-				'.d.ts',
-				'.json',
-				'.less',
-				'.css',
-				'.svg'
-			],
+			extensions: ['.js', '.ts', '.d.ts', '.json', '.less', '.svg'],
 			alias: {
 				'jodit/src': path.resolve(__dirname, '../src/'),
 				jodit: path.resolve(__dirname, '../src/')
@@ -72,8 +57,7 @@ module.exports = (env, argv, dir = process.cwd(), onlyTS = false) => {
 
 		optimization: {
 			minimize: !debug && uglify,
-			moduleIds: debug ? 'named' : false,
-			mangleExports: true,
+			moduleIds: debug ? 'named' : 'natural',
 			minimizer: require('./minimizer').map(mnm =>
 				mnm({ isTest, ESNext })
 			)

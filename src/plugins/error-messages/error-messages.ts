@@ -13,8 +13,7 @@ import './errors-messages.less';
 import type { IJodit } from 'jodit/types';
 import { Config } from 'jodit/config';
 import { Dom } from 'jodit/core/dom';
-import { css } from 'jodit/core/helpers/utils/css';
-import { toArray } from 'jodit/core/helpers/array/to-array';
+import { css, toArray } from 'jodit/core/helpers';
 
 declare module 'jodit/config' {
 	interface Config {
@@ -45,7 +44,7 @@ export function errorMessages(editor: IJodit): void {
 	if (editor.o.showMessageErrors) {
 		const activeClass = editor.getFullElName(ELM_NAME, 'active', true),
 			messagesBox = editor.c.div(editor.getFullElName(ELM_NAME)),
-			calcOffsets = (): void => {
+			calcOffsets = () => {
 				let height = 5;
 
 				toArray(
@@ -66,7 +65,7 @@ export function errorMessages(editor: IJodit): void {
 		 * options.showMessageErrorTime = 2000
 		 * @example
 		 * ```javascript
-		 * const editor = Jodit.make('#editors');
+		 * const editor = new Jodit('#editors');
 		 * editor.e.fire('errorMessage', 'Error 123. File has not been upload');
 		 * editor.e.fire('errorMessage', 'You can upload file', 'info', 4000);
 		 * editor.e.fire('errorMessage', 'File was uploaded', 'success', 4000);

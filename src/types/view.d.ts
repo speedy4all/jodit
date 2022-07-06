@@ -20,6 +20,7 @@ import type {
 import type { IComponent, IContainer, IDictionary, Nullable } from './types';
 import type { Attributes, ICreate } from './create';
 import type { IStorage } from './storage';
+import type { IAsync } from './async';
 import type { IUIButtonState } from './ui';
 import type { IEventEmitter } from './events';
 import type { IPluginButton } from './plugin';
@@ -32,22 +33,22 @@ interface ILanguageOptions {
 }
 
 interface IToolbarOptions {
+	theme?: string;
 	toolbar?: boolean | string | HTMLElement;
-	readonly theme?: string;
-	readonly toolbarButtonSize?: IUIButtonState['size'];
-	readonly textIcons?: boolean | ((key: string) => boolean);
+	toolbarButtonSize?: IUIButtonState['size'];
+	textIcons?: boolean | ((key: string) => boolean);
 
-	readonly extraButtons?: Buttons;
-	readonly removeButtons?: string[];
-	readonly extraIcons?: IDictionary<string>;
+	extraButtons?: Buttons;
+	removeButtons?: string[];
+	extraIcons?: IDictionary<string>;
 
-	readonly buttons?: ButtonsOption;
+	buttons?: ButtonsOption;
 
-	readonly showTooltip?: boolean;
-	readonly showTooltipDelay?: number;
-	readonly useNativeTooltip?: boolean;
+	showTooltip?: boolean;
+	showTooltipDelay?: number;
+	useNativeTooltip?: boolean;
 
-	readonly direction?: string;
+	direction?: string;
 }
 
 type NodeFunction = (elm: HTMLElement) => void;
@@ -111,8 +112,10 @@ interface IViewBased<T = IViewOptions>
 
 	progressbar: IProgressBar;
 
-	readonly events: IEventEmitter;
-	readonly e: this['events'];
+	events: IEventEmitter;
+	e: this['events'];
+
+	readonly async: IAsync;
 
 	readonly create: ICreate;
 	readonly c: this['create'];

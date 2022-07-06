@@ -93,7 +93,7 @@ Config.prototype.controls.classSpan = {
  * Applying some className to selected text.
  * @example
  * ```js
- * const editor = Jodit.make('#editor', {
+ * const editor = new Jodit('#editor', {
  *	controls: {
  *		classSpan: {
  *			list: {

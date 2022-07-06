@@ -6,7 +6,7 @@
 
 module.exports = vars => {
 	return {
-		test: /\.(less|css)$/,
+		test: /\.less$/,
 		use: require('../loaders/style')(vars)
 	};
 };

@@ -75,7 +75,7 @@ Jodit.make('#editor', {
 To use internationalization in your own plugin, use the method [[Jodit.i18n]]
 
 ```js
-const editor = Jodit.make('#redactor', {
+const editor = new Jodit('#redactor', {
 	language: 'ru'
 });
 console.log(editor.i18n('Type something')); //'Введите что-либо тут...'

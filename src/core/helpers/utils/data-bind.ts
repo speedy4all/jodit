@@ -9,7 +9,8 @@
  */
 
 import type { IEventEmitter, IViewComponent, Nullable } from 'jodit/types';
-import { isViewObject } from '../checker/is-view-object';
+import { ViewComponent } from 'jodit/core/component';
+import { isViewObject } from '../checker';
 
 const store = new WeakMap();
 
@@ -26,7 +27,7 @@ export const dataBind = <T = any>(
 
 		let e: Nullable<IEventEmitter> = null;
 
-		if (isViewObject((elm as IViewComponent).j)) {
+		if (elm instanceof ViewComponent) {
 			e = (elm as IViewComponent).j.e;
 		}
 

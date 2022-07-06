@@ -4,16 +4,16 @@
 
 An excellent WYSIWYG editor written in pure TypeScript without the use of additional libraries. Its file editor and image editor.
 
-[![Build Status](https://github.com/xdan/jodit/workflows/Run%20tests/badge.svg)](https://github.com/xdan/jodit/actions/workflows/tests.yml)
-[![npm version](https://badge.fury.io/js/jodit.svg)](https://badge.fury.io/js/jodit)
-[![npm](https://img.shields.io/npm/dm/jodit.svg)](https://www.npmjs.com/package/jodit)
+[![Run tests](https://github.com/speedy4all/jodit/actions/workflows/tests.yml/badge.svg)](https://github.com/speedy4all/jodit/actions/workflows/tests.yml)
+[![npm version](https://badge.fury.io/js/@speedy4all%2Fjodit.svg)](https://badge.fury.io/js/@speedy4all%2Fjodit)
+[![npm](https://img.shields.io/npm/dm/@speedy4all/jodit.svg)](https://www.npmjs.com/package/@speedy4all/jodit)
 
 -   [Demo and Official site](https://xdsoft.net/jodit/)
 -   [PRO Version](https://xdsoft.net/jodit/pro/)
 -   [Playground - play with options](https://xdsoft.net/jodit/play.html)
 -   [Documentation](https://xdsoft.net/jodit/docs/)
 -   [Download & Changes](https://github.com/xdan/jodit/releases)
--   [Changelog](https://github.com/xdan/jodit/blob/master/CHANGELOG.md)
+-   [Changelog](https://github.com/speedy4all/jodit/blob/master/CHANGELOG.MD)
 -   [Examples](https://xdan.github.io/jodit/examples/)
 
 ## Get Started
@@ -55,9 +55,9 @@ ES2018 Version (if your users use only modern browsers)
 ```html
 <link
 	rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.2/jodit.es2018.min.css"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.13.4/jodit.es2018.min.css"
 />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.18.2/jodit.es2018.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.13.4/jodit.es2018.min.js"></script>
 ```
 
 ### USAGE
@@ -71,7 +71,7 @@ And some `<textarea>` element
 After this, you can init Jodit plugin
 
 ```javascript
-var editor = Jodit.make('#editor');
+var editor = new Jodit('#editor');
 editor.value = '<p>start</p>';
 ```
 
@@ -86,7 +86,7 @@ with jQuery
 
 ```javascript
 $('textarea').each(function () {
-	var editor = Jodit.make(this);
+	var editor = new Jodit(this);
 	editor.value = '<p>start</p>';
 });
 ```
@@ -156,7 +156,7 @@ php -S localhost:8181 -t ./
 and set options for Jodit:
 
 ```javascript
-var editor = Jodit.make('#editor', {
+var editor = new Jodit('#editor', {
 	uploader: {
 		url: 'http://localhost:8181/index-test.php?action=fileUpload'
 	},
@@ -181,7 +181,7 @@ Jodit.plugins.yourplugin = function (editor) {
 ### Add custom button
 
 ```javascript
-var editor = Jodit.make('.someselector', {
+var editor = new Jodit('.someselector', {
 	extraButtons: [
 		{
 			name: 'insertDate',
@@ -197,7 +197,7 @@ var editor = Jodit.make('.someselector', {
 or
 
 ```javascript
-var editor = Jodit.make('.someselector', {
+var editor = new Jodit('.someselector', {
 	buttons: ['bold', 'insertDate'],
 	controls: {
 		insertDate: {
@@ -253,7 +253,7 @@ Jodit.plugins.add(
 	}
 );
 
-var editor = Jodit.make('.someselector', {
+var editor = new Jodit('.someselector', {
 	buttons: ['bold', 'insertText'],
 	controls: {
 		insertText: {

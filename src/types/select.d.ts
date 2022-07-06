@@ -22,14 +22,16 @@ export interface MarkerInfo {
 export type WindowSelection = Selection;
 
 export interface ISelect {
-	readonly sel: WindowSelection | null;
-	readonly range: Range;
-	readonly isInsideArea: boolean;
-	readonly html: string;
+	area: HTMLElement;
 
+	sel: WindowSelection | null;
+
+	range: Range;
 	createRange(select?: boolean): Range;
+	selectRange(range: Range, focus?: boolean): void;
 	clear(): void;
 
+	html: string;
 
 	current(checkChild?: boolean): Nullable<Node>;
 	focus(options?: FocusOptions): boolean;
@@ -50,10 +52,7 @@ export interface ISelect {
 		insertCursorAfter?: boolean,
 		fireChange?: boolean
 	): void;
-	insertHTML(
-		html: number | string | Node,
-		insertCursorAfter?: boolean
-	): void;
+	insertHTML(html: number | string | Node): void;
 	insertImage(
 		url: string | HTMLImageElement,
 		styles?: Nullable<IDictionary<string>>,
@@ -68,16 +67,14 @@ export interface ISelect {
 	cursorOnTheLeft(parentBlock: HTMLElement): Nullable<boolean>;
 	cursorOnTheRight(parentBlock: HTMLElement): Nullable<boolean>;
 
-	expandSelection(): ISelect;
 	insertCursorAtPoint(x: number, y: number): boolean;
 	setCursorAfter(node: Node): Nullable<Text>;
 	setCursorBefore(node: Node): Nullable<Text>;
 	setCursorIn(node: Node, inStart?: boolean): Node;
-	selectRange(range: Range, focus?: boolean): ISelect;
 	select(
 		node: Node | HTMLElement | HTMLTableElement | HTMLTableCellElement,
 		inward?: boolean
-	): ISelect;
+	): void;
 
 	wrapInTagGen(): Generator<HTMLElement>;
 	wrapInTag(

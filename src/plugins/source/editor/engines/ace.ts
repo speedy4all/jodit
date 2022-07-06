@@ -9,8 +9,8 @@
  */
 
 import type { IJodit, ISourceEditor } from 'jodit/types';
-import * as constants from 'jodit/core/constants';
-import { isString, loadNext } from 'jodit/core/helpers';
+import * as constants from '../../../../core/constants';
+import { isString, loadNext } from '../../../../core/helpers';
 import { SourceEditor } from '../sourceEditor';
 
 export class AceEditor
@@ -19,22 +19,22 @@ export class AceEditor
 {
 	override className = 'jodit_ace_editor';
 
-	private aceExists(): boolean {
+	private aceExists() {
 		return (this.j.ow as any).ace !== undefined;
 	}
 
 	/**
 	 * Proxy Method
 	 */
-	private proxyOnBlur = (e: MouseEvent): void => {
+	private proxyOnBlur = (e: MouseEvent) => {
 		this.j.e.fire('blur', e);
 	};
 
-	private proxyOnFocus = (e: MouseEvent): void => {
+	private proxyOnFocus = (e: MouseEvent) => {
 		this.j.e.fire('focus', e);
 	};
 
-	private proxyOnMouseDown = (e: MouseEvent): void => {
+	private proxyOnMouseDown = (e: MouseEvent) => {
 		this.j.e.fire('mousedown', e);
 	};
 
@@ -84,7 +84,7 @@ export class AceEditor
 		return { row, column };
 	}
 
-	private setSelectionRangeIndices(start: number, end: number): void {
+	private setSelectionRangeIndices(start: number, end: number) {
 		const startRowColumn = this.getRowColumnIndices(start);
 		const endRowColumn = this.getRowColumnIndices(end);
 
@@ -101,7 +101,7 @@ export class AceEditor
 	}
 
 	init(editor: IJodit): any {
-		const tryInitAceEditor = (): void => {
+		const tryInitAceEditor = () => {
 			if (this.instance !== undefined || !this.aceExists()) {
 				return;
 			}
@@ -227,16 +227,8 @@ export class AceEditor
 		this.instance.setReadOnly(isReadOnly);
 	}
 
-	get isFocused(): boolean {
-		return this.instance.isFocused();
-	}
-
 	focus(): void {
 		this.instance.focus();
-	}
-
-	blur(): void {
-		this.instance.blur();
 	}
 
 	getSelectionStart(): number {
@@ -278,13 +270,13 @@ export class AceEditor
 	}
 
 	replaceUndoManager(): void {
-		const { history } = this.jodit;
+		const { observer } = this.jodit;
 
 		this.instance.commands.addCommand({
 			name: 'Undo',
 			bindKey: { win: 'Ctrl-Z', mac: 'Command-Z' },
 			exec: () => {
-				history.undo();
+				observer.undo();
 			}
 		});
 
@@ -292,7 +284,7 @@ export class AceEditor
 			name: 'Redo',
 			bindKey: { win: 'Ctrl-Shift-Z', mac: 'Command-Shift-Z' },
 			exec: () => {
-				history.redo();
+				observer.redo();
 			}
 		});
 	}

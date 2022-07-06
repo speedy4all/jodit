@@ -40,16 +40,12 @@ export function get<T>(chain: string, obj: IDictionary): Nullable<T> {
 
 	let result = obj;
 
-	try {
-		for (const part of parts) {
-			if (isVoid(result[part])) {
-				return null;
-			}
-
-			result = result[part];
+	for (const part of parts) {
+		if (isVoid(result[part])) {
+			return null;
 		}
-	} catch {
-		return null; // permission denied ore another access exception
+
+		result = result[part];
 	}
 
 	if (isVoid(result)) {

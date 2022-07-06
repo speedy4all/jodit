@@ -7,16 +7,6 @@
 			"allowMultiple": false
 		},
     {
-      "tagName": "@default",
-      "syntaxKind": "block",
-      "allowMultiple": false
-    },
-    {
-      "tagName": "@event",
-      "syntaxKind": "block",
-      "allowMultiple": true
-    },
-    {
       "tagName": "@private",
       "syntaxKind": "block",
       "allowMultiple": false

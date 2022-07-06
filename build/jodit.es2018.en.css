@@ -1,7 +1,7 @@
 /*!
- * jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
+ * @speedy4all/jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
  * Author: Chupurnov <chupurnov@gmail.com> (https://xdsoft.net/)
- * Version: v3.18.9
+ * Version: v3.14.0
  * Url: https://xdsoft.net/jodit/
  * License(s): MIT
  */
@@ -615,7 +615,7 @@ svg.jodit-icon {
   width: 100%;
   height: 100%;
 }
-.jodit-wysiwyg *[contenteditable='false'] {
+.jodit-wysiwyg *[contentEditable='false'] {
   cursor: default;
 }
 .jodit-container:not(.jodit_inline) {
@@ -631,9 +631,6 @@ svg.jodit-icon {
 }
 .jodit-container:not(.jodit_inline).jodit_disabled .jodit-workplace {
   opacity: 0.4;
-}
-.jodit_lock {
-  user-select: none !important;
 }
 .jodit_disabled {
   user-select: none !important;
@@ -824,100 +821,6 @@ svg.jodit-icon {
 .jodit-dialog_theme_dark.jodit-dialog .jodit-filebrowser__files.active .jodit-filebrowser__files-item-info,
 .jodit_theme_dark.jodit-dialog .jodit-filebrowser__files.active .jodit-filebrowser__files-item-info {
   background-color: var(--jd-dark_text_color);
-}
-
-/*!
- * Jodit Editor (https://xdsoft.net/jodit/)
- * Released under MIT see LICENSE.txt in the project root for license information.
- * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
- */
-.jodit-context-menu {
-  position: static;
-  width: auto;
-  max-width: none;
-  height: auto;
-  padding: 0;
-  border: 0;
-  margin: 0;
-  background: 0 0;
-  float: none;
-  outline: 0;
-  position: fixed;
-  z-index: var(--jd-z-index-popup);
-  display: inline-block;
-  box-shadow: var(--jd-popup-box-shadow);
-  transform: translate3d(0, 0, 0);
-  z-index: var(--jd-z-index-context-menu);
-}
-.jodit-context-menu__content {
-  font-family: var(--jd-font-default);
-  font-size: var(--jd-font-size-default);
-  overflow: auto;
-  max-height: 300px;
-  padding: var(--jd-padding-default);
-  background: var(--jd-color-background-default);
-  overflow-scrolling: touch;
-}
-.jodit-context-menu_padding_false .jodit-context-menu__content {
-  padding: 0;
-}
-.jodit-context-menu_max-height_false .jodit-context-menu__content {
-  max-height: fit-content;
-}
-.jodit-context-menu .jodit-ui-button {
-  display: flex;
-}
-.jodit-context-menu__actions {
-  font-family: var(--jd-font-default);
-  font-size: var(--jd-font-size-default);
-}
-.jodit-context-menu__actions button {
-  width: 100%;
-}
-.jodit-context-menu_theme_dark .jodit-context-menu__content {
-  background-color: var(--jd-dark_background_color);
-}
-
-/*!
- * Jodit Editor (https://xdsoft.net/jodit/)
- * Released under MIT see LICENSE.txt in the project root for license information.
- * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
- */
-:root {
-  --jd-popup-box-shadow: 0 4px 1px -2px rgba(76, 76, 76, 0.2),
-		0 3px 3px 0 rgba(76, 76, 76, 0.15), 0 1px 4px 0 rgba(76, 76, 76, 0.13);
-}
-.jodit-popup {
-  position: static;
-  width: auto;
-  max-width: none;
-  height: auto;
-  padding: 0;
-  border: 0;
-  margin: 0;
-  background: 0 0;
-  float: none;
-  outline: 0;
-  position: fixed;
-  z-index: var(--jd-z-index-popup);
-  display: inline-block;
-  box-shadow: var(--jd-popup-box-shadow);
-  transform: translate3d(0, 0, 0);
-}
-.jodit-popup__content {
-  font-family: var(--jd-font-default);
-  font-size: var(--jd-font-size-default);
-  overflow: auto;
-  max-height: 300px;
-  padding: var(--jd-padding-default);
-  background: var(--jd-color-background-default);
-  overflow-scrolling: touch;
-}
-.jodit-popup_padding_false .jodit-popup__content {
-  padding: 0;
-}
-.jodit-popup_max-height_false .jodit-popup__content {
-  max-height: fit-content;
 }
 
 /*!
@@ -1232,7 +1135,6 @@ svg.jodit-icon {
   justify-content: center;
   padding: 0 var(--jd-padding-default);
   border-radius: var(--jd-border-radius-default);
-  color: var(--jd-color-text-icons);
 }
 .jodit-ui-button {
   position: relative;
@@ -1253,13 +1155,11 @@ svg.jodit-icon {
   justify-content: center;
   padding: 0 var(--jd-padding-default);
   border-radius: var(--jd-border-radius-default);
-  color: var(--jd-color-text-icons);
   cursor: pointer;
   min-width: 34px;
   height: 34px;
 }
-.jodit-ui-button:hover:not([disabled]),
-.jodit-ui-button:focus-visible:not([disabled]) {
+.jodit-ui-button:hover:not([disabled]) {
   background-color: var(--jd-color-button-background-hover);
   opacity: 1;
   outline: 0;
@@ -1547,6 +1447,67 @@ svg.jodit-icon {
   outline: 1px dashed #bd2130;
 }
 
+.jodit-ui-button-group {
+  margin-bottom: var(--jd-padding-default);
+}
+.jodit-ui-button-group__label {
+  display: block;
+  margin-bottom: calc(var(--jd-padding-default) / 4);
+  color: var(--jd-color-label);
+  font-size: 0.8em;
+}
+.jodit-ui-button-group__options {
+  display: flex;
+  justify-content: flex-start;
+}
+.jodit-ui-button-group .jodit-ui-button:not(:last-child) {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+.jodit-ui-button-group .jodit-ui-button + .jodit-ui-button {
+  border-left: 1px solid var(--jd-color-button-background-hover_opacity40);
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+.jodit-ui-button-group .jodit-ui-button[aria-pressed='true']:not([disabled]) {
+  border-left: 0;
+  background-color: var(--jd-color-button-background-hover);
+  box-shadow: inset 0 0 3px 0 var(--jd-color-dark);
+  color: var(--jd-color-dark);
+  outline: 0;
+}
+.jodit-ui-button-group .jodit-ui-button[aria-pressed='true']:not([disabled]) + .jodit-ui-button {
+  border: 0;
+}
+
+/*!
+ * Jodit Editor (https://xdsoft.net/jodit/)
+ * Released under MIT see LICENSE.txt in the project root for license information.
+ * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
+ */
+.jodit-ui-group {
+  display: inline-flex;
+  max-width: 100%;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.jodit-ui-group_line_true {
+  display: flex;
+  justify-content: stretch;
+}
+.jodit-ui-group_separated_true:not(:last-child):not(.jodit-ui-group_before-spacer_true):after {
+  content: '';
+  padding: 0;
+  border-right: 1px solid var(--jd-color-border);
+  border-left: 0;
+  margin: 2px;
+  cursor: default;
+}
+.jodit-ui-group:last-child {
+  border-bottom: 0;
+}
+
 /*!
  * Jodit Editor (https://xdsoft.net/jodit/)
  * Released under MIT see LICENSE.txt in the project root for license information.
@@ -1596,60 +1557,589 @@ svg.jodit-icon {
  * Released under MIT see LICENSE.txt in the project root for license information.
  * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
  */
-.jodit-ui-group {
-  display: inline-flex;
-  max-width: 100%;
-  flex: 0 0 auto;
-  flex-shrink: 0;
-  flex-wrap: wrap;
+:root {
+  --jd-popup-box-shadow: 0 4px 1px -2px rgba(76, 76, 76, 0.2),
+		0 3px 3px 0 rgba(76, 76, 76, 0.15), 0 1px 4px 0 rgba(76, 76, 76, 0.13);
 }
-.jodit-ui-group_line_true {
-  display: flex;
-  justify-content: stretch;
-}
-.jodit-ui-group_separated_true:not(:last-child):not(.jodit-ui-group_before-spacer_true):after {
-  content: '';
+.jodit-popup {
+  position: static;
+  width: auto;
+  max-width: none;
+  height: auto;
   padding: 0;
-  border-right: 1px solid var(--jd-color-border);
-  border-left: 0;
-  margin: 2px;
-  cursor: default;
+  border: 0;
+  margin: 0;
+  background: 0 0;
+  float: none;
+  outline: 0;
+  position: fixed;
+  z-index: var(--jd-z-index-popup);
+  display: inline-block;
+  box-shadow: var(--jd-popup-box-shadow);
+  transform: translate3d(0, 0, 0);
 }
-.jodit-ui-group:last-child {
-  border-bottom: 0;
+.jodit-popup__content {
+  font-family: var(--jd-font-default);
+  font-size: var(--jd-font-size-default);
+  overflow: auto;
+  max-height: 300px;
+  padding: var(--jd-padding-default);
+  background: var(--jd-color-background-default);
+  overflow-scrolling: touch;
+}
+.jodit-popup_padding_false .jodit-popup__content {
+  padding: 0;
+}
+.jodit-popup_max-height_false .jodit-popup__content {
+  max-height: fit-content;
 }
 
-.jodit-ui-button-group {
-  margin-bottom: var(--jd-padding-default);
-}
-.jodit-ui-button-group__label {
+.jodit-ui-label {
   display: block;
   margin-bottom: calc(var(--jd-padding-default) / 4);
   color: var(--jd-color-label);
   font-size: 0.8em;
 }
-.jodit-ui-button-group__options {
+.jodit-ui-input {
   display: flex;
-  justify-content: flex-start;
+  flex-direction: column;
+  margin-bottom: var(--jd-padding-default);
 }
-.jodit-ui-button-group .jodit-ui-button:not(:last-child) {
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
+.jodit-ui-input__input {
+  font-family: var(--jd-font-default);
+  font-size: var(--jd-font-size-default);
+  width: 100%;
+  height: var(--jd-input-height);
+  box-sizing: border-box;
+  padding: 0 var(--jd-padding-default);
+  border: 1px solid var(--jd-color-border);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--jd-color-white);
+  border-radius: 0;
+  line-height: var(--jd-input-height);
+  outline: none;
+  border: 0;
 }
-.jodit-ui-button-group .jodit-ui-button + .jodit-ui-button {
-  border-left: 1px solid var(--jd-color-button-background-hover_opacity40);
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
+.jodit-ui-input__input[disabled] {
+  background-color: #f0f0f0;
+  color: var(--jd-color-border);
 }
-.jodit-ui-button-group .jodit-ui-button[aria-pressed='true']:not([disabled]) {
-  border-left: 0;
-  background-color: var(--jd-color-button-background-hover);
-  box-shadow: inset 0 0 3px 0 var(--jd-color-dark);
-  color: var(--jd-color-dark);
+.jodit-ui-input__input_has-error_true {
+  border-color: var(--jd-color-red);
+}
+.jodit-ui-input__input:focus {
   outline: 0;
 }
-.jodit-ui-button-group .jodit-ui-button[aria-pressed='true']:not([disabled]) + .jodit-ui-button {
+.jodit-ui-input_theme_dark .jodit-ui-input__input {
+  background-color: var(--jd-color-gray);
+}
+.jodit-ui-input_has-error_true .jodit-ui-input__input {
+  border-color: var(--jd-color-red);
+}
+.jodit-ui-input__error,
+.jodit-ui-input__label {
+  display: block;
+  margin-bottom: calc(var(--jd-padding-default) / 4);
+  color: var(--jd-color-label);
+  font-size: 0.8em;
+}
+.jodit-ui-input_has-error_true .jodit-ui-input__label,
+.jodit-ui-input__error {
+  color: var(--jd-color-error);
+}
+.jodit-ui-input__wrapper {
+  display: flex;
+  min-width: 200px;
+  align-items: center;
+  justify-content: stretch;
+  border: 1px solid var(--jd-color-border);
+  background-color: var(--jd-color-white);
+}
+@media (max-width: 480px) {
+  .jodit-ui-input__wrapper {
+    min-width: 140px;
+  }
+}
+.jodit-ui-input_theme_dark .jodit-ui-input__wrapper {
+  border-color: var(--jd-color-border);
+  background-color: var(--jd-color-gray);
+}
+.jodit-ui-input_focused_true .jodit-ui-input__wrapper {
+  border-color: var(--jd-color-border-selected);
+}
+.jodit-ui-input__icon:not(:empty) {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-padding-default);
+}
+.jodit-ui-input__icon:not(:empty) svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--jd-color-border);
+}
+.jodit-ui-input__icon:not(:empty) + .jodit-ui-input__input {
+  padding-left: 0;
+}
+.jodit-ui-input__clear {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-padding-default) 0 0;
+  opacity: 0.8;
+}
+.jodit-ui-input__clear:active {
+  opacity: 1;
+  transform: scale(1.1, 1.1);
+}
+.jodit-ui-input__clear svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--jd-color-border);
+}
+.jodit-ui-input_theme_dark .jodit-ui-input__icon svg,
+.jodit-ui-input_theme_dark .jodit-ui-input__clear svg {
+  fill: var(--jd-color-dark);
+}
+.jodit-ui-block .jodit-ui-input {
+  margin-bottom: 0;
+}
+
+.jodit-ui-text-area {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--jd-padding-default);
+  width: 100%;
+}
+.jodit-ui-text-area__input {
+  font-family: var(--jd-font-default);
+  font-size: var(--jd-font-size-default);
+  width: 100%;
+  height: var(--jd-input-height);
+  box-sizing: border-box;
+  padding: 0 var(--jd-padding-default);
+  border: 1px solid var(--jd-color-border);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--jd-color-white);
+  border-radius: 0;
+  line-height: var(--jd-input-height);
+  outline: none;
   border: 0;
+}
+.jodit-ui-text-area__input[disabled] {
+  background-color: #f0f0f0;
+  color: var(--jd-color-border);
+}
+.jodit-ui-text-area__input_has-error_true {
+  border-color: var(--jd-color-red);
+}
+.jodit-ui-text-area__input:focus {
+  outline: 0;
+}
+.jodit-ui-text-area_theme_dark .jodit-ui-text-area__input {
+  background-color: var(--jd-color-gray);
+}
+.jodit-ui-text-area_has-error_true .jodit-ui-text-area__input {
+  border-color: var(--jd-color-red);
+}
+.jodit-ui-text-area__error,
+.jodit-ui-text-area__label {
+  display: block;
+  margin-bottom: calc(var(--jd-padding-default) / 4);
+  color: var(--jd-color-label);
+  font-size: 0.8em;
+}
+.jodit-ui-text-area_has-error_true .jodit-ui-text-area__label,
+.jodit-ui-text-area__error {
+  color: var(--jd-color-error);
+}
+.jodit-ui-text-area__wrapper {
+  display: flex;
+  min-width: 200px;
+  align-items: center;
+  justify-content: stretch;
+  border: 1px solid var(--jd-color-border);
+  background-color: var(--jd-color-white);
+}
+@media (max-width: 480px) {
+  .jodit-ui-text-area__wrapper {
+    min-width: 140px;
+  }
+}
+.jodit-ui-text-area_theme_dark .jodit-ui-text-area__wrapper {
+  border-color: var(--jd-color-border);
+  background-color: var(--jd-color-gray);
+}
+.jodit-ui-text-area_focused_true .jodit-ui-text-area__wrapper {
+  border-color: var(--jd-color-border-selected);
+}
+.jodit-ui-text-area__icon:not(:empty) {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-padding-default);
+}
+.jodit-ui-text-area__icon:not(:empty) svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--jd-color-border);
+}
+.jodit-ui-text-area__icon:not(:empty) + .jodit-ui-text-area__input {
+  padding-left: 0;
+}
+.jodit-ui-text-area__clear {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-padding-default) 0 0;
+  opacity: 0.8;
+}
+.jodit-ui-text-area__clear:active {
+  opacity: 1;
+  transform: scale(1.1, 1.1);
+}
+.jodit-ui-text-area__clear svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--jd-color-border);
+}
+.jodit-ui-text-area_theme_dark .jodit-ui-text-area__icon svg,
+.jodit-ui-text-area_theme_dark .jodit-ui-text-area__clear svg {
+  fill: var(--jd-color-dark);
+}
+.jodit-ui-text-area__wrapper {
+  flex: 1;
+}
+.jodit-ui-text-area__input {
+  height: 100%;
+  min-height: 60px;
+}
+
+.jodit-ui-checkbox {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: var(--jd-padding-default);
+}
+.jodit-ui-checkbox__input {
+  margin-right: var(--jd-padding-default);
+}
+.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__wrapper {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-right: var(--jd-padding-default);
+}
+.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__wrapper input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__switch-slider {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #ccc;
+  border-radius: 34px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__switch-slider:before {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  width: 26px;
+  height: 26px;
+  background-color: white;
+  border-radius: 50%;
+  content: '';
+  transition: 0.4s;
+}
+.jodit-ui-checkbox_switch_true.jodit-ui-checkbox_checked_true .jodit-ui-checkbox__switch-slider {
+  background-color: #2196f3;
+}
+.jodit-ui-checkbox_switch_true.jodit-ui-checkbox_checked_true .jodit-ui-checkbox__switch-slider:before {
+  transform: translateX(26px);
+}
+.jodit-ui-checkbox_switch_true.jodit-ui-checkbox_focused_true .jodit-ui-checkbox__switch-slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+.jodit-ui-block .jodit-ui-checkbox {
+  margin-bottom: 0;
+}
+
+.jodit-ui-select {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--jd-padding-default);
+}
+.jodit-ui-select__input {
+  font-family: var(--jd-font-default);
+  font-size: var(--jd-font-size-default);
+  width: 100%;
+  height: var(--jd-input-height);
+  box-sizing: border-box;
+  padding: 0 var(--jd-padding-default);
+  border: 1px solid var(--jd-color-border);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: var(--jd-color-white);
+  border-radius: 0;
+  line-height: var(--jd-input-height);
+  outline: none;
+  border: 0;
+}
+.jodit-ui-select__input[disabled] {
+  background-color: #f0f0f0;
+  color: var(--jd-color-border);
+}
+.jodit-ui-select__input_has-error_true {
+  border-color: var(--jd-color-red);
+}
+.jodit-ui-select__input:focus {
+  outline: 0;
+}
+.jodit-ui-select_theme_dark .jodit-ui-select__input {
+  background-color: var(--jd-color-gray);
+}
+.jodit-ui-select_has-error_true .jodit-ui-select__input {
+  border-color: var(--jd-color-red);
+}
+.jodit-ui-select__error,
+.jodit-ui-select__label {
+  display: block;
+  margin-bottom: calc(var(--jd-padding-default) / 4);
+  color: var(--jd-color-label);
+  font-size: 0.8em;
+}
+.jodit-ui-select_has-error_true .jodit-ui-select__label,
+.jodit-ui-select__error {
+  color: var(--jd-color-error);
+}
+.jodit-ui-select__wrapper {
+  display: flex;
+  min-width: 200px;
+  align-items: center;
+  justify-content: stretch;
+  border: 1px solid var(--jd-color-border);
+  background-color: var(--jd-color-white);
+}
+@media (max-width: 480px) {
+  .jodit-ui-select__wrapper {
+    min-width: 140px;
+  }
+}
+.jodit-ui-select_theme_dark .jodit-ui-select__wrapper {
+  border-color: var(--jd-color-border);
+  background-color: var(--jd-color-gray);
+}
+.jodit-ui-select_focused_true .jodit-ui-select__wrapper {
+  border-color: var(--jd-color-border-selected);
+}
+.jodit-ui-select__icon:not(:empty) {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-padding-default);
+}
+.jodit-ui-select__icon:not(:empty) svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--jd-color-border);
+}
+.jodit-ui-select__icon:not(:empty) + .jodit-ui-select__input {
+  padding-left: 0;
+}
+.jodit-ui-select__clear {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--jd-padding-default) 0 0;
+  opacity: 0.8;
+}
+.jodit-ui-select__clear:active {
+  opacity: 1;
+  transform: scale(1.1, 1.1);
+}
+.jodit-ui-select__clear svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--jd-color-border);
+}
+.jodit-ui-select_theme_dark .jodit-ui-select__icon svg,
+.jodit-ui-select_theme_dark .jodit-ui-select__clear svg {
+  fill: var(--jd-color-dark);
+}
+.jodit-ui-select__input {
+  padding-right: calc(var(--jd-padding-default) * 2);
+  background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+);
+  background-position: 98% 50%;
+  background-repeat: no-repeat;
+}
+.jodit-ui-select_size_tiny {
+  margin-bottom: 0;
+}
+.jodit-ui-select_size_tiny .jodit-ui-select__input {
+  --jd-height: calc(var(--jd-input-height) / 1.8);
+  height: var(--jd-height);
+  line-height: var(--jd-height);
+}
+.jodit-ui-select_variant_outline .jodit-ui-select__wrapper {
+  border: 0;
+}
+.jodit-ui-select_variant_outline .jodit-ui-select__wrapper select {
+  outline: 0;
+}
+.jodit-ui-select_width_auto {
+  width: auto;
+}
+.jodit-ui-select_width_auto .jodit-ui-select__wrapper {
+  min-width: auto;
+}
+
+.jodit-ui-file-input {
+  position: relative;
+  overflow: hidden;
+}
+.jodit-ui-file-input__input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0;
+  margin: 0 calc(var(--jd-padding-default) * -1) 0 0;
+  cursor: pointer;
+  font-size: 400px;
+  opacity: 0;
+}
+
+.jodit-ui-block {
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  margin-bottom: var(--jd-padding-default);
+}
+.jodit-ui-block_width_full {
+  width: 100%;
+}
+.jodit-ui-block_align_full {
+  justify-content: space-between;
+}
+.jodit-ui-block_align_right {
+  justify-content: flex-end;
+}
+.jodit-ui-block_padding_true {
+  padding: var(--jd-padding-default);
+}
+
+/*!
+ * Jodit Editor (https://xdsoft.net/jodit/)
+ * Released under MIT see LICENSE.txt in the project root for license information.
+ * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
+ */
+@keyframes pulse {
+  30% {
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+.jodit-progress-bar {
+  position: absolute;
+  z-index: 2147483647;
+  top: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 1px;
+  opacity: 0.7;
+}
+.jodit-progress-bar div {
+  position: relative;
+  height: 2px;
+  background: var(--jd-color-background-progress);
+  transition: width 500ms ease-out, opacity 500ms linear;
+  will-change: width, opacity;
+}
+.jodit-progress-bar div::before,
+.jodit-progress-bar div::after {
+  position: absolute;
+  top: 0;
+  display: inline-block;
+  height: 2px;
+  animation: pulse 2s ease-out 0s infinite;
+  border-radius: 100%;
+  box-shadow: var(--jd-color-background-progress) 1px 0 6px 1px;
+  content: '';
+  opacity: 0.6;
+}
+.jodit-progress-bar div::before {
+  right: -80px;
+  width: 180px;
+  clip: rect(-6px, 90px, 14px, -6px);
+}
+.jodit-progress-bar div::after {
+  right: 0;
+  width: 20px;
+  clip: rect(-6px, 22px, 14px, var(--jd-padding-default));
+}
+
+/*!
+ * Jodit Editor (https://xdsoft.net/jodit/)
+ * Released under MIT see LICENSE.txt in the project root for license information.
+ * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
+ */
+.jodit-context-menu {
+  position: static;
+  width: auto;
+  max-width: none;
+  height: auto;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  background: 0 0;
+  float: none;
+  outline: 0;
+  position: fixed;
+  z-index: var(--jd-z-index-popup);
+  display: inline-block;
+  box-shadow: var(--jd-popup-box-shadow);
+  transform: translate3d(0, 0, 0);
+  z-index: var(--jd-z-index-context-menu);
+}
+.jodit-context-menu__content {
+  font-family: var(--jd-font-default);
+  font-size: var(--jd-font-size-default);
+  overflow: auto;
+  max-height: 300px;
+  padding: var(--jd-padding-default);
+  background: var(--jd-color-background-default);
+  overflow-scrolling: touch;
+}
+.jodit-context-menu_padding_false .jodit-context-menu__content {
+  padding: 0;
+}
+.jodit-context-menu_max-height_false .jodit-context-menu__content {
+  max-height: fit-content;
+}
+.jodit-context-menu .jodit-ui-button {
+  display: flex;
+}
+.jodit-context-menu__actions {
+  font-family: var(--jd-font-default);
+  font-size: var(--jd-font-size-default);
+}
+.jodit-context-menu__actions button {
+  width: 100%;
+}
+.jodit-context-menu_theme_dark .jodit-context-menu__content {
+  background-color: var(--jd-dark_background_color);
 }
 
 /*!
@@ -1719,7 +2209,7 @@ svg.jodit-icon {
   white-space: normal;
 }
 @media (max-width: 480px) {
-  .jodit-dialog:not(.jodit-dialog_adaptive_false) .jodit-dialog__panel {
+  .jodit-dialog__panel {
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
@@ -1752,6 +2242,11 @@ svg.jodit-icon {
   border-bottom: 1px solid var(--jd-color-border);
   cursor: move;
   text-align: left;
+}
+@media (max-width: 480px) {
+  .jodit-dialog__header {
+    flex-direction: column;
+  }
 }
 .jodit-dialog__header-toolbar,
 .jodit-dialog__header-title {
@@ -1791,11 +2286,6 @@ svg.jodit-icon {
 .jodit-dialog__header .jodit_toolbar > li.jodit-toolbar-button .jodit-input {
   width: auto;
   padding-left: var(--jd-padding-default);
-}
-@media (max-width: 480px) {
-  .jodit-dialog:not(.jodit-dialog_adaptive_false) .jodit-dialog__header {
-    flex-direction: column;
-  }
 }
 .jodit-dialog_slim_true .jodit-dialog__header {
   min-height: 10px;
@@ -2049,502 +2539,6 @@ svg.jodit-icon {
   background-image: none;
 }
 
-.jodit-ui-label {
-  display: block;
-  margin-bottom: calc(var(--jd-padding-default) / 4);
-  color: var(--jd-color-label);
-  font-size: 0.8em;
-}
-.jodit-ui-input {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: var(--jd-padding-default);
-}
-.jodit-ui-input__input {
-  font-family: var(--jd-font-default);
-  font-size: var(--jd-font-size-default);
-  width: 100%;
-  height: var(--jd-input-height);
-  box-sizing: border-box;
-  padding: 0 var(--jd-padding-default);
-  border: 1px solid var(--jd-color-border);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-color: var(--jd-color-white);
-  border-radius: 0;
-  line-height: var(--jd-input-height);
-  outline: none;
-  border: 0;
-}
-.jodit-ui-input__input[disabled] {
-  background-color: #f0f0f0;
-  color: var(--jd-color-border);
-}
-.jodit-ui-input__input_has-error_true {
-  border-color: var(--jd-color-red);
-}
-.jodit-ui-input__input:focus {
-  outline: 0;
-}
-.jodit-ui-input_theme_dark .jodit-ui-input__input {
-  background-color: var(--jd-color-gray);
-}
-.jodit-ui-input_has-error_true .jodit-ui-input__input {
-  border-color: var(--jd-color-red);
-}
-.jodit-ui-input__error,
-.jodit-ui-input__label {
-  display: block;
-  margin-bottom: calc(var(--jd-padding-default) / 4);
-  color: var(--jd-color-label);
-  font-size: 0.8em;
-}
-.jodit-ui-input_has-error_true .jodit-ui-input__label,
-.jodit-ui-input__error {
-  color: var(--jd-color-error);
-}
-.jodit-ui-input__wrapper {
-  display: flex;
-  min-width: 200px;
-  align-items: center;
-  justify-content: stretch;
-  border: 1px solid var(--jd-color-border);
-  background-color: var(--jd-color-white);
-}
-@media (max-width: 480px) {
-  .jodit-ui-input__wrapper {
-    min-width: 140px;
-  }
-}
-.jodit-ui-input_theme_dark .jodit-ui-input__wrapper {
-  border-color: var(--jd-color-border);
-  background-color: var(--jd-color-gray);
-}
-.jodit-ui-input_focused_true .jodit-ui-input__wrapper {
-  border-color: var(--jd-color-border-selected);
-}
-.jodit-ui-input__icon:not(:empty) {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--jd-padding-default);
-}
-.jodit-ui-input__icon:not(:empty) svg {
-  width: 16px;
-  height: 16px;
-  fill: var(--jd-color-border);
-}
-.jodit-ui-input__icon:not(:empty) + .jodit-ui-input__input {
-  padding-left: 0;
-}
-.jodit-ui-input__clear {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--jd-padding-default) 0 0;
-  opacity: 0.8;
-}
-.jodit-ui-input__clear:active {
-  opacity: 1;
-  transform: scale(1.1, 1.1);
-}
-.jodit-ui-input__clear svg {
-  width: 12px;
-  height: 12px;
-  fill: var(--jd-color-border);
-}
-.jodit-ui-input_theme_dark .jodit-ui-input__icon svg,
-.jodit-ui-input_theme_dark .jodit-ui-input__clear svg {
-  fill: var(--jd-color-dark);
-}
-.jodit-ui-block .jodit-ui-input {
-  margin-bottom: 0;
-}
-
-.jodit-ui-select {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: var(--jd-padding-default);
-}
-.jodit-ui-select__input {
-  font-family: var(--jd-font-default);
-  font-size: var(--jd-font-size-default);
-  width: 100%;
-  height: var(--jd-input-height);
-  box-sizing: border-box;
-  padding: 0 var(--jd-padding-default);
-  border: 1px solid var(--jd-color-border);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-color: var(--jd-color-white);
-  border-radius: 0;
-  line-height: var(--jd-input-height);
-  outline: none;
-  border: 0;
-}
-.jodit-ui-select__input[disabled] {
-  background-color: #f0f0f0;
-  color: var(--jd-color-border);
-}
-.jodit-ui-select__input_has-error_true {
-  border-color: var(--jd-color-red);
-}
-.jodit-ui-select__input:focus {
-  outline: 0;
-}
-.jodit-ui-select_theme_dark .jodit-ui-select__input {
-  background-color: var(--jd-color-gray);
-}
-.jodit-ui-select_has-error_true .jodit-ui-select__input {
-  border-color: var(--jd-color-red);
-}
-.jodit-ui-select__error,
-.jodit-ui-select__label {
-  display: block;
-  margin-bottom: calc(var(--jd-padding-default) / 4);
-  color: var(--jd-color-label);
-  font-size: 0.8em;
-}
-.jodit-ui-select_has-error_true .jodit-ui-select__label,
-.jodit-ui-select__error {
-  color: var(--jd-color-error);
-}
-.jodit-ui-select__wrapper {
-  display: flex;
-  min-width: 200px;
-  align-items: center;
-  justify-content: stretch;
-  border: 1px solid var(--jd-color-border);
-  background-color: var(--jd-color-white);
-}
-@media (max-width: 480px) {
-  .jodit-ui-select__wrapper {
-    min-width: 140px;
-  }
-}
-.jodit-ui-select_theme_dark .jodit-ui-select__wrapper {
-  border-color: var(--jd-color-border);
-  background-color: var(--jd-color-gray);
-}
-.jodit-ui-select_focused_true .jodit-ui-select__wrapper {
-  border-color: var(--jd-color-border-selected);
-}
-.jodit-ui-select__icon:not(:empty) {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--jd-padding-default);
-}
-.jodit-ui-select__icon:not(:empty) svg {
-  width: 16px;
-  height: 16px;
-  fill: var(--jd-color-border);
-}
-.jodit-ui-select__icon:not(:empty) + .jodit-ui-select__input {
-  padding-left: 0;
-}
-.jodit-ui-select__clear {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--jd-padding-default) 0 0;
-  opacity: 0.8;
-}
-.jodit-ui-select__clear:active {
-  opacity: 1;
-  transform: scale(1.1, 1.1);
-}
-.jodit-ui-select__clear svg {
-  width: 12px;
-  height: 12px;
-  fill: var(--jd-color-border);
-}
-.jodit-ui-select_theme_dark .jodit-ui-select__icon svg,
-.jodit-ui-select_theme_dark .jodit-ui-select__clear svg {
-  fill: var(--jd-color-dark);
-}
-.jodit-ui-select__input {
-  padding-right: calc(var(--jd-padding-default) * 2);
-  background-image: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+);
-  background-position: 98% 50%;
-  background-repeat: no-repeat;
-}
-.jodit-ui-select_size_tiny {
-  margin-bottom: 0;
-}
-.jodit-ui-select_size_tiny .jodit-ui-select__input {
-  --jd-height: calc(var(--jd-input-height) / 1.8);
-  height: var(--jd-height);
-  line-height: var(--jd-height);
-}
-.jodit-ui-select_variant_outline .jodit-ui-select__wrapper {
-  border: 0;
-}
-.jodit-ui-select_variant_outline .jodit-ui-select__wrapper select {
-  outline: 0;
-}
-.jodit-ui-select_width_auto {
-  width: auto;
-}
-.jodit-ui-select_width_auto .jodit-ui-select__wrapper {
-  min-width: auto;
-}
-
-.jodit-ui-text-area {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: var(--jd-padding-default);
-  width: 100%;
-}
-.jodit-ui-text-area__input {
-  font-family: var(--jd-font-default);
-  font-size: var(--jd-font-size-default);
-  width: 100%;
-  height: var(--jd-input-height);
-  box-sizing: border-box;
-  padding: 0 var(--jd-padding-default);
-  border: 1px solid var(--jd-color-border);
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-color: var(--jd-color-white);
-  border-radius: 0;
-  line-height: var(--jd-input-height);
-  outline: none;
-  border: 0;
-}
-.jodit-ui-text-area__input[disabled] {
-  background-color: #f0f0f0;
-  color: var(--jd-color-border);
-}
-.jodit-ui-text-area__input_has-error_true {
-  border-color: var(--jd-color-red);
-}
-.jodit-ui-text-area__input:focus {
-  outline: 0;
-}
-.jodit-ui-text-area_theme_dark .jodit-ui-text-area__input {
-  background-color: var(--jd-color-gray);
-}
-.jodit-ui-text-area_has-error_true .jodit-ui-text-area__input {
-  border-color: var(--jd-color-red);
-}
-.jodit-ui-text-area__error,
-.jodit-ui-text-area__label {
-  display: block;
-  margin-bottom: calc(var(--jd-padding-default) / 4);
-  color: var(--jd-color-label);
-  font-size: 0.8em;
-}
-.jodit-ui-text-area_has-error_true .jodit-ui-text-area__label,
-.jodit-ui-text-area__error {
-  color: var(--jd-color-error);
-}
-.jodit-ui-text-area__wrapper {
-  display: flex;
-  min-width: 200px;
-  align-items: center;
-  justify-content: stretch;
-  border: 1px solid var(--jd-color-border);
-  background-color: var(--jd-color-white);
-}
-@media (max-width: 480px) {
-  .jodit-ui-text-area__wrapper {
-    min-width: 140px;
-  }
-}
-.jodit-ui-text-area_theme_dark .jodit-ui-text-area__wrapper {
-  border-color: var(--jd-color-border);
-  background-color: var(--jd-color-gray);
-}
-.jodit-ui-text-area_focused_true .jodit-ui-text-area__wrapper {
-  border-color: var(--jd-color-border-selected);
-}
-.jodit-ui-text-area__icon:not(:empty) {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--jd-padding-default);
-}
-.jodit-ui-text-area__icon:not(:empty) svg {
-  width: 16px;
-  height: 16px;
-  fill: var(--jd-color-border);
-}
-.jodit-ui-text-area__icon:not(:empty) + .jodit-ui-text-area__input {
-  padding-left: 0;
-}
-.jodit-ui-text-area__clear {
-  display: flex;
-  align-items: center;
-  padding: 0 var(--jd-padding-default) 0 0;
-  opacity: 0.8;
-}
-.jodit-ui-text-area__clear:active {
-  opacity: 1;
-  transform: scale(1.1, 1.1);
-}
-.jodit-ui-text-area__clear svg {
-  width: 12px;
-  height: 12px;
-  fill: var(--jd-color-border);
-}
-.jodit-ui-text-area_theme_dark .jodit-ui-text-area__icon svg,
-.jodit-ui-text-area_theme_dark .jodit-ui-text-area__clear svg {
-  fill: var(--jd-color-dark);
-}
-.jodit-ui-text-area__wrapper {
-  flex: 1;
-}
-.jodit-ui-text-area__input {
-  height: 100%;
-  min-height: 60px;
-}
-
-.jodit-ui-checkbox {
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: flex-end;
-  margin-bottom: var(--jd-padding-default);
-}
-.jodit-ui-checkbox__input {
-  margin-right: var(--jd-padding-default);
-}
-.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__wrapper {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  margin-right: var(--jd-padding-default);
-}
-.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__wrapper input {
-  width: 0;
-  height: 0;
-  opacity: 0;
-}
-.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__switch-slider {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: #ccc;
-  border-radius: 34px;
-  cursor: pointer;
-  transition: 0.4s;
-}
-.jodit-ui-checkbox_switch_true .jodit-ui-checkbox__switch-slider:before {
-  position: absolute;
-  bottom: 4px;
-  left: 4px;
-  width: 26px;
-  height: 26px;
-  background-color: white;
-  border-radius: 50%;
-  content: '';
-  transition: 0.4s;
-}
-.jodit-ui-checkbox_switch_true.jodit-ui-checkbox_checked_true .jodit-ui-checkbox__switch-slider {
-  background-color: #2196f3;
-}
-.jodit-ui-checkbox_switch_true.jodit-ui-checkbox_checked_true .jodit-ui-checkbox__switch-slider:before {
-  transform: translateX(26px);
-}
-.jodit-ui-checkbox_switch_true.jodit-ui-checkbox_focused_true .jodit-ui-checkbox__switch-slider {
-  box-shadow: 0 0 1px #2196f3;
-}
-.jodit-ui-block .jodit-ui-checkbox {
-  margin-bottom: 0;
-}
-
-.jodit-ui-file-input {
-  position: relative;
-  overflow: hidden;
-}
-.jodit-ui-file-input__input {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0;
-  margin: 0 calc(var(--jd-padding-default) * -1) 0 0;
-  cursor: pointer;
-  font-size: 400px;
-  opacity: 0;
-}
-
-.jodit-ui-block {
-  display: flex;
-  align-items: center;
-  justify-content: stretch;
-  margin-bottom: var(--jd-padding-default);
-}
-.jodit-ui-block_width_full {
-  width: 100%;
-}
-.jodit-ui-block_align_full {
-  justify-content: space-between;
-}
-.jodit-ui-block_align_right {
-  justify-content: flex-end;
-}
-.jodit-ui-block_padding_true {
-  padding: var(--jd-padding-default);
-}
-
-/*!
- * Jodit Editor (https://xdsoft.net/jodit/)
- * Released under MIT see LICENSE.txt in the project root for license information.
- * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
- */
-@keyframes pulse {
-  30% {
-    opacity: 0.6;
-  }
-  60% {
-    opacity: 0;
-  }
-  to {
-    opacity: 0.6;
-  }
-}
-.jodit-progress-bar {
-  position: absolute;
-  z-index: 2147483647;
-  top: 0;
-  left: 0;
-  height: 2px;
-  border-radius: 1px;
-  opacity: 0.7;
-}
-.jodit-progress-bar div {
-  position: relative;
-  height: 2px;
-  background: var(--jd-color-background-progress);
-  transition: width 500ms ease-out, opacity 500ms linear;
-  will-change: width, opacity;
-}
-.jodit-progress-bar div::before,
-.jodit-progress-bar div::after {
-  position: absolute;
-  top: 0;
-  display: inline-block;
-  height: 2px;
-  animation: pulse 2s ease-out 0s infinite;
-  border-radius: 100%;
-  box-shadow: var(--jd-color-background-progress) 1px 0 6px 1px;
-  content: '';
-  opacity: 0.6;
-}
-.jodit-progress-bar div::before {
-  right: -80px;
-  width: 180px;
-  clip: rect(-6px, 90px, 14px, -6px);
-}
-.jodit-progress-bar div::after {
-  right: 0;
-  width: 20px;
-  clip: rect(-6px, 22px, 14px, var(--jd-padding-default));
-}
-
 /*!
  * Jodit Editor (https://xdsoft.net/jodit/)
  * Released under MIT see LICENSE.txt in the project root for license information.
@@ -2699,10 +2693,8 @@ svg.jodit-icon {
   justify-content: center;
   padding: 0 var(--jd-padding-default);
   border-radius: var(--jd-border-radius-default);
-  color: var(--jd-color-text-icons);
 }
-.jodit-toolbar-button__button:hover:not([disabled]),
-.jodit-toolbar-button__button:focus-visible:not([disabled]) {
+.jodit-toolbar-button__button:hover:not([disabled]) {
   background-color: var(--jd-color-button-background-hover);
   opacity: 1;
   outline: 0;
@@ -2729,8 +2721,7 @@ svg.jodit-icon {
   cursor: pointer;
   width: 14px;
 }
-.jodit-toolbar-button__trigger:hover:not([disabled]),
-.jodit-toolbar-button__trigger:focus-visible:not([disabled]) {
+.jodit-toolbar-button__trigger:hover:not([disabled]) {
   background-color: var(--jd-color-button-background-hover);
   opacity: 1;
   outline: 0;
@@ -2780,9 +2771,6 @@ svg.jodit-icon {
 .jodit-toolbar-button_with-trigger_true:hover:not([disabled]) {
   border-color: var(--jd-color-border);
 }
-.jodit-toolbar-button_stroke_false svg {
-  stroke: none;
-}
 
 /*!
  * Jodit Editor (https://xdsoft.net/jodit/)
@@ -2807,15 +2795,13 @@ svg.jodit-icon {
   justify-content: center;
   padding: 0 var(--jd-padding-default);
   border-radius: var(--jd-border-radius-default);
-  color: var(--jd-color-text-icons);
   cursor: pointer;
   min-width: 34px;
   height: 34px;
   padding: 0;
   border: 1px solid transparent;
 }
-.jodit-toolbar-content:hover:not([disabled]),
-.jodit-toolbar-content:focus-visible:not([disabled]) {
+.jodit-toolbar-content:hover:not([disabled]) {
   background-color: var(--jd-color-button-background-hover);
   opacity: 1;
   outline: 0;
@@ -3175,9 +3161,9 @@ svg.jodit-icon {
   position: relative;
   display: flex;
   min-width: 400px;
-  max-width: Min(100%, 1000px);
+  max-width: min(100%, 1000px);
   height: 100%;
-  min-height: Min(100%, 500px);
+  min-height: min(100%, 500px);
   max-height: 100%;
   align-items: center;
   justify-content: center;
@@ -3836,6 +3822,9 @@ a + .jodit-filebrowser-tree__source-title {
     max-width: 100%;
   }
 }
+.jodit_drag_hover {
+  background-color: var(--jd-color-background-button-hover);
+}
 
 /*!
  * Jodit Editor (https://xdsoft.net/jodit/)
@@ -3845,8 +3834,7 @@ a + .jodit-filebrowser-tree__source-title {
 :root {
   --jd-color-new-line: var(--jd-color-border);
   --jd-width-icon: 30px;
-  --jd-height-icon: 30px;
-  --jd-offset-handle: calc(100% - var(--jd-width-icon));
+  --jd-height-icon: calc(var(--jd-padding-default) * 2);
 }
 .jodit-add-new-line {
   position: fixed;
@@ -3862,14 +3850,14 @@ a + .jodit-filebrowser-tree__source-title {
 }
 .jodit-add-new-line::after {
   display: block;
-  width: 100%;
+  width: calc(100% - var(--jd-width-icon));
   height: 1px;
   background-color: var(--jd-color-new-line);
   content: '';
 }
 .jodit-add-new-line span {
   position: absolute;
-  left: var(--jd-offset-handle);
+  right: 0;
   display: flex;
   width: var(--jd-width-icon);
   height: var(--jd-height-icon);
@@ -4238,13 +4226,18 @@ html.jodit_fullsize-box_true {
  * Released under MIT see LICENSE.txt in the project root for license information.
  * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
  */
+:root {
+  --jd-viewer_width: 70px;
+  --jd-viewer_height: 24px;
+  --jd-resizer-handle-size: 10px;
+  --jd-resizer-border-color: #98c1f1;
+  --jd-resizer-handle-color: #5ba4f3;
+  --jd-resizer-handle-hover-color: #537ebb;
+}
 [data-jodit_iframe_wrapper] {
   position: relative;
   display: block;
   user-select: none;
-}
-[data-jodit_iframe_wrapper] iframe {
-  position: relative;
 }
 [data-jodit_iframe_wrapper]::after {
   position: absolute;
@@ -4257,20 +4250,6 @@ html.jodit_fullsize-box_true {
   background: rgba(0, 0, 0, 0);
   content: '';
   cursor: pointer;
-}
-[data-jodit_iframe_wrapper][data-jodit-wrapper_active='true'] iframe {
-  z-index: 2;
-}
-.jodit_lock [data-jodit-wrapper_active='true'] iframe {
-  z-index: 1;
-}
-:root {
-  --jd-viewer_width: 70px;
-  --jd-viewer_height: 24px;
-  --jd-resizer-handle-size: 10px;
-  --jd-resizer-border-color: #98c1f1;
-  --jd-resizer-handle-color: #5ba4f3;
-  --jd-resizer-handle-hover-color: #537ebb;
 }
 .jodit-resizer {
   position: absolute;
@@ -4319,22 +4298,22 @@ html.jodit_fullsize-box_true {
 .jodit-resizer > div:nth-child(1) {
   top: calc(var(--jd-resizer-handle-size) / -2);
   left: calc(var(--jd-resizer-handle-size) / -2);
-  cursor: nwse-resize;
+  cursor: nw-resize;
 }
 .jodit-resizer > div:nth-child(2) {
   top: calc(var(--jd-resizer-handle-size) / -2);
   right: calc(var(--jd-resizer-handle-size) / -2);
-  cursor: nesw-resize;
+  cursor: ne-resize;
 }
 .jodit-resizer > div:nth-child(3) {
   right: calc(var(--jd-resizer-handle-size) / -2);
   bottom: calc(var(--jd-resizer-handle-size) / -2);
-  cursor: nwse-resize;
+  cursor: se-resize;
 }
 .jodit-resizer > div:nth-child(4) {
   bottom: calc(var(--jd-resizer-handle-size) / -2);
   left: calc(var(--jd-resizer-handle-size) / -2);
-  cursor: nesw-resize;
+  cursor: sw-resize;
 }
 @media (max-width: 768px) {
   .jodit-resizer > div :root {
@@ -4355,17 +4334,21 @@ html.jodit_fullsize-box_true {
   --jd-transform-button-active: 0.95;
   --jd-timeout-button-active: 0.1s;
 }
-.jodit-ui-search {
+.jodit-search {
   position: absolute;
   top: 0;
   right: 0;
   width: 0;
   height: 0;
+  visibility: hidden;
 }
-.jodit-ui-search_sticky_true {
+.jodit-search_sticky {
   position: fixed;
 }
-.jodit-ui-search__box {
+.jodit-search.jodit-search_active {
+  visibility: visible;
+}
+.jodit-search .jodit-search__box {
   position: absolute;
   right: 0;
   display: flex;
@@ -4376,7 +4359,7 @@ html.jodit_fullsize-box_true {
   border-width: 0 0 1px 1px;
   background-color: var(--jd-color-panel);
 }
-.jodit-ui-search__box input {
+.jodit-search .jodit-search__box input {
   width: 100%;
   height: 100%;
   padding: 0 var(--jd-padding-default);
@@ -4385,22 +4368,22 @@ html.jodit_fullsize-box_true {
   background-color: transparent;
   outline: none;
 }
-.jodit-ui-search__box input[data-ref='replace'] {
+.jodit-search .jodit-search__box input[data-ref='replace'] {
   display: none;
 }
-.jodit-ui-search__box input:not(:focus) + input:not(:focus) {
+.jodit-search .jodit-search__box input:not(:focus) + input:not(:focus) {
   border-top: 1px solid var(--jd-color-border);
 }
-.jodit-ui-search__buttons,
-.jodit-ui-search__counts,
-.jodit-ui-search__inputs {
+.jodit-search .jodit-search__box .jodit-search__buttons,
+.jodit-search .jodit-search__box .jodit-search__counts,
+.jodit-search .jodit-search__box .jodit-search__inputs {
   height: var(--jd-height-search);
 }
-.jodit-ui-search__inputs {
+.jodit-search .jodit-search__box .jodit-search__inputs {
   width: var(--jd-width-search-input-box);
   padding-right: calc(var(--jd-padding-default) / 2);
 }
-.jodit-ui-search__counts {
+.jodit-search .jodit-search__box .jodit-search__counts {
   display: flex;
   width: var(--jd-width-search-count-box);
   align-items: center;
@@ -4408,65 +4391,55 @@ html.jodit_fullsize-box_true {
   border-left: 1px solid var(--jd-color-border);
   color: var(--jd-color-border);
 }
-.jodit-ui-search__buttons {
+.jodit-search .jodit-search__box .jodit-search__buttons {
   display: flex;
   flex: 1;
   align-items: center;
   justify-content: center;
   padding-left: 0;
 }
-.jodit-ui-search__buttons button {
+.jodit-search .jodit-search__box .jodit-search__buttons button {
   width: 32%;
   height: 100%;
   border: 1px solid transparent;
   margin-right: 1%;
   background-color: transparent;
 }
-.jodit-ui-search__buttons button[data-ref='replace-btn'] {
+.jodit-search .jodit-search__box .jodit-search__buttons button[data-ref='replace-btn'] {
   display: none;
   width: 100%;
   border: 1px solid var(--jd-color-border);
   margin-top: 2px;
 }
-.jodit-ui-search__buttons button:hover {
+.jodit-search .jodit-search__box .jodit-search__buttons button:hover {
   background-color: var(--jd-color-background-button-hover);
 }
-.jodit-ui-search__buttons button:focus {
+.jodit-search .jodit-search__box .jodit-search__buttons button:focus {
   border: 1px solid var(--jd-color-background-selection_opacity50);
 }
-.jodit-ui-search__buttons button:active {
+.jodit-search .jodit-search__box .jodit-search__buttons button:active {
   border: 1px solid var(--jd-color-background-selection);
   transform: scale(var(--jd-transform-button-active), var(--jd-transform-button-active));
 }
-.jodit-ui-search_empty-query_true [data-ref='next'],
-.jodit-ui-search_empty-query_true [data-ref='prev'] {
-  opacity: 0.5;
-}
-.jodit-ui-search_replace_true .jodit-ui-search__counts,
-.jodit-ui-search_replace_true .jodit-ui-search__inputs {
+.jodit-search.jodit-search_replace .jodit-search__counts,
+.jodit-search.jodit-search_replace .jodit-search__inputs {
   height: calc(var(--jd-height-search) * 2);
 }
-.jodit-ui-search_replace_true .jodit-ui-search__counts input,
-.jodit-ui-search_replace_true .jodit-ui-search__inputs input {
+.jodit-search.jodit-search_replace .jodit-search__counts input,
+.jodit-search.jodit-search_replace .jodit-search__inputs input {
   height: 50%;
   transition: background-color var(--jd-timeout-button-active) linear;
 }
-.jodit-ui-search_replace_true .jodit-ui-search__counts input:focus,
-.jodit-ui-search_replace_true .jodit-ui-search__inputs input:focus {
+.jodit-search.jodit-search_replace .jodit-search__counts input:focus,
+.jodit-search.jodit-search_replace .jodit-search__inputs input:focus {
   box-shadow: inset 0 0 3px 0 var(--jd-color-border);
 }
-.jodit-ui-search_replace_true .jodit-ui-search__counts input[data-ref='replace'],
-.jodit-ui-search_replace_true .jodit-ui-search__inputs input[data-ref='replace'] {
-  display: block;
-}
-.jodit-ui-search_replace_true .jodit-ui-search__buttons {
+.jodit-search.jodit-search_replace .jodit-search__buttons {
   flex-wrap: wrap;
 }
-.jodit-ui-search_replace_true .jodit-ui-search__buttons button[data-ref='replace-btn'] {
+.jodit-search.jodit-search_replace .jodit-search__inputs input[data-ref='replace'],
+.jodit-search.jodit-search_replace .jodit-search__buttons button[data-ref='replace-btn'] {
   display: block;
-}
-[jd-tmp-selection] {
-  background-color: aquamarine;
 }
 
 /*!
@@ -4636,36 +4609,6 @@ html.jodit_fullsize-box_true {
  * Released under MIT see LICENSE.txt in the project root for license information.
  * Copyright (c) 2013-2022 Valeriy Chupurnov. All rights reserved. https://xdsoft.net
  */
-.jodit-context table,
-.jodit-wysiwyg table {
-  max-width: 100%;
-  border: none;
-  margin-top: 1em;
-  margin-bottom: 1em;
-  border-collapse: collapse;
-  empty-cells: show;
-}
-.jodit-context table tr,
-.jodit-wysiwyg table tr {
-  user-select: none;
-}
-.jodit-context table tr th,
-.jodit-wysiwyg table tr th,
-.jodit-context table tr td,
-.jodit-wysiwyg table tr td {
-  min-width: 2em;
-  padding: 0.4em;
-  border: 1px solid var(--jd-color-border);
-  user-select: text;
-  vertical-align: middle;
-  /**
-			// In some circumstances, because of this rule,
-			// the borders of the table are not shown - you need to find out under what
-			&[style*='border'] {
-				border-style: double !important;
-			}
-			*/
-}
 .jodit-table-resizer {
   position: absolute;
   z-index: 3;
@@ -4687,6 +4630,25 @@ html.jodit_fullsize-box_true {
 }
 .jodit-table-resizer_moved::after {
   border-right: 1px solid var(--jd-color-border) moved;
+}
+.jodit-wysiwyg table {
+  max-width: 100%;
+  border: none;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border-collapse: collapse;
+  empty-cells: show;
+}
+.jodit-wysiwyg table tr {
+  user-select: none;
+}
+.jodit-wysiwyg table tr th,
+.jodit-wysiwyg table tr td {
+  min-width: 2em;
+  padding: 0.4em;
+  border: 1px solid var(--jd-color-border);
+  user-select: text;
+  vertical-align: middle;
 }
 .jodit-form__inserter .jodit-form__table-creator-box {
   display: flex;
@@ -4788,13 +4750,6 @@ html.jodit_fullsize-box_true {
   border: 1px solid var(--jd-color-border);
   user-select: text;
   vertical-align: middle;
-  /**
-			// In some circumstances, because of this rule,
-			// the borders of the table are not shown - you need to find out under what
-			&[style*='border'] {
-				border-style: double !important;
-			}
-			*/
 }
 
 /*!

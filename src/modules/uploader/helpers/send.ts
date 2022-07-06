@@ -25,7 +25,7 @@ export function send(
 		request: FormData | IDictionary<string> | string
 	): Promise<any> => {
 		const ajax = new Ajax<IUploaderAnswer>(uploader.j, {
-			xhr: (): XMLHttpRequest => {
+			xhr: () => {
 				const xhr = new XMLHttpRequest();
 
 				if (

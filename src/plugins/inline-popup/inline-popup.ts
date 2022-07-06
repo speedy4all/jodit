@@ -34,9 +34,7 @@ import {
 	keys,
 	camelCase
 } from 'jodit/core/helpers';
-import { Dom } from 'jodit/core/dom';
-import { UIElement } from 'jodit/core/ui';
-import type { Table } from 'jodit/modules/table/table';
+import { Dom, Table, ToolbarCollection, UIElement } from '../../modules';
 import { debounce, wait, autobind, watch } from 'jodit/core/decorators';
 
 /**
@@ -162,7 +160,7 @@ export class inlinePopup extends Plugin {
 		this.j.e
 			.on(
 				'getDiffButtons.mobile',
-				(toolbar: IToolbarCollection): void | Buttons => {
+				(toolbar: ToolbarCollection): void | Buttons => {
 					if (this.toolbar === toolbar) {
 						const names = this.toolbar.getButtonsNames();
 
@@ -221,12 +219,12 @@ export class inlinePopup extends Plugin {
 	private snapRange: Nullable<Range> = null;
 
 	@autobind
-	private onSelectionStart(): void {
+	private onSelectionStart() {
 		this.snapRange = this.j.s.range.cloneRange();
 	}
 
 	@autobind
-	private onSelectionEnd(e: MouseEvent): void {
+	private onSelectionEnd(e: MouseEvent) {
 		if (
 			e &&
 			e.target &&
@@ -321,27 +319,25 @@ export class inlinePopup extends Plugin {
 		s => !this.isExcludedTarget(s)
 	);
 
-	private _eventsList(): string {
-		const el = this.elmsList;
-		return el
-			.map(e => camelCase(`click_${e}`))
-			.concat(el.map(e => camelCase(`touchstart_${e}`)))
-			.join(' ');
+	private addListenersForElements() {
+		this.j.e.on(
+			this.elmsList.map(e => camelCase(`click_${e}`)).join(' '),
+			this.onClick
+		);
 	}
 
-	private addListenersForElements(): void {
-		this.j.e.on(this._eventsList(), this.onClick);
-	}
-
-	private removeListenersForElements(): void {
-		this.j.e.off(this._eventsList(), this.onClick);
+	private removeListenersForElements() {
+		this.j.e.off(
+			this.elmsList.map(e => camelCase(`click_${e}`)).join(' '),
+			this.onClick
+		);
 	}
 
 	/**
 	 * Show the inline WYSIWYG toolbar editor.
 	 */
 	@autobind
-	private showInlineToolbar(bound?: IBound): void {
+	private showInlineToolbar(bound?: IBound) {
 		this.showPopup(() => {
 			if (bound) {
 				return bound;

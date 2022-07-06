@@ -14,9 +14,9 @@ import {
 	defaultLanguage as defineLanguage,
 	error
 } from 'jodit/core/helpers/utils';
-import { isString } from 'jodit/core/helpers/checker/is-string';
-import { ucfirst } from 'jodit/core/helpers/string/ucfirst';
-import { lang } from 'jodit/core/constants';
+import { isString } from 'jodit/core/helpers/checker';
+import { ucfirst } from 'jodit/core/helpers/string';
+import { lang } from 'jodit/core/global';
 
 /**
  * Simple variant sprintf function
@@ -46,7 +46,7 @@ export const sprintf = (str: string, args?: Array<string | number>): string => {
  * Internationalization method. Uses Jodit.lang object
  * @example
  * ```javascript
- * var editor = Jodit.make("#redactor", {
+ * var editor = new Jodit("#redactor", {
  *      language: 'ru'
  * });
  * console.log(editor.i18n('Cancel')) //Отмена;
@@ -67,11 +67,11 @@ export const sprintf = (str: string, args?: Array<string | number>): string => {
  * console.log(Jodit.prototype.i18n('Hello world', 'mr.Perkins', 'day')) //Hello mr.Perkins Good day
  * ```
  */
-export function i18n(
+export const i18n = (
 	key: string,
 	params?: Array<string | number>,
 	options?: ILanguageOptions
-): string {
+): string => {
 	if (!isString(key)) {
 		throw error('i18n: Need string in first argument');
 	}
@@ -156,4 +156,4 @@ export function i18n(
 	}
 
 	return parse(key);
-}
+};

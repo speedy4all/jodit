@@ -28,7 +28,7 @@ export function cache<T, R>(
 		throw error('Getter property descriptor expected');
 	}
 
-	descriptor.get = function (this: T): R {
+	descriptor.get = function (this: T) {
 		const value = getter.call(this);
 
 		if (value && (value as IDictionary).noCache === true) {

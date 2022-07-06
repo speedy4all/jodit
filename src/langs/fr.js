@@ -219,8 +219,5 @@ module.exports = {
 	'Find Previous': 'Trouvez Précédente',
 	'Find Next': 'Suivant',
 	'Insert className': 'Insérer un nom de classe',
-	'Line height': 'Hauteur de ligne',
-	Spellchecking: 'Vérification Orthographique',
-	'Press Alt for custom resizing':
-		'Appuyez sur Alt pour un redimensionnement personnalisé'
+	'Line height': 'Hauteur de ligne'
 };

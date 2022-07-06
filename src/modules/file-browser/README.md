@@ -141,7 +141,7 @@ Jodit.make('#editor', {
 Example:
 
 ```javascript
-var editor = Jodit.make('#editor', {
+var editor = new Jodit('#editor', {
 	filebrowser: {
 		buttons: [
 			'filebrowser.upload',
@@ -330,7 +330,7 @@ Jodit.make('#editor2', {
 Example:
 
 ```javascript
-var editor = Jodit.make('#jodit', {
+var editor = new Jodit('#jodit', {
 	uploader: {
 		url: 'connector/upload.php',
 		baseurl: 'images/'

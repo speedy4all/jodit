@@ -56,7 +56,7 @@ export class limit extends Plugin {
 			jodit.e
 				.off('.limit')
 				.on('beforePaste.limit', () => {
-					snapshot = jodit.history.snapshot.make();
+					snapshot = jodit.observer.snapshot.make();
 				})
 				.on(
 					'keydown.limit keyup.limit beforeEnter.limit beforePaste.limit',
@@ -65,7 +65,7 @@ export class limit extends Plugin {
 				.on('change.limit', this.checkPreventChanging)
 				.on('afterPaste.limit', (): false | void => {
 					if (this.shouldPreventInsertHTML() && snapshot) {
-						jodit.history.snapshot.restore(snapshot);
+						jodit.observer.snapshot.restore(snapshot);
 						return false;
 					}
 				});
@@ -111,7 +111,7 @@ export class limit extends Plugin {
 	 * Check if some external changing should be prevented
 	 */
 	@autobind
-	private checkPreventChanging(newValue: string, oldValue: string): void {
+	private checkPreventChanging(newValue: string, oldValue: string) {
 		const { jodit } = this;
 		const { limitWords, limitChars } = jodit.o;
 

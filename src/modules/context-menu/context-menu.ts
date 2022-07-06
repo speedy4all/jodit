@@ -16,12 +16,10 @@ import type { IContextMenu, IContextMenuAction } from 'jodit/types';
 import { Popup } from 'jodit/core/ui/popup';
 import { Button } from 'jodit/core/ui/button';
 import { isArray } from 'jodit/core/helpers/checker';
-import { component } from 'jodit/core/decorators/component/component';
 
 /**
  * Module to generate context menu
  */
-@component
 export class ContextMenu extends Popup implements IContextMenu {
 	/** @override */
 	override className(): string {
@@ -70,9 +68,8 @@ export class ContextMenu extends Popup implements IContextMenu {
 			content.appendChild(action.container);
 		});
 
-		this.setContent(content).open(
-			() => ({ left: x, top: y, width: 0, height: 0 }),
-			true
-		);
+		super
+			.setContent(content)
+			.open(() => ({ left: x, top: y, width: 0, height: 0 }), true);
 	}
 }

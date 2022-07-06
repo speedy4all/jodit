@@ -10,11 +10,16 @@
  * @module decorators/idle
  */
 
-import type { DecoratorHandler, IDictionary, IComponent } from 'jodit/types';
+import type {
+	DecoratorHandler,
+	IDictionary,
+	IViewBased,
+	IViewComponent
+} from 'jodit/types';
 import { Component, STATUSES } from 'jodit/core/component';
-import { error, isFunction } from 'jodit/core/helpers';
+import { error, isFunction, isViewObject } from 'jodit/core/helpers';
 
-export function idle<V extends IComponent = IComponent>(): DecoratorHandler {
+export function idle<V = IViewComponent | IViewBased>(): DecoratorHandler {
 	return <T extends Component & IDictionary>(
 		target: IDictionary,
 		propertyKey: string
@@ -24,12 +29,14 @@ export function idle<V extends IComponent = IComponent>(): DecoratorHandler {
 		}
 
 		target.hookStatus(STATUSES.ready, (component: V) => {
-			const { async } = component;
+			const view = isViewObject(component)
+				? component
+				: (component as unknown as IViewComponent).jodit;
 
 			const originalMethod = (component as any)[propertyKey];
 
-			(component as any)[propertyKey] = (...args: unknown[]): number =>
-				async.requestIdleCallback(
+			(component as any)[propertyKey] = (...args: unknown[]) =>
+				view.async.requestIdleCallback(
 					originalMethod.bind(component, ...args)
 				);
 		});

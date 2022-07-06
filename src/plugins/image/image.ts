@@ -56,10 +56,6 @@ Config.prototype.controls.image = {
 				url: async (url: string, text: string) => {
 					editor.s.restore();
 
-					if (/^[a-z\d_-]+(\.[a-z\d_-]+)+/i.test(url)) {
-						url = '//' + url;
-					}
-
 					const image: HTMLImageElement =
 						sourceImage || editor.createInside.element('img');
 

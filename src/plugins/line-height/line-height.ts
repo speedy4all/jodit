@@ -22,7 +22,7 @@ export class lineHeight extends Plugin {
 	override buttons: Plugin['buttons'] = [
 		{
 			name: 'lineHeight',
-			group: 'font'
+			group: 'font-style'
 		}
 	];
 
@@ -35,7 +35,7 @@ export class lineHeight extends Plugin {
 	}
 
 	@autobind
-	private applyLineHeight(ignore: string, ignoreA: any, value: any): void {
+	private applyLineHeight(ignore: string, ignoreA: any, value: any) {
 		const { s, createInside: c, editor: root, o } = this.j;
 
 		if (!s.isFocused()) {

@@ -11,8 +11,8 @@
 import './select.less';
 
 import type { IUISelect, IViewBased } from 'jodit/types';
-import { attr } from 'jodit/core/helpers/utils/utils';
-import { component } from 'jodit/core/decorators/component/component';
+import { attr } from 'jodit/core/helpers';
+import { component } from 'jodit/core/decorators';
 import { UIInput } from 'jodit/core/ui/form/inputs/input/input';
 import {
 	inputValidators,
@@ -49,7 +49,7 @@ export class UISelect extends UIInput implements IUISelect {
 		const { j } = this,
 			{ nativeInput } = this;
 
-		const opt = (): HTMLOptionElement => j.create.element('option');
+		const opt = () => j.create.element('option');
 
 		if (state.placeholder !== undefined) {
 			const option = opt();

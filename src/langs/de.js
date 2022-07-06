@@ -229,8 +229,5 @@ module.exports = {
 	'Find Previous': 'Suche vorherige',
 	'Find Next': 'Weitersuchen',
 	'Insert className': 'className (CSS) einfügen',
-	'Line height': 'Zeilenhöhe',
-	Spellchecking: 'Rechtschreibprüfung',
-	'Press Alt for custom resizing':
-		'Drücken Sie Alt für benutzerdefinierte Größenanpassung'
+	'Line height': 'Zeilenhöhe'
 };
