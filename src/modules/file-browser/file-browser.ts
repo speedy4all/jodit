@@ -28,7 +28,8 @@ import type {
 	IUploaderOptions,
 	IDialog,
 	CanUndef,
-	IViewOptions
+	IViewOptions,
+	CallbackFunction
 } from 'jodit/types';
 
 import { Storage } from 'jodit/core/storage';
@@ -37,7 +38,8 @@ import {
 	isFunction,
 	isString,
 	ConfigProto,
-	trim
+	trim,
+	isAbort
 } from 'jodit/core/helpers';
 import { ViewWithToolbar } from 'jodit/core/view/view-with-toolbar';
 
@@ -90,8 +92,10 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 	dataProvider!: IFileBrowserDataProvider;
 
 	// eslint-disable-next-line no-unused-vars
-	private onSelect(callback?: (_: IFileBrowserCallBackData) => void) {
-		return () => {
+	private onSelect(
+		callback?: (_: IFileBrowserCallBackData) => void
+	): CallbackFunction {
+		return (): boolean => {
 			if (this.state.activeElements.length) {
 				const files: string[] = [];
 				const isImages: boolean[] = [];
@@ -124,7 +128,11 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 		};
 	}
 
-	private errorHandler = (resp: Error | IFileBrowserAnswer) => {
+	private errorHandler = (resp: Error | IFileBrowserAnswer): void => {
+		if (isAbort(resp)) {
+			return;
+		}
+
 		if (resp instanceof Error) {
 			this.status(this.i18n(resp.message));
 		} else {
@@ -159,6 +167,10 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 	 */
 	@autobind
 	status(message: string | Error, success?: boolean): void {
+		if (!message || isAbort(message)) {
+			return;
+		}
+
 		if (!isString(message)) {
 			message = message.message;
 		}
@@ -258,7 +270,7 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 		});
 	}
 
-	private initUploader(editor?: IFileBrowser | IJodit) {
+	private initUploader(editor?: IFileBrowser | IJodit): void {
 		const self = this,
 			options = editor?.options?.uploader,
 			uploaderOptions: IUploaderOptions<IUploader> = ConfigProto(
@@ -266,7 +278,7 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 				Config.defaultOptions.uploader
 			) as IUploaderOptions<IUploader>;
 
-		const uploadHandler = () => loadItems(this);
+		const uploadHandler = (): Promise<any> => loadItems(this);
 
 		self.uploader = self.getInstance('Uploader', uploaderOptions);
 		self.uploader
@@ -399,7 +411,7 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 		self.setStatus(STATUSES.ready);
 	}
 
-	private proxyDialogEvents(self: FileBrowser) {
+	private proxyDialogEvents(self: FileBrowser): void {
 		['afterClose', 'beforeOpen'].forEach(proxyEvent => {
 			self.dialog.events.on(self.dialog, proxyEvent, () => {
 				this.e.fire(proxyEvent);
@@ -412,11 +424,11 @@ export class FileBrowser extends ViewWithToolbar implements IFileBrowser {
 			return;
 		}
 
+		super.destruct();
+
 		this.dialog.destruct();
 		this.events && this.e.off('.filebrowser');
 		this.uploader && this.uploader.destruct();
-
-		super.destruct();
 	}
 }
 

@@ -9,11 +9,450 @@
 > -   :house: [Internal]
 > -   :nail_care: [Polish]
 
-## 3.14.0
+## 3.18.8
+
+#### :house: Internal
+
+-   Used plugin `webpack.ids.DeterministicModuleIdsPlugin` for more reliable sharing of exported module names between builds.
+    Now you can include plugins from 'es5' in the assembly for 'es2018.en'.
+-   Deps
+    ```
+     @types/node                       ^17.0.36  →  ^17.0.41
+     @typescript-eslint/eslint-plugin   ^5.27.0  →   ^5.27.1
+     @typescript-eslint/parser          ^5.27.0  →   ^5.27.1
+     cssnano-preset-advanced             ^5.3.6  →    ^5.3.7
+     eslint                             ^8.16.0  →   ^8.17.0
+     lint-staged                        ^12.4.3  →   ^13.0.0
+     terser-webpack-plugin               ^5.3.1  →    ^5.3.3
+     typescript                          ^4.7.2  →    ^4.7.3
+     webpack                            ^5.72.1  →   ^5.73.0
+     webpack-dev-server                  ^4.9.0  →    ^4.9.2
+     core-js                            ^3.22.7  →   ^3.22.8
+    ```
+
+## 3.18.7
+
+#### :rocket: New Feature
+
+-   Allow custom resizing with Alt btn [How to resize image with the handle bars without fixed aspect ratio #839](https://github.com/xdan/jodit/issues/839)
 
 #### :bug: Bug Fix
 
--  Images not printed on print button click
+-   [Multiple modals 'Paste as HTML' after longer pressing ctrl+v #849](https://github.com/xdan/jodit/issues/849)
+-   [All added videos are deleted when you click Delete or Backspace #847](https://github.com/xdan/jodit/issues/847)
+
+## 3.18.6
+
+#### :rocket: New Feature
+
+-   Separate plugin for voice recognition and input of recognized text into the editor.
+    [Feature Request: Add ability for user to dictate using local device microphone as input #828](https://github.com/xdan/jodit/issues/828)
+    > This plugin is not included in the main Jodit build. It must be connected separately [Подробнее](./src/plugins/speech/speech-recognize/README.md)
+
+## 3.18.5
+
+#### :boom: Breaking Change
+
+-   Added default table style to `createAttributes` option:
+
+```js
+Jodit.defaultOptions.createAttributes = {
+	table: {
+		style: 'border-collapse:collapse;width: 100%;'
+	}
+};
+```
+
+#### :bug: Bug Fix
+
+-   Fixed a bug where the download cancellation business exceptions were shown as errors in the file browser. Also fixed uncatchable exceptions inside Async.promise
+-   [Fixed Eraser delete "<a>" tag! #705 #845](https://github.com/xdan/jodit/pull/845) Thanks @s-renier-taonix-fr
+-   [Update Docker Env #844](https://github.com/xdan/jodit/pull/844) Thanks @s-renier-taonix-fr
+-   Fixed table default styles [Jodit doesn't keep table borders #295](https://github.com/xdan/jodit/issues/295)
+-   [All td elements got double border style. #842](https://github.com/xdan/jodit/issues/842)
+
+## 3.18.4
+
+#### :rocket: New Feature
+
+-   Added option `uploader.processFileName` - The method can be used to change the name of the uploaded file
+
+```js
+Jodit.make('#editor', {
+	uploader: {
+		url: 'some-connector.php',
+		processFileName: (key, file, name) => {
+			return [key, file, 'some-prefix_' + name];
+		}
+	}
+});
+```
+
+-   Fixed file naming error when uploading to server
+
+## 3.18.3
+
+#### :bug: Bug Fix
+
+-   Fixed a bug where pressing `Esc` did not close the dialog
+
+## 3.18.2
+
+#### :boom: Breaking Change
+
+The on/one/off methods of the Jodit Event System have been greatly simplified:
+
+instead:
+
+```js
+editor.e.on(
+	'click',
+	() => {
+		alert('Clicked!');
+	},
+	undefined,
+	true
+);
+```
+
+Now:
+
+```js
+editor.e.on(
+	'click',
+	() => {
+		alert('Clicked!');
+	},
+	{
+		top: true
+	}
+);
+```
+
+Also, the methods now support an array of events:
+
+```js
+editor.e.on('click mousedown mouseup', () => {
+	alert('Some event!');
+});
+editor.e.on(['click', 'mousedown', 'mouseup'], () => {
+	alert('Some event!');
+});
+```
+
+#### :rocket: New Feature
+
+-   All components have their own instance of the Async module. What used to be `this.j.async` is now `this.async`.
+-   New option `resizer.useAspectRatio` [How to resize image with the handle bars without fixed aspect ratio](https://github.com/xdan/jodit/issues/839)
+-   Added event `applyLink` for issue [change default target for all links #841](https://github.com/xdan/jodit/issues/841)
+
+#### :bug: Bug Fix
+
+-   Fixed non-removal of the event handler on destruct
+-   Extra br are not removed
+-   [Bold removing line break in table #838](https://github.com/xdan/jodit/issues/838)
+-   [Cleans <br> that should be there #835](https://github.com/xdan/jodit/issues/835)
+-   [Cursor goes out of edit box when moving to a new line #824](https://github.com/xdan/jodit/issues/824)
+-   [Couldn't click next line button, when table is resized. #831](https://github.com/xdan/jodit/issues/831)
+-   [Unable to add line height for Html pasted content. #830](https://github.com/xdan/jodit/issues/830)
+
+#### :house: Internal
+
+-   Instead of a self-written truncated polyfill for `Array.from`, the core-js module is used
+-   Moved the test files to the appropriate directories
+-   Update deps
+
+    ```
+     @types/node                       ^17.0.23  →  ^17.0.31
+     @typescript-eslint/eslint-plugin   ^5.19.0  →   ^5.22.0
+     @typescript-eslint/parser          ^5.19.0  →   ^5.22.0
+     autoprefixer                       ^10.4.4  →   ^10.4.7
+     axios                              ^0.26.1  →   ^0.27.2
+     eslint                             ^8.13.0  →   ^8.14.0
+     express                            ^4.17.3  →   ^4.18.1
+     karma                              ^6.3.17  →   ^6.3.19
+     lint-staged                        ^12.3.7  →   ^12.4.1
+     mocha                               ^9.2.2  →   ^10.0.0
+     postcss                           >=8.4.12  →  >=8.4.13
+     stylelint                          ^14.6.1  →   ^14.8.2
+     ts-loader                           ^9.2.8  →    ^9.3.0
+     tslib                               ^2.3.1  →    ^2.4.0
+     typescript                          ^4.6.3  →    ^4.6.4
+     webpack-dev-server                  ^4.8.1  →    ^4.9.0
+     core-js                            ^3.21.1  →   ^3.22.4
+    ```
+
+## 3.17.1
+
+#### :boom: Breaking Change
+
+Some minifier configurations do not correctly handle inheritance in the `component` decorator,
+we added some helper code earlier to make this work correctly.
+We tried to determine belonging by the name of the component and not by its constructor or prototype.
+Because in some build system(ex. create-react-app):
+
+```js
+@component
+class A extends Component {
+	className() {
+		return 'A';
+	}
+}
+const a = new A();
+a instanceof Component; // false - only in some cases
+elm.className() === A.prototype.className(); // true
+```
+
+In most cases, this entailed new bugs, so in 3.17 we decided to remove this heuristic.
+If something broke in your assembly, please create an [issue on github](https://github.com/xdan/jodit/issues/new).
+
+#### :bug: Bug Fix
+
+-   Fixed processing of inserting videos from YouTube. Now you can start playing the video.
+-   [selection.insertHTML causes infinite blur loop when Jodit editor not active](https://github.com/xdan/jodit/issues/819) Added `insertCursorAfter` argument.
+-   [Preview missing non styled content in a paragraph when there is any styled text in that paragraph #823](https://github.com/xdan/jodit/issues/823)
+-   [Image hyperlink is not working without https:// #821](https://github.com/xdan/jodit/issues/821)
+
+```js
+const editor = Jodit.make('#editor');
+editor.s.insertHTML('test', false);
+```
+
+#### :house: Internal
+
+-   Update
+
+```
+@typescript-eslint/eslint-plugin  ^5.16.0  →  ^5.19.0
+@typescript-eslint/parser         ^5.16.0  →  ^5.19.0
+cssnano-preset-advanced            ^5.3.1  →   ^5.3.3
+eslint                            ^8.12.0  →  ^8.13.0
+eslint-plugin-tsdoc               ^0.2.14  →  ^0.2.16
+prettier                           ^2.6.1  →   ^2.6.2
+webpack                           ^5.70.0  →  ^5.72.0
+webpack-dev-server                 ^4.7.4  →   ^4.8.1
+yargs                             ^17.4.0  →  ^17.4.1
+```
+
+## 3.16.6
+
+#### :bug: Bug Fix
+
+-   [Keyboard Trap in Source Code mode #817](https://github.com/xdan/jodit/issues/817) Author: @haruanm
+-   ["Uncaught TypeError: Cannot redefine property: \_\_activeTab" occurs when I use 'brush' button twice in inline-popup for a element. #815](https://github.com/xdan/jodit/issues/815)
+
+## 3.16.5
+
+#### :rocket: New Feature
+
+-   imageProcessor.replaceDataURIToBlobIdInView
+    The `imageProcessor` plugin has added the functionality of replacing data-uri objects in the `src` of images with `blob-url`.
+    This allows you to more conveniently work with an HTML document without loading the processor.
+    Checks if the `imageProcessor.replaceDataURIToBlobIdInView` option is enabled then converts image src which has `data:base64`
+    to [blob-object-uri](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL)
+
+In this case, `Jodit.value` returns images with `data-uri`. And original `textarea` itself does the reverse replacement take place.
+
+```js
+const editor = Jodit.make('#editor', {
+	imageProcessor: {
+		replaceDataURIToBlobIdInView: true // This is the default value, but for examples we set it
+	}
+});
+
+editor.value =
+	'<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="/></p>';
+console.log(editor.value); // <p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="/></p>
+console.log(editor.getElementValue()); // '<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="/></p>'
+console.log(editor.getNativeEditorValue()); // <p><img src="blob:http://localhost:2000/03377cf0-6260-4351-82ad-8a8901ea104f"></p>
+```
+
+-   Method `Jodit.setElementValue` marked us deprecated and will be removed in next major release.
+
+#### :house: Internal
+
+-   Update
+
+```
+@types/node                       ^17.0.21  →  ^17.0.23
+@typescript-eslint/eslint-plugin   ^5.14.0  →   ^5.16.0
+@typescript-eslint/parser          ^5.14.0  →   ^5.16.0
+autoprefixer                       ^10.4.2  →   ^10.4.4
+cssnano-preset-advanced             ^5.2.4  →    ^5.3.1
+eslint                             ^8.11.0  →   ^8.12.0
+lint-staged                        ^12.3.5  →   ^12.3.7
+postcss                            >=8.4.8  →  >=8.4.12
+prettier                            ^2.5.1  →    ^2.6.1
+stylelint                          ^14.5.3  →   ^14.6.1
+typescript                          ^4.6.2  →    ^4.6.3
+yargs                              ^17.3.1  →   ^17.4.0
+```
+
+## 3.16.4
+
+#### :bug: Bug Fix
+
+-   [Sass compile error Css3 min() #809](https://github.com/xdan/jodit/issues/809)
+-   [The preview popup has double scrollbars #808](https://github.com/xdan/jodit/issues/808)
+-   Fixed bug with sync editor size with iframe mode (Works only with [ResizeObserver](https://caniuse.com/resizeobserver))
+
+## 3.16.3
+
+-   Fixed composition `wait` and `debounce` decorators
+
+## 3.16.2
+
+#### :bug: Bug Fix
+
+-   ["Uncaught TypeError: this.setEditorValue is not a function" with Japanese input method #807](https://github.com/xdan/jodit/issues/807)
+
+## 3.16.1
+
+#### :rocket: New Feature
+
+-   Added `spellcheck` plugin.
+-   Added `Config.pasteHTMLActionList` and `Config.pasteFromWordActionList` options https://github.com/xdan/jodit/issues/802.
+-   Added `Jodit.synchronizeValues()` method. The method synchronizes the WYSIWYG values of the editor
+-   and the original input field. The method works through `Async.throttle`.
+-   Added a new class for working with DOM without blocking the main thread `LazyWalker`
+-   Search engine replace on `LazyWalker`
+-   CleanHTML plugin engine replace on `LazyWalker`
+-   Search plugin now highlights all found options https://github.com/xdan/jodit/issues/798
+-   Added `Jodit.constants` https://github.com/xdan/jodit/issues/806
+
+#### :boom: Breaking Change
+
+-   Renamed `wrap-text-nodes` plugin to `wrap-nodes`
+-   Option `spellcheck` = false by default. This is due to the fact that the built-in spell check slows down the editor very much on large tests.
+-   Enabled `@typescript-eslint/explicit-function-return-type` in eslint
+
+#### :bug: Bug Fix
+
+-   Fixed a bug in the `watch` decorator, when multiple watchers were set, it used only one context
+-   [Default is not working for insert ordered list and insert unordered list #799](https://github.com/xdan/jodit/issues/799)
+-   [In print preview, table border color and background color is not showing #803](https://github.com/xdan/jodit/issues/803)
+
+#### :house: Internal
+
+-   `clean-html` plugin now works via `requestIdleCallback` and doesn't slow down the browser
+
+## 3.15.3
+
+#### :boom: Breaking Change
+
+-   `Observer` module renamed to `History`, accessed via `Jodit.history`
+-   `Jodit.observer` field deprecated and will be removed in future releases
+-   Changed to `history` in `observer` settings. The `observer` field has been deprecated.
+-   Removed `stack` field from `History` class (former `Observer`).
+-   Separated default editor timeout and `history.timeout`. Now the second setting is just for history.
+    Timeouts for all asynchronous operations in Jodit now apply the `defaultTimeout` setting
+
+Before:
+
+```js
+const editor = Jodit.make({
+	observer: {
+		timeout: 122,
+		maxHistoryLength: 100
+	}
+});
+console.log(editor.defaultTimeout); // 122
+editor.observer.stack.clear();
+```
+
+Now:
+
+```js
+const editor = Jodit.make({
+	defaultTimeout: 122,
+	history: {
+		timeout: 1000,
+		maxHistoryLength: 100
+	}
+});
+console.log(editor.defaultTimeout); // 122
+editor.history.clear();
+```
+
+-   When adding information to the editor via `Jodit.value`, the history of changes will be process immediately,
+    without a timeout. Read more https://github.com/xdan/jodit/issues/792
+
+#### :bug: Bug Fix
+
+-   [Colors popup closes when I select the secondary tab (Text) #171](https://github.com/jodit/jodit-react/issues/171)
+
+## 3.15.2
+
+-   Fixed a bug when it was impossible to select a normal font after selecting any other
+-   [Dropdowns not hiding when clicking again on the arrow #791](https://github.com/xdan/jodit/issues/791)
+-   [The problem that the selected text disappears #790](https://github.com/xdan/jodit/issues/790)
+
+## 3.15.1
+
+#### :rocket: New Feature
+
+-   When copying elements, their hierarchy is taken into, for example, if you selected `<ul><li><span>|test|</span></li></ul>`,
+    then when copying to the clipboard, the selection will be expanded to root element `UL`.
+    For this, the [[Select.expandSelection]] method has been added to the [[Select]] class.
+    [Ordered Bullets are getting changed to unordered bullets after copy and pasting within the editor #789](https://github.com/xdan/jodit/issues/789)
+    > Method called before copy/cut/selectall operations
+
+#### :house: Internal
+
+-   The [[Dom.isNode]] method now uses Duck Typing instead of inctanceof, this seems to be enough
+-   Update
+    @types/node ^17.0.18 → ^17.0.21
+    @typescript-eslint/eslint-plugin ^5.12.0 → ^5.13.0
+    @typescript-eslint/parser ^5.12.0 → ^5.13.0
+    cssnano-preset-advanced ^5.1.12 → ^5.2.1
+    eslint ^8.9.0 → ^8.10.0
+    eslint-config-prettier ^8.4.0 → ^8.5.0
+    karma ^6.3.16 → ^6.3.17
+    mini-css-extract-plugin ^2.5.3 → ^2.6.0
+    postcss >=8.4.6 → >=8.4.7
+    stylelint ^14.5.1 → ^14.5.3
+    ts-loader ^9.2.6 → ^9.2.7
+    typescript ^4.5.5 → ^4.6.2
+    webpack ^5.69.1 → ^5.70.0
+
+## 3.14.2
+
+#### :rocket: New Feature
+
+-   Added an experimental module for working with VDom<->Dom, an attempt to switch to this technology in the editor
+
+#### :house: Internal
+
+-   @types/node ^17.0.15 → ^17.0.18
+-   @typescript-eslint/eslint-plugin ^5.10.2 → ^5.12.0
+-   @typescript-eslint/parser ^5.10.2 → ^5.12.0
+-   axios ^0.25.0 → ^0.26.0
+-   cssnano-preset-advanced ^5.1.11 → ^5.1.12
+-   eslint ^8.8.0 → ^8.9.0
+-   eslint-config-prettier ^8.3.0 → ^8.4.0
+-   express ^4.17.2 → ^4.17.3
+-   karma ^6.3.15 → ^6.3.16
+-   lint-staged ^12.3.3 → ^12.3.4
+-   mocha ^9.2.0 → ^9.2.1
+-   stylelint ^14.3.0 → ^14.5.1
+-   stylelint-config-standard ^24.0.0 → ^25.0.0
+-   webpack ^5.68.0 → ^5.69.1
+-   core-js ^3.21.0 → ^3.21.1
+
+## 3.14.1
+
+#### :house: Internal
+
+-   [(change) improved a few german translations #783](https://github.com/xdan/jodit/pull/783)
+
+#### :boom: Breaking Change
+
+-   Changed the positions of some buttons on different resolutions for greater density
+-   Disabled the ability to drag and drop elements on mobile devices as it affected page scrollability
+
+#### :bug: Bug Fix
+
+-   [Cannot format table cells in PRO version #786](https://github.com/xdan/jodit/issues/786) -[Build error: Property or signature expected. #174](https://github.com/jodit/jodit-react/issues/174)
 
 ## 3.13.5
 
@@ -282,34 +721,28 @@ console.log(Jodit.modules.UIButton.componentName); // jodit-ui-button
 -   [Remember last opened folder with FileBrowser #675](https://github.com/xdan/jodit/issues/675)
     Boolean option `filebrowser.saveStateInStorage` split to dictionary:
 
-```ts
-interface IFileBrowserOptions
-
-:
-{
-}
-saveStateInStorage: false | {
-	storeLastOpenedFolder? : boolean;
-	storeView? : boolean;
-	storeSortBy? : boolean;
-};
+```typescript
+interface IFileBrowserOptions {
+	saveStateInStorage:
+		| false
+		| {
+				storeLastOpenedFolder?: boolean;
+				storeView?: boolean;
+				storeSortBy?: boolean;
+		  };
 }
 ```
 
 By default:
 
 ```js
-{
+opt = {
 	saveStateInStorage: {
 		storeLastOpenedFolder: true,
-			storeView
-	:
-		true,
-			storeSortBy
-	:
-		true
+		storeView: true,
+		storeSortBy: true
 	}
-}
+};
 ```
 
 Disable it:
@@ -411,9 +844,8 @@ await new Ajax(editor, {
 await new Ajax(editor, {
 	url: 'index.php'
 })
-	.send()˚
-.
-then(resp => resp.json()); // {success: true, data: ...}
+	.send()
+	.then(resp => resp.json()); // {success: true, data: ...}
 ```
 
 -   In `.npmignore` added:
@@ -1080,11 +1512,11 @@ Related with https://github.com/xdan/jodit/issues/574. In some cases need to lim
 -   @property {IUIOption[]} link.selectOptionsClassName=[] The list of the option for the select (to use with
     modeClassName="select")
 -   ex: [
--                                                                                                                             	{ value: "", text: "" },
--                                                                                                                             	{ value: "val1", text: "text1" },
--                                                                                                                             	{ value: "val2", text: "text2" },
--                                                                                                                             	{ value: "val3", text: "text3" }
--                                                                                                                             ]
+-                                                                                                                                                                                                                                                                                                       	{ value: "", text: "" },
+-                                                                                                                                                                                                                                                                                                       	{ value: "val1", text: "text1" },
+-                                                                                                                                                                                                                                                                                                       	{ value: "val2", text: "text2" },
+-                                                                                                                                                                                                                                                                                                       	{ value: "val3", text: "text3" }
+-                                                                                                                                                                                                                                                                                                       ]
     PR: https://github.com/xdan/jodit/pull/577 Thanks @s-renier-taonix-fr
 
 ##### New option `statusbar: boolean = true`
@@ -1395,12 +1827,12 @@ https://github.com/xdan/jodit/issues/359
 ### Features
 
 -   All `less` variables were replaced to css custom properties for modern browsers.
--   Added `WrapTextNodes` plugin - it wrap all alone text node(or inline elements) inside `options.enter` element. You can
+-   Added `WrapNodes` plugin - it wrap all alone text node(or inline elements) inside `options.enter` element. You can
     disable this behaviour:
 
 ```js
 const editor = Jodit.make('#editor', {
-	disablePlugins: ['WrapTextNodes']
+	disablePlugins: ['WrapNodes']
 });
 ```
 
@@ -2235,14 +2667,10 @@ var editor = new Jodit('#example2_0', {
 Dom Module is now compatible with jQuery objects
 
 ```javascript
-var a = jQuery("<a href="
-#link
-">Link</a>"
-)
-;
+var a = jQuery('<a href="#link">Link</a>');
 jodit.modules.Dom('.selector').append(a);
-jodit.modules.Dom(jQuery("#someid")).val();
-jodit.modules.Dom("#someid").val();
+jodit.modules.Dom(jQuery('#someid')).val();
+jodit.modules.Dom('#someid').val();
 ```
 
 But you must remember that Jodit.modules.Dom! = JQuery

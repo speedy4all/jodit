@@ -11,7 +11,6 @@
 import './image-properties.less';
 
 import type { IDialog, IFileBrowserCallBackData, IJodit } from 'jodit/types';
-import { Config } from 'jodit/config';
 
 import {
 	Alert,
@@ -42,6 +41,8 @@ import { watch, autobind } from 'jodit/core/decorators';
 import { openImageEditor } from 'jodit/modules/image-editor/image-editor';
 import { hAlignElement } from 'jodit/plugins/image/helpers';
 
+import './config';
+
 /**
  * Plug-in for image editing window
  *
@@ -55,104 +56,6 @@ import { hAlignElement } from 'jodit/plugins/image/helpers';
  * });
  * ```
  */
-
-declare module 'jodit/config' {
-	interface Config {
-		image: {
-			dialogWidth: number;
-
-			/**
-			 * Open editing dialog after double click on image
-			 */
-			openOnDblClick: boolean;
-
-			/**
-			 * Show edit 'src' input
-			 */
-			editSrc: boolean;
-
-			/**
-			 * Show crop/resize btn
-			 */
-			useImageEditor: boolean;
-
-			/**
-			 * Show edit 'title' input
-			 */
-			editTitle: boolean;
-
-			/**
-			 * Show edit 'alt' input
-			 */
-			editAlt: boolean;
-
-			/**
-			 * Show edit image link's options
-			 */
-			editLink: boolean;
-
-			/**
-			 * Show edit image size's inputs
-			 */
-			editSize: boolean;
-
-			/**
-			 * Show edit margin inputs
-			 */
-			editMargins: boolean;
-			editBorderRadius: boolean;
-
-			/**
-			 * Show edit classNames input
-			 */
-			editClass: boolean;
-
-			/**
-			 * Show style edit input
-			 */
-			editStyle: boolean;
-
-			/**
-			 * Show edit ID input
-			 */
-			editId: boolean;
-
-			/**
-			 * Show Alignment selector
-			 */
-			editAlign: boolean;
-
-			/**
-			 * Show preview image
-			 */
-			showPreview: boolean;
-
-			/**
-			 * Select image after close dialog
-			 */
-			selectImageAfterClose: boolean;
-		};
-	}
-}
-
-Config.prototype.image = {
-	dialogWidth: 600,
-	openOnDblClick: true,
-	editSrc: true,
-	useImageEditor: true,
-	editTitle: true,
-	editAlt: true,
-	editLink: true,
-	editSize: true,
-	editBorderRadius: true,
-	editMargins: true,
-	editClass: true,
-	editStyle: true,
-	editId: true,
-	editAlign: true,
-	showPreview: true,
-	selectImageAfterClose: true
-};
 
 const normalSizeToString = (value: string): string => {
 	value = trim(value);
@@ -181,6 +84,10 @@ export class imageProperties extends Plugin {
 		},
 		sizeIsLocked: true,
 		marginIsLocked: true
+	};
+
+	private activeTabState: { __activeTab: 'Image' | 'Advanced' } = {
+		__activeTab: 'Image'
 	};
 
 	@watch('state.marginIsLocked')
@@ -248,6 +155,7 @@ export class imageProperties extends Plugin {
 	 */
 	protected open(): void | false {
 		this.makeForm();
+		this.activeTabState.__activeTab = 'Image';
 
 		this.j.e.fire('hidePopup');
 
@@ -280,7 +188,7 @@ export class imageProperties extends Plugin {
 			theme: this.j.o.theme,
 			language: this.j.o.language,
 			minWidth: Math.min(400, screen.width),
-			minHeight: 400,
+			minHeight: 590,
 			buttons: ['fullsize', 'dialog.close']
 		});
 
@@ -288,7 +196,7 @@ export class imageProperties extends Plugin {
 			opt = editor.o,
 			i18n = editor.i18n.bind(editor),
 			buttons = {
-				check: Button(editor, 'ok', 'Apply'),
+				check: Button(editor, 'ok', 'Apply', 'primary'),
 				remove: Button(editor, 'bin', 'Delete')
 			};
 
@@ -319,10 +227,14 @@ export class imageProperties extends Plugin {
 
 		if (tabsBox) {
 			tabsBox.appendChild(
-				TabsWidget(editor, [
-					{ name: 'Image', content: mainTab(editor) },
-					{ name: 'Advanced', content: positionTab(editor) }
-				])
+				TabsWidget(
+					editor,
+					[
+						{ name: 'Image', content: mainTab(editor) },
+						{ name: 'Advanced', content: positionTab(editor) }
+					],
+					this.activeTabState
+				)
 			);
 		}
 
@@ -415,11 +327,11 @@ export class imageProperties extends Plugin {
 			lockSize
 		} = refs<HTMLInputElement>(this.form);
 
-		const updateLock = () => {
+		const updateLock = (): void => {
 				lockMargin.checked = this.state.marginIsLocked;
 				lockSize.checked = this.state.sizeIsLocked;
 			},
-			updateAlign = () => {
+			updateAlign = (): void => {
 				if (
 					image.style.cssFloat &&
 					['left', 'right'].indexOf(
@@ -437,24 +349,24 @@ export class imageProperties extends Plugin {
 					}
 				}
 			},
-			updateBorderRadius = () => {
+			updateBorderRadius = (): void => {
 				borderRadius.value = (
 					parseInt(image.style.borderRadius || '0', 10) || '0'
 				).toString();
 			},
-			updateId = () => {
+			updateId = (): void => {
 				id.value = attr(image, 'id') || '';
 			},
-			updateStyle = () => {
+			updateStyle = (): void => {
 				style.value = attr(image, 'style') || '';
 			},
-			updateClasses = () => {
+			updateClasses = (): void => {
 				classes.value = (attr(image, 'class') || '').replace(
 					/jodit_focused_image[\s]*/,
 					''
 				);
 			},
-			updateMargins = () => {
+			updateMargins = (): void => {
 				if (!opt.image.editMargins) {
 					return;
 				}
@@ -494,7 +406,7 @@ export class imageProperties extends Plugin {
 
 				this.state.marginIsLocked = equal;
 			},
-			updateSizes = () => {
+			updateSizes = (): void => {
 				const width =
 						attr(image, 'width') ||
 						css(image, 'width', true) ||
@@ -528,7 +440,7 @@ export class imageProperties extends Plugin {
 					return Math.abs(w - h * this.state.ratio) < 1;
 				})();
 			},
-			updateText = () => {
+			updateText = (): void => {
 				imageTitle.value = attr(image, 'title') || '';
 
 				imageAlt.value = attr(image, 'alt') || '';
@@ -545,7 +457,7 @@ export class imageProperties extends Plugin {
 					imageLinkOpenInNewTab.checked = false;
 				}
 			},
-			updateSrc = () => {
+			updateSrc = (): void => {
 				imageSrc.value = attr(image, 'src') || '';
 
 				if (imageViewSrc) {
@@ -689,8 +601,7 @@ export class imageProperties extends Plugin {
 			);
 		}
 
-		this.j.setEditorValue();
-
+		this.j.synchronizeValues();
 		this.dialog.close();
 	}
 
@@ -701,7 +612,7 @@ export class imageProperties extends Plugin {
 	private openImageEditor(): void {
 		const url: string = attr(this.state.image, 'src') || '',
 			a = this.j.c.element('a'),
-			loadExternal = () => {
+			loadExternal = (): void => {
 				if (a.host !== location.host) {
 					Confirm(
 						this.j.i18n(

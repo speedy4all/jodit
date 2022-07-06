@@ -9,10 +9,10 @@
  */
 
 import type { IControlType, IJodit } from 'jodit/types';
-import { Dom } from '../../../../core/dom';
-import { isString } from '../../../../core/helpers/checker';
-import { css } from '../../../../core/helpers';
-import { hAlignElement } from '../../../image/helpers';
+import { Dom } from 'jodit/core/dom';
+import { isString } from 'jodit/core/helpers/checker/is-string';
+import { css } from 'jodit/core/helpers/utils/css';
+import { hAlignElement } from 'jodit/plugins/image/helpers';
 
 export const align: IControlType<IJodit> = {
 	name: 'left',
@@ -38,7 +38,7 @@ export const align: IControlType<IJodit> = {
 			hAlignElement(elm.firstElementChild as HTMLElement, command);
 		}
 
-		editor.setEditorValue();
+		editor.synchronizeValues();
 
 		editor.e.fire('recalcPositionPopup');
 	},
@@ -50,13 +50,13 @@ export default [
 		name: 'delete',
 		icon: 'bin',
 		tooltip: 'Delete',
-		exec: (editor: IJodit, image) => {
+		exec: (editor: IJodit, image): void => {
 			image && editor.s.removeNode(image);
 		}
 	},
 	{
 		name: 'pencil',
-		exec(editor: IJodit, current) {
+		exec(editor: IJodit, current): void {
 			const tagName = (current as HTMLElement).tagName.toLowerCase();
 
 			if (tagName === 'img') {

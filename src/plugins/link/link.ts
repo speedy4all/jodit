@@ -8,15 +8,7 @@
  * @module plugins/link
  */
 
-import type {
-	IDictionary,
-	IJodit,
-	IControlType,
-	IUIForm,
-	IUIOption,
-	Nullable
-} from 'jodit/types';
-import { Config } from 'jodit/config';
+import type { IDictionary, IJodit, IUIForm, Nullable } from 'jodit/types';
 import { Dom } from 'jodit/core/dom';
 import {
 	attr,
@@ -26,114 +18,11 @@ import {
 	refs,
 	stripTags
 } from 'jodit/core/helpers';
-import { formTemplate } from './template';
 import { Plugin } from 'jodit/core/plugin';
 import { autobind } from 'jodit/core/decorators';
 import { Dialog, UIForm } from '../../modules';
 
-declare module 'jodit/config' {
-	interface Config {
-		link: {
-			/**
-			 * Template for the link dialog form
-			 */
-			formTemplate: (editor: IJodit) => string | HTMLElement | IUIForm;
-			formClassName?: string;
-
-			/**
-			 * Follow link address after dblclick
-			 */
-			followOnDblClick: boolean;
-
-			/**
-			 * Replace inserted youtube/vimeo link to `iframe`
-			 */
-			processVideoLink: boolean;
-
-			/**
-			 * Wrap inserted link
-			 */
-			processPastedLink: boolean;
-
-			/**
-			 * Show `no follow` checkbox in link dialog.
-			 */
-			noFollowCheckbox: boolean;
-
-			/**
-			 * Show `Open in new tab` checkbox in link dialog.
-			 */
-			openInNewTabCheckbox: boolean;
-
-			/**
-			 * Use an input text to ask the classname or a select or not ask
-			 */
-			modeClassName: 'input' | 'select';
-
-			/**
-			 * Allow multiple choises (to use with modeClassName="select")
-			 */
-			selectMultipleClassName: boolean;
-
-			/**
-			 * The size of the select (to use with modeClassName="select")
-			 */
-			selectSizeClassName?: number;
-
-			/**
-			 * The list of the option for the select (to use with modeClassName="select")
-			 */
-			selectOptionsClassName: IUIOption[];
-
-			hotkeys: string[];
-		};
-	}
-}
-
-Config.prototype.link = {
-	formTemplate,
-	followOnDblClick: false,
-	processVideoLink: true,
-	processPastedLink: true,
-	noFollowCheckbox: true,
-	openInNewTabCheckbox: true,
-	modeClassName: 'input',
-	selectMultipleClassName: true,
-	selectSizeClassName: 3,
-	selectOptionsClassName: [],
-	hotkeys: ['ctrl+k', 'cmd+k']
-};
-
-Config.prototype.controls.unlink = {
-	exec: (editor: IJodit, current: Node) => {
-		const anchor: HTMLAnchorElement | false = Dom.closest(
-			current,
-			'a',
-			editor.editor
-		) as HTMLAnchorElement;
-
-		if (anchor) {
-			Dom.unwrap(anchor);
-		}
-
-		editor.setEditorValue();
-		editor.e.fire('hidePopup');
-	},
-	tooltip: 'Unlink'
-} as IControlType;
-
-Config.prototype.controls.link = {
-	isActive: (editor: IJodit): boolean => {
-		const current = editor.s.current();
-		return Boolean(current && Dom.closest(current, 'a', editor.editor));
-	},
-
-	popup: (editor: IJodit, current, self: IControlType, close: () => void) => {
-		return editor.e.fire('generateLinkForm.link', current, close);
-	},
-	tags: ['a'],
-	tooltip: 'Insert link'
-} as IControlType;
+import './config';
 
 /**
  * Process link. Insert, dblclick or remove format
@@ -158,6 +47,7 @@ export class link extends Plugin {
 		}
 
 		jodit.e.on('generateLinkForm.link', this.generateForm);
+
 		jodit.registerCommand('openLinkDialog', {
 			exec: () => {
 				const dialog = new Dialog({
@@ -182,7 +72,7 @@ export class link extends Plugin {
 	}
 
 	@autobind
-	private onDblClickOnLink(e: MouseEvent) {
+	private onDblClickOnLink(e: MouseEvent): void {
 		if (!Dom.isTag(e.target, 'a')) {
 			return;
 		}
@@ -280,7 +170,7 @@ export class link extends Plugin {
 
 		let link: false | HTMLAnchorElement;
 
-		const getSelectionText = () =>
+		const getSelectionText = (): string =>
 			link
 				? link.innerText
 				: stripTags(jodit.s.range.cloneContents(), jodit.ed);
@@ -360,18 +250,18 @@ export class link extends Plugin {
 		}
 
 		jodit.editor.normalize();
-		const snapshot = jodit.observer.snapshot.make();
+		const snapshot = jodit.history.snapshot.make();
 
 		if (unlink) {
 			jodit.e.on(unlink, 'click', (e: MouseEvent) => {
 				jodit.s.restore();
-				jodit.observer.snapshot.restore(snapshot);
+				jodit.history.snapshot.restore(snapshot);
 
 				if (link) {
 					Dom.unwrap(link);
 				}
 
-				jodit.setEditorValue();
+				jodit.synchronizeValues();
 
 				close();
 				e.preventDefault();
@@ -390,7 +280,7 @@ export class link extends Plugin {
 			jodit.s.restore();
 			jodit.s.removeMarkers();
 			jodit.editor.normalize();
-			jodit.observer.snapshot.restore(snapshot);
+			jodit.history.snapshot.restore(snapshot);
 
 			const textWasChanged =
 				getSelectionText() !== content_input.value.trim();
@@ -485,9 +375,11 @@ export class link extends Plugin {
 						nofollow_checkbox.checked ? 'nofollow' : null
 					);
 				}
+
+				jodit.e.fire('applyLink', jodit, a, form);
 			});
 
-			jodit.setEditorValue();
+			jodit.synchronizeValues();
 
 			close();
 

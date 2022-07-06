@@ -17,15 +17,13 @@ import type {
 	ITimeout,
 	RejectablePromise
 } from 'jodit/types';
-import {
-	setTimeout,
-	clearTimeout,
-	isFunction,
-	isPlainObject,
-	isPromise,
-	isString,
-	isNumber
-} from 'jodit/core/helpers/';
+import { setTimeout, clearTimeout } from 'jodit/core/helpers/async';
+
+import { isFunction } from 'jodit/core/helpers/checker/is-function';
+import { isPlainObject } from 'jodit/core/helpers/checker/is-plain-object';
+import { isPromise } from 'jodit/core/helpers/checker/is-promise';
+import { isString } from 'jodit/core/helpers/checker/is-string';
+import { isNumber } from 'jodit/core/helpers/checker/is-number';
 
 export class Async implements IAsync {
 	private timers: Map<number | string | Function, number> = new Map();
@@ -62,7 +60,7 @@ export class Async implements IAsync {
 		return timer;
 	}
 
-	private clearLabel(label: string) {
+	private clearLabel(label: string): void {
 		if (label && this.timers.has(label)) {
 			clearTimeout(this.timers.get(label) as number);
 			this.timers.delete(label);
@@ -86,7 +84,7 @@ export class Async implements IAsync {
 	 *
 	 * @example
 	 * ```javascript
-	 * var jodit = new Jodit('.editor');
+	 * var jodit = Jodit.make('.editor');
 	 * jodit.e.on('mousemove', jodit.async.debounce(() => {
 	 * 	// Do expensive things
 	 * }, 100));
@@ -102,14 +100,14 @@ export class Async implements IAsync {
 
 		const promises: Function[] = [];
 
-		const callFn = (...args: any[]) => {
+		const callFn = (...args: any[]): void => {
 			if (!fired) {
 				timer = 0;
 				const res = fn(...args);
 				fired = true;
 
 				if (promises.length) {
-					const runPromises = () => {
+					const runPromises = (): void => {
 						promises.forEach(res => res());
 						promises.length = 0;
 					};
@@ -119,7 +117,7 @@ export class Async implements IAsync {
 			}
 		};
 
-		const onFire = (...args: any[]) => {
+		const onFire = (...args: any[]): void => {
 			fired = false;
 
 			if (!timeout) {
@@ -141,7 +139,7 @@ export class Async implements IAsync {
 		};
 
 		return isPlainObject(timeout) && timeout.promisify
-			? (...args: any[]) => {
+			? (...args: any[]): Promise<any> => {
 					const promise = this.promise(res => {
 						promises.push(res);
 					});
@@ -159,7 +157,7 @@ export class Async implements IAsync {
 	 *
 	 * @example
 	 * ```javascript
-	 * var jodit = new Jodit('.editor');
+	 * var jodit = Jodit.make('.editor');
 	 * jodit.e.on(document.body, 'scroll', jodit.async.throttle(function() {
 	 * 	// Do expensive things
 	 * }, 100));
@@ -185,7 +183,7 @@ export class Async implements IAsync {
 			}
 
 			if (!timer) {
-				callee = () => {
+				callee = (): void => {
 					if (needInvoke) {
 						fn(...lastArgs);
 						needInvoke = false;
@@ -222,15 +220,19 @@ export class Async implements IAsync {
 		});
 
 		if (!promise.finally && process.env.TARGET_ES !== 'es2018') {
-			promise.finally = (onfinally?: (() => void) | undefined | null) => {
+			promise.finally = (
+				onfinally?: (() => void) | undefined | null
+			): Promise<T> => {
 				promise.then(onfinally).catch(onfinally);
 				return promise;
 			};
 		}
 
-		promise.finally(() => {
-			this.promisesRejections.delete(rejectCallback);
-		});
+		promise
+			.finally(() => {
+				this.promisesRejections.delete(rejectCallback);
+			})
+			.catch(() => null);
 
 		(promise as RejectablePromise<T>).rejectCallback = rejectCallback;
 
@@ -276,10 +278,14 @@ export class Async implements IAsync {
 	}
 
 	private requestsIdle: Set<number> = new Set();
+	private requestsRaf: Set<number> = new Set();
 
 	private requestIdleCallbackNative =
 		(window as any)['requestIdleCallback']?.bind(window) ??
-		((callback: IdleRequestCallback): number => {
+		((
+			callback: IdleRequestCallback,
+			options?: { timeout: number }
+		): number => {
 			const start = Date.now();
 
 			return this.setTimeout(() => {
@@ -287,7 +293,7 @@ export class Async implements IAsync {
 					didTimeout: false,
 					timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
 				});
-			}, 1);
+			}, options?.timeout ?? 1);
 		});
 
 	private cancelIdleCallbackNative =
@@ -296,15 +302,23 @@ export class Async implements IAsync {
 			this.clearTimeout(request);
 		});
 
-	requestIdleCallback(callback: IdleRequestCallback): number {
-		const request = this.requestIdleCallbackNative(callback);
+	requestIdleCallback(
+		callback: IdleRequestCallback,
+		options?: { timeout: number }
+	): number {
+		const request = this.requestIdleCallbackNative(callback, options);
 		this.requestsIdle.add(request);
 		return request;
 	}
 
-	requestIdlePromise(): RejectablePromise<number> {
+	requestIdlePromise(options?: {
+		timeout: number;
+	}): RejectablePromise<number> {
 		return this.promise<number>(res => {
-			const request = this.requestIdleCallback(() => res(request));
+			const request = this.requestIdleCallback(
+				() => res(request),
+				options
+			);
 		});
 	}
 
@@ -313,20 +327,28 @@ export class Async implements IAsync {
 		return this.cancelIdleCallbackNative(request);
 	}
 
-	clear(): void {
-		this.requestsIdle.forEach(key => {
-			this.cancelIdleCallback(key);
-		});
+	requestAnimationFrame(callback: FrameRequestCallback): number {
+		const request = requestAnimationFrame(callback);
+		this.requestsRaf.add(request);
+		return request;
+	}
 
-		this.timers.forEach(key => {
-			clearTimeout(this.timers.get(key) as number);
-		});
+	cancelAnimationFrame(request: number): void {
+		this.requestsRaf.delete(request);
+		cancelAnimationFrame(request);
+	}
+
+	clear(): void {
+		this.requestsIdle.forEach(key => this.cancelIdleCallback(key));
+		this.requestsRaf.forEach(key => this.cancelAnimationFrame(key));
+
+		this.timers.forEach(key =>
+			clearTimeout(this.timers.get(key) as number)
+		);
 
 		this.timers.clear();
 
-		this.promisesRejections.forEach(reject => {
-			reject();
-		});
+		this.promisesRejections.forEach(reject => reject());
 
 		this.promisesRejections.clear();
 	}

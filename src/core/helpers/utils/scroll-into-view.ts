@@ -8,13 +8,21 @@
  * @module helpers/utils
  */
 
+import { Dom } from 'jodit/core/dom/dom';
+import type { Nullable } from 'jodit/types';
+
+/**
+ * @module helpers/utils
+ */
+
 export const inView = (
 	elm: HTMLElement,
 	root: HTMLElement,
 	doc: Document
 ): boolean => {
-	let rect: ClientRect = elm.getBoundingClientRect(),
+	let rect = elm.getBoundingClientRect(),
 		el: HTMLElement | null = elm as HTMLElement | null;
+
 	const top: number = rect.top,
 		height: number = rect.height;
 
@@ -22,6 +30,7 @@ export const inView = (
 		if (el && el.parentNode) {
 			el = el.parentNode as HTMLElement;
 			rect = el.getBoundingClientRect();
+
 			if (!(top <= rect.bottom)) {
 				return false;
 			}
@@ -39,17 +48,18 @@ export const inView = (
 	);
 };
 
-export const scrollIntoViewIfNeeded = (
-	elm: HTMLElement,
+export function scrollIntoViewIfNeeded(
+	elm: Nullable<Node>,
 	root: HTMLElement,
 	doc: Document
-): void => {
-	if (!inView(elm, root, doc)) {
+): void {
+	if (Dom.isHTMLElement(elm) && !inView(elm, root, doc)) {
 		if (root.clientHeight !== root.scrollHeight) {
 			root.scrollTop = elm.offsetTop;
 		}
+
 		if (!inView(elm, root, doc)) {
 			elm.scrollIntoView();
 		}
 	}
-};
+}

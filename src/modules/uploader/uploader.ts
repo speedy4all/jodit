@@ -41,6 +41,12 @@ import {
 import './config';
 
 export class Uploader extends ViewComponent implements IUploader {
+	override readonly jodit!: IViewBased;
+
+	override get j(): IViewBased {
+		return this.jodit;
+	}
+
 	/** @override */
 	className(): string {
 		return 'Uploader';
@@ -95,7 +101,7 @@ export class Uploader extends ViewComponent implements IUploader {
 		handlerSuccess?: HandlerSuccess,
 		handlerError?: HandlerError
 	): void {
-		const onFinally = () => {
+		const onFinally = (): void => {
 			form.classList.remove('jodit_drag_hover');
 		};
 
@@ -105,7 +111,7 @@ export class Uploader extends ViewComponent implements IUploader {
 
 				const cData = e.clipboardData;
 
-				const process = (formdata: FormData) => {
+				const process = (formdata: FormData): void => {
 					if (file) {
 						formdata.append('extension', extension);
 						formdata.append('mimetype', file.type);
@@ -182,7 +188,7 @@ export class Uploader extends ViewComponent implements IUploader {
 		handlerSuccess?: HandlerSuccess,
 		handlerError?: HandlerError,
 		onFinally?: () => void
-	) {
+	): void {
 		const self = this;
 
 		self.j.e

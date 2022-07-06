@@ -111,15 +111,15 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 	private startY: number = 0;
 	private startPoint = { x: 0, y: 0, w: 0, h: 0 };
 
-	private lockSelect = () => {
+	private lockSelect = (): void => {
 		this.setMod('moved', true);
 	};
 
-	private unlockSelect = () => {
+	private unlockSelect = (): void => {
 		this.setMod('moved', false);
 	};
 
-	private setElements(root: HTMLElement, elements: Content) {
+	private setElements(root: HTMLElement, elements: Content): void {
 		const elements_list: HTMLElement[] = [];
 
 		asArray<ContentItem | ContentItem[] | IContainer>(elements).forEach(
@@ -159,7 +159,7 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 	@autobind
 	private onMouseUp(): void {
 		if (this.draggable || this.resizable) {
-			this.e.off(this.ow, 'mousemove', this.onMouseMove);
+			this.removeGlobalResizeListeners();
 
 			this.draggable = false;
 			this.resizable = false;
@@ -197,7 +197,10 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 		this.startPoint.y = css(this.dialog, 'top') as number;
 
 		this.setMaxZIndex();
-		e.preventDefault();
+
+		if (e.cancelable) {
+			e.preventDefault();
+		}
 
 		this.lockSelect();
 
@@ -212,7 +215,7 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 	}
 
 	@autobind
-	private onMouseMove(e: MouseEvent) {
+	private onMouseMove(e: MouseEvent): void {
 		if (this.draggable && this.o.draggable) {
 			this.setPosition(
 				this.startPoint.x + e.clientX - this.startX,
@@ -273,7 +276,7 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 		}
 	}
 
-	private onResize = () => {
+	private onResize = (): void => {
 		if (
 			this.options &&
 			this.o.resizable &&
@@ -287,7 +290,7 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 	};
 
 	@autobind
-	private onResizerMouseDown(e: MouseEvent) {
+	private onResizerMouseDown(e: MouseEvent): void {
 		this.resizable = true;
 		this.startX = e.clientX;
 		this.startY = e.clientY;
@@ -311,16 +314,16 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 		const self = this;
 
 		self.e
-			.on(self.ow, 'mousemove', self.onMouseMove)
-			.on(self.ow, 'mouseup', self.onMouseUp);
+			.on(self.ow, 'pointermove touchmove', self.onMouseMove)
+			.on(self.ow, 'pointerup touchend', self.onMouseUp);
 	}
 
 	private removeGlobalResizeListeners(): void {
 		const self = this;
 
 		self.e
-			.off(self.ow, 'mousemove', self.onMouseMove)
-			.off(self.ow, 'mouseup', self.onMouseUp);
+			.off(self.ow, 'mousemove pointermove', self.onMouseMove)
+			.off(self.ow, 'mouseup pointerup', self.onMouseUp);
 	}
 
 	override OPTIONS!: IDialogOptions;
@@ -781,9 +784,18 @@ export class Dialog extends ViewWithToolbar implements IDialog {
 
 		const headerBox = self.getElm('header');
 
-		headerBox && self.e.on(headerBox, 'mousedown', self.onHeaderMouseDown);
+		headerBox &&
+			self.e.on(
+				headerBox,
+				'pointerdown touchstart',
+				self.onHeaderMouseDown
+			);
 
-		self.e.on(self.resizer, 'mousedown', self.onResizerMouseDown);
+		self.e.on(
+			self.resizer,
+			'mousedown touchstart',
+			self.onResizerMouseDown
+		);
 
 		const fullSize = pluginSystem.get('fullsize') as Function;
 		isFunction(fullSize) && fullSize(self);

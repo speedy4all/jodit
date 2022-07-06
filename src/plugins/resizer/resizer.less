@@ -5,6 +5,7 @@
  */
 
 @import (reference) '../../styles/variables';
+@import './resizer.common';
 
 :root {
 	--viewer_width: 70px;
@@ -13,25 +14,6 @@
 	--resizer-border-color: #98c1f1;
 	--resizer-handle-color: #5ba4f3;
 	--resizer-handle-hover-color: #537ebb;
-}
-
-[data-jodit_iframe_wrapper] {
-	position: relative;
-	display: block;
-	user-select: none;
-
-	&::after {
-		position: absolute;
-		z-index: 1;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		display: block;
-		background: rgba(0, 0, 0, 0);
-		content: '';
-		cursor: pointer;
-	}
 }
 
 .jodit-resizer {
@@ -90,25 +72,25 @@
 		&:nth-child(1) {
 			top: calc(var(--resizer-handle-size) / -2);
 			left: calc(var(--resizer-handle-size) / -2);
-			cursor: nw-resize;
+			cursor: nwse-resize;
 		}
 
 		&:nth-child(2) {
 			top: calc(var(--resizer-handle-size) / -2);
 			right: calc(var(--resizer-handle-size) / -2);
-			cursor: ne-resize;
+			cursor: nesw-resize;
 		}
 
 		&:nth-child(3) {
 			right: calc(var(--resizer-handle-size) / -2);
 			bottom: calc(var(--resizer-handle-size) / -2);
-			cursor: se-resize;
+			cursor: nwse-resize;
 		}
 
 		&:nth-child(4) {
 			bottom: calc(var(--resizer-handle-size) / -2);
 			left: calc(var(--resizer-handle-size) / -2);
-			cursor: sw-resize;
+			cursor: nesw-resize;
 		}
 
 		@media (max-width: @screen-sm) {

@@ -15,11 +15,10 @@ import { css, dataBind, normalizeColor } from 'jodit/core/helpers/';
 import { ColorPickerWidget, TabOption, TabsWidget } from 'jodit/modules/widget';
 
 Config.prototype.controls.brush = {
-	update(button): void {
+	update(button, editor: IJodit): void {
 		const color = dataBind(button, 'color');
-		const editor = button.j as IJodit;
 
-		const update = (key: string, value: string) => {
+		const update = (key: string, value: string): void => {
 			if (value && value !== css(editor.editor, key).toString()) {
 				button.state.icon.fill = value;
 				return;
@@ -209,7 +208,7 @@ export function color(editor: IJodit): void {
 				break;
 		}
 
-		editor.setEditorValue();
+		editor.synchronizeValues();
 		return false;
 	};
 

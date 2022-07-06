@@ -9,13 +9,13 @@
  */
 
 import type { IControlType, IJodit } from 'jodit/types';
-import { attr } from '../../../../core/helpers/utils';
+import { attr } from 'jodit/core/helpers/utils';
 
 export default [
 	{
 		name: 'eye',
 		tooltip: 'Open link',
-		exec: (editor: IJodit, current) => {
+		exec: (editor: IJodit, current): void => {
 			const href = attr(current as HTMLElement, 'href');
 
 			if (current && href) {

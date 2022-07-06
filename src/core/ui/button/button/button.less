@@ -33,7 +33,7 @@
 .jodit-ui-button-interaction() {
 	cursor: pointer;
 
-	&:hover:not([disabled]) {
+	&:hover:not([disabled]), &:focus-visible:not([disabled]) {
 		background-color: var(--color-button-background-hover);
 		opacity: 1;
 		outline: 0;
@@ -175,6 +175,8 @@
 
 	padding: 0 var(--padding-default);
 	border-radius: var(--border-radius-default);
+
+	color: var(--color-text-icons);
 }
 
 .jodit-ui-button {

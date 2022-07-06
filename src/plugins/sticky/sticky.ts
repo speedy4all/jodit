@@ -22,7 +22,7 @@ declare module 'jodit/config' {
 		/**
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit('#someid', {
+		 * var editor = Jodit.make('#someid', {
 		 *  toolbarSticky: false
 		 * })
 		 * ```
@@ -37,7 +37,7 @@ declare module 'jodit/config' {
 		 *
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit('#someid', {
+		 * var editor = Jodit.make('#someid', {
 		 *  toolbarStickyOffset: 100
 		 * })
 		 * ```
@@ -54,7 +54,7 @@ export class sticky extends Plugin {
 	private isToolbarSticked: boolean = false;
 	private dummyBox?: HTMLElement;
 
-	private createDummy = (toolbar: HTMLElement) => {
+	private createDummy = (toolbar: HTMLElement): void => {
 		if (!isESNext && IS_IE && !this.dummyBox) {
 			this.dummyBox = this.j.c.div();
 			this.dummyBox.classList.add('jodit_sticky-dummy_toolbar');

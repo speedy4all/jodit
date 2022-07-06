@@ -12,6 +12,7 @@
 
 import type {
 	ComponentStatus,
+	IAsync,
 	IComponent,
 	IDictionary,
 	Nullable
@@ -26,6 +27,7 @@ import {
 } from 'jodit/core/helpers';
 import { uniqueUid } from 'jodit/core/global';
 import { STATUSES } from 'jodit/core/component/statuses';
+import { Async } from 'jodit/core/async';
 
 const StatusListHandlers: Map<
 	Component,
@@ -39,6 +41,8 @@ export abstract class Component implements IComponent {
 	static STATUSES = STATUSES;
 
 	private __componentName!: string;
+
+	readonly async: IAsync = new Async();
 
 	get componentName(): string {
 		if (!this.__componentName) {
@@ -162,7 +166,7 @@ export abstract class Component implements IComponent {
 	}
 
 	/**
-	 * Bind destructor to come View
+	 * Bind destructor to some View
 	 */
 	bindDestruct(component: IComponent): this {
 		component.hookStatus(
@@ -184,6 +188,7 @@ export abstract class Component implements IComponent {
 	 */
 	destruct(): void {
 		this.setStatus(STATUSES.destructed);
+		this.async.destruct();
 
 		if (StatusListHandlers.get(this)) {
 			StatusListHandlers.delete(this);
@@ -226,6 +231,10 @@ export abstract class Component implements IComponent {
 			return;
 		}
 
+		if (component === this) {
+			this.__componentStatus = componentStatus;
+		}
+
 		const proto = Object.getPrototypeOf(this);
 
 		if (proto && isFunction(proto.setStatusComponent)) {
@@ -237,10 +246,6 @@ export abstract class Component implements IComponent {
 
 		if (list && list.length) {
 			list.forEach(cb => cb(component));
-		}
-
-		if (component === this) {
-			this.__componentStatus = componentStatus;
 		}
 	}
 
@@ -266,5 +271,12 @@ export abstract class Component implements IComponent {
 		}
 
 		list[status].push(callback);
+	}
+
+	static isInstanceOf<T extends IComponent>(
+		c: unknown | IComponent,
+		constructorFunc: Function
+	): c is T {
+		return c instanceof constructorFunc;
 	}
 }

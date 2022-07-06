@@ -27,16 +27,16 @@ import type {
 	IFileBrowserCallBackData,
 	IStorage,
 	CanPromise,
-	IObserver
+	IHistory
 } from './types';
 
 import { Config } from './config';
-import * as consts from './core/constants';
+import * as constants from './core/constants';
 
 import {
 	Create,
 	Dom,
-	Observer,
+	History,
 	Plugin,
 	Select,
 	StatusBar,
@@ -59,15 +59,17 @@ import {
 	markAsAtomic,
 	ConfigProto,
 	kebabCase,
-	isJoditObject
+	isJoditObject,
+	isNumber
 } from './core/helpers/';
 
 import { Storage } from './core/storage/';
 
 import { ViewWithToolbar } from './core/view/view-with-toolbar';
 
-import { instances, pluginSystem, modules, lang } from './core/global';
-import { autobind, cache } from './core/decorators';
+import { lang } from 'jodit/core/constants';
+import { instances, pluginSystem, modules } from './core/global';
+import { autobind, cache, throttle, watch } from './core/decorators';
 
 const __defaultStyleDisplayKey = 'data-jodit-default-style-display';
 const __defaultClassesKey = 'data-jodit-default-classes';
@@ -77,7 +79,7 @@ const __defaultClassesKey = 'data-jodit-default-classes';
  */
 export class Jodit extends ViewWithToolbar implements IJodit {
 	/** @override */
-	className(): string {
+	override className(): string {
 		return 'Jodit';
 	}
 
@@ -123,12 +125,12 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 	/**
 	 * Return default timeout period in milliseconds for some debounce or throttle functions.
-	 * By default return `{observer.timeout}` options
+	 * By default, `{history.timeout}` options
 	 */
 	override get defaultTimeout(): number {
-		return this.options && this.o.observer
-			? this.o.observer.timeout
-			: Config.defaultOptions.observer.timeout;
+		return isNumber(this.o.defaultTimeout)
+			? this.o.defaultTimeout
+			: Config.defaultOptions.defaultTimeout;
 	}
 
 	/**
@@ -173,6 +175,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	static readonly ns: IDictionary<Function> = modules;
 
 	static readonly decorators: IDictionary<Function> = {};
+	static readonly constants: typeof constants = constants;
 	static readonly instances: IDictionary<IJodit> = instances;
 
 	static readonly lang: any = lang;
@@ -266,8 +269,15 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		this.setPlaceField('iframe', iframe);
 	}
 
-	get observer(): IObserver {
-		return this.currentPlace.observer;
+	get history(): IHistory {
+		return this.currentPlace.history;
+	}
+
+	/**
+	 * @deprecated Instead use `Jodit.history`
+	 */
+	get observer(): IHistory {
+		return this.history;
 	}
 
 	/**
@@ -369,7 +379,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		return jodit.getInstance<IFileBrowser>('FileBrowser', options);
 	}
 
-	private __mode: Modes = consts.MODE_WYSIWYG;
+	private __mode: Modes = constants.MODE_WYSIWYG;
 
 	/**
 	 * Editor's mode
@@ -425,6 +435,20 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 	set value(html: string) {
 		this.setEditorValue(html);
+		this.history.processChanges();
+	}
+
+	@throttle()
+	synchronizeValues(): void {
+		this.__imdSynchronizeValues();
+	}
+
+	/**
+	 * This is an internal method, do not use it in your applications.
+	 * @private
+	 */
+	__imdSynchronizeValues(): void {
+		this.setEditorValue();
 	}
 
 	/**
@@ -439,7 +463,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		 * If returned not undefined getEditorValue will return this value
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit("#redactor");
+		 * var editor = Jodit.make("#redactor");
 		 * editor.e.on('beforeGetValueFromEditor', function () {
 		 *     return editor.editor.innerHTML.replace(/a/g, 'b');
 		 * });
@@ -454,7 +478,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		}
 
 		value = this.getNativeEditorValue().replace(
-			consts.INVISIBLE_SPACE_REG_EXP(),
+			constants.INVISIBLE_SPACE_REG_EXP(),
 			''
 		);
 
@@ -475,7 +499,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		 *
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit("#redactor");
+		 * var editor = Jodit.make("#redactor");
 		 * editor.e.on('afterGetValueFromEditor', function (new_value) {
 		 *     new_value.value = new_value.value.replace('a', 'b');
 		 * });
@@ -499,7 +523,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		 * Triggered before getEditorValue set value to wysiwyg.
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit("#redactor");
+		 * var editor = Jodit.make("#redactor");
 		 * editor.e.on('beforeSetValueToEditor', function (old_value) {
 		 *     return old_value.value.replace('a', 'b');
 		 * });
@@ -523,7 +547,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 		if (!this.editor) {
 			if (value !== undefined) {
-				this.setElementValue(value);
+				this.__setElementValue(value);
 			}
 
 			return; // try change value before init or after destruct
@@ -533,7 +557,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 			throw error('value must be string');
 		}
 
-		if (value !== undefined && this.getNativeEditorValue() !== value) {
+		if (!isVoid(value) && this.getNativeEditorValue() !== value) {
 			this.setNativeEditorValue(value);
 		}
 
@@ -545,19 +569,35 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		if (
 			!this.isSilentChange &&
 			old_value !== new_value &&
-			this.__callChangeCount < consts.SAFE_COUNT_CHANGE_CALL
+			this.__callChangeCount < constants.SAFE_COUNT_CHANGE_CALL
 		) {
-			this.setElementValue(new_value);
+			this.__setElementValue(new_value);
 			this.__callChangeCount += 1;
 
+			if (!isProd && this.__callChangeCount > 4) {
+				console.warn(
+					'Too many recursive changes',
+					new_value,
+					old_value
+				);
+			}
+
 			try {
-				this.observer.upTick();
+				this.history.upTick();
 				this.e.fire('change', new_value, old_value);
-				this.e.fire(this.observer, 'change', new_value, old_value);
+				this.e.fire(this.history, 'change', new_value, old_value);
 			} finally {
 				this.__callChangeCount = 0;
 			}
 		}
+	}
+
+	/**
+	 * If some plugin changes the DOM directly, then you need to update the content of the original element
+	 */
+	@watch(':internalChange')
+	protected updateElementValue(): void {
+		this.__setElementValue(this.getEditorValue());
 	}
 
 	/**
@@ -570,28 +610,44 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	}
 
 	/**
-	 * Set source element value and if set sync fill editor value
-	 * When method was called without arguments - it is simple way to synchronize element to editor
+	 * @deprecated Use `Jodit.value` instead
 	 */
-	setElementValue(value?: string): void {
-		if (!isString(value) && value !== undefined) {
+	protected setElementValue(value?: string): CanPromise<void> {
+		const oldValue = this.getElementValue();
+
+		if (value === undefined || (isString(value) && value !== oldValue)) {
+			value ??= oldValue;
+
+			if (value !== this.getEditorValue()) {
+				this.setEditorValue(value);
+			}
+		}
+
+		return this.__setElementValue(value);
+	}
+
+	private __setElementValue(value: string): CanPromise<void> {
+		if (!isString(value)) {
 			throw error('value must be string');
 		}
 
-		if (value !== undefined) {
-			if (this.element !== this.container) {
-				if ((this.element as HTMLInputElement).value !== undefined) {
-					(this.element as HTMLInputElement).value = value;
-				} else {
-					this.element.innerHTML = value;
-				}
-			}
-		} else {
-			value = this.getElementValue();
-		}
+		if (
+			this.element !== this.container &&
+			value !== this.getElementValue()
+		) {
+			const data = { value };
 
-		if (value !== this.getEditorValue()) {
-			this.setEditorValue(value);
+			const res = this.e.fire('beforeSetElementValue', data);
+
+			callPromise(res, () => {
+				if ((this.element as HTMLInputElement).value !== undefined) {
+					(this.element as HTMLInputElement).value = data.value;
+				} else {
+					this.element.innerHTML = data.value;
+				}
+
+				this.e.fire('afterSetElementValue', data);
+			});
 		}
 	}
 
@@ -600,7 +656,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	 *
 	 * @example
 	 * ```javascript
-	 * var jodit = new Jodit('#editor);
+	 * var jodit = Jodit.make('#editor);
 	 *
 	 * jodit.setEditorValue('test test test');
 	 *
@@ -676,7 +732,9 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		this.e
 			.off(shortcuts)
 			.on(shortcuts, (type: string, stop: { shouldStop: boolean }) => {
-				stop.shouldStop = shouldStop ?? true;
+				if (stop) {
+					stop.shouldStop = shouldStop ?? true;
+				}
 				return this.execCommand(commandName); // because need `beforeCommand`
 			});
 	}
@@ -700,6 +758,10 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		showUI: boolean = false,
 		value: null | any = null
 	): void {
+		if (!this.s.isFocused()) {
+			this.s.focus();
+		}
+
 		if (this.o.readonly && command !== 'selectall') {
 			return;
 		}
@@ -736,6 +798,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 			if (command === 'selectall') {
 				this.s.select(this.editor, true);
+				this.s.expandSelection();
 			} else {
 				try {
 					result = this.nativeExecCommand(command, showUI, value);
@@ -826,7 +889,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		if (super.lock(name)) {
 			this.__selectionLocked = this.s.save();
 			this.s.clear();
-			this.editor.classList.add('jodit_disabled');
+			this.editor.classList.add('jodit_lock');
 			this.e.fire('lock', true);
 			return true;
 		}
@@ -839,7 +902,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	 */
 	override unlock(): boolean {
 		if (super.unlock()) {
-			this.editor.classList.remove('jodit_disabled');
+			this.editor.classList.remove('jodit_lock');
 
 			if (this.__selectionLocked) {
 				this.s.restore();
@@ -860,7 +923,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	}
 
 	isEditorMode(): boolean {
-		return this.getRealMode() === consts.MODE_WYSIWYG;
+		return this.getRealMode() === constants.MODE_WYSIWYG;
 	}
 
 	/**
@@ -870,12 +933,12 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	 *
 	 * @example
 	 * ```javascript
-	 * var editor = new Jodit('#editor');
+	 * var editor = Jodit.make('#editor');
 	 * console.log(editor.getRealMode());
 	 * ```
 	 */
 	getRealMode(): Modes {
-		if (this.getMode() !== consts.MODE_SPLIT) {
+		if (this.getMode() !== constants.MODE_SPLIT) {
 			return this.getMode();
 		}
 
@@ -887,17 +950,17 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 				Dom.isOrContains(this.editor, active) ||
 				Dom.isOrContains(this.toolbar.container, active))
 		) {
-			return consts.MODE_WYSIWYG;
+			return constants.MODE_WYSIWYG;
 		}
 
-		return consts.MODE_SOURCE;
+		return constants.MODE_SOURCE;
 	}
 
 	/**
 	 * Set current mode
 	 */
 	setMode(mode: number | string): void {
-		const oldmode: Modes = this.getMode();
+		const oldMode: Modes = this.getMode();
 
 		const data = {
 				mode: parseInt(mode.toString(), 10) as Modes
@@ -913,7 +976,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		 * @param data - PlainObject `{mode: {string}}` In handler you can change data.mode
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit("#redactor");
+		 * var editor = Jodit.make("#redactor");
 		 * editor.e.on('beforeSetMode', function (data) {
 		 *     data.mode = Jodit.MODE_SOURCE; // not respond to the mode change. Always make the source code mode
 		 * });
@@ -924,12 +987,12 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		}
 
 		this.__mode = [
-			consts.MODE_SOURCE,
-			consts.MODE_WYSIWYG,
-			consts.MODE_SPLIT
+			constants.MODE_SOURCE,
+			constants.MODE_WYSIWYG,
+			constants.MODE_SPLIT
 		].includes(data.mode)
 			? data.mode
-			: consts.MODE_WYSIWYG;
+			: constants.MODE_WYSIWYG;
 
 		if (this.o.saveModeInStorage) {
 			this.storage.set('jodit_default_mode', this.mode);
@@ -945,13 +1008,13 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		 * Triggered after setMode executed
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit("#redactor");
+		 * var editor = Jodit.make("#redactor");
 		 * editor.e.on('afterSetMode', function () {
 		 *     editor.setEditorValue(''); // clear editor's value after change mode
 		 * });
 		 * ```
 		 */
-		if (oldmode !== this.getMode()) {
+		if (oldMode !== this.getMode()) {
 			this.e.fire('afterSetMode');
 		}
 	}
@@ -961,7 +1024,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	 *
 	 * @example
 	 * ```javascript
-	 * var editor = new Jodit('#editor');
+	 * var editor = Jodit.make('#editor');
 	 * editor.toggleMode();
 	 * ```
 	 */
@@ -970,14 +1033,14 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 		if (
 			[
-				consts.MODE_SOURCE,
-				consts.MODE_WYSIWYG,
-				this.o.useSplitMode ? consts.MODE_SPLIT : 9
+				constants.MODE_SOURCE,
+				constants.MODE_WYSIWYG,
+				this.o.useSplitMode ? constants.MODE_SPLIT : 9
 			].includes(mode + 1)
 		) {
 			mode += 1;
 		} else {
-			mode = consts.MODE_WYSIWYG;
+			mode = constants.MODE_WYSIWYG;
 		}
 
 		this.setMode(mode);
@@ -1073,6 +1136,8 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	 *
 	 * @param element - Selector or HTMLElement
 	 * @param options - Editor's options
+	 *
+	 * @deprecated - Instead use `Jodit.make`
 	 */
 	constructor(element: HTMLElement | string, options?: object) {
 		super(options as IViewOptions, true);
@@ -1084,6 +1149,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 			);
 
 			if (Jodit.isJoditAssigned(elementSource)) {
+				// @ts-ignore
 				return elementSource.component;
 			}
 		} catch (e) {
@@ -1133,7 +1199,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 				instances[this.id] = this;
 
-				const init = () => {
+				const init = (): void => {
 					if (this.e) {
 						this.e.fire('afterInit', this);
 					}
@@ -1271,7 +1337,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 						Config.defaultOptions
 				  ) as IWorkPlace['options'])
 				: this.options,
-			observer: new Observer(this),
+			history: new History(this),
 			editorWindow: this.ow
 		};
 
@@ -1286,7 +1352,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 		const opt = this.options;
 
-		const init = () => {
+		const init = (): void => {
 			if (
 				opt.enableDragAndDropFileToEditor &&
 				opt.uploader &&
@@ -1320,7 +1386,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 		}
 
 		if (!this.isEditorMode()) {
-			this.setMode(consts.MODE_WYSIWYG);
+			this.setMode(constants.MODE_WYSIWYG);
 		}
 
 		this.currentPlace = place;
@@ -1342,7 +1408,11 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 
 			// syncro
 			if (this.element !== this.container) {
-				this.setElementValue();
+				const value = this.getElementValue();
+
+				if (value !== this.getEditorValue()) {
+					this.setEditorValue(value);
+				}
 			} else {
 				buffer != null && this.setEditorValue(buffer); // inline mode
 			}
@@ -1453,14 +1523,8 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 	 * Attach some native event listeners
 	 */
 	@autobind
-	private prepareWYSIWYGEditor() {
+	private prepareWYSIWYGEditor(): void {
 		const { editor } = this;
-
-		if (this.o.spellcheck) {
-			this.editor.setAttribute('spellcheck', 'true');
-		} else {
-			this.editor.setAttribute('spellcheck', 'false');
-		}
 
 		// direction
 		if (this.o.direction) {
@@ -1480,9 +1544,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 					this.setCurrentPlace(place);
 				}
 			})
-			.on(editor, 'compositionend', () => {
-				this.setEditorValue();
-			})
+			.on(editor, 'compositionend', this.synchronizeValues)
 			.on(
 				editor,
 				'selectionchange selectionstart keydown keyup input keypress dblclick mousedown mouseup ' +
@@ -1505,7 +1567,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 							return false;
 						}
 
-						this.setEditorValue();
+						this.synchronizeValues();
 					}
 				}
 			);
@@ -1548,7 +1610,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 				element,
 				iframe,
 				editor,
-				observer
+				history
 			}) => {
 				if (element !== container) {
 					if (element.hasAttribute(__defaultStyleDisplayKey)) {
@@ -1573,7 +1635,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 					element.removeAttribute('style');
 				}
 
-				!statusbar.isInDestruct && statusbar.destruct();
+				statusbar.destruct();
 
 				this.e.off(container);
 				this.e.off(element);
@@ -1599,7 +1661,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 					element.innerHTML = buffer;
 				}
 
-				!observer.isInDestruct && observer.destruct();
+				history.destruct();
 			}
 		);
 

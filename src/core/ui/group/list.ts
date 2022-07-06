@@ -28,7 +28,8 @@ import { UISpacer } from 'jodit/core/ui/group/spacer';
 import { UIButton } from 'jodit/core/ui/button/button/button';
 import { isButtonGroup } from 'jodit/core/ui/helpers/buttons';
 import { getControlType } from 'jodit/core/ui/helpers/get-control-type';
-import { splitArray } from 'jodit/core/helpers/array';
+import { splitArray } from 'jodit/core/helpers/array/split-array';
+import { Component } from 'jodit/core/component/component';
 
 @component
 export class UIList<T extends IViewBased = IViewBased>
@@ -65,8 +66,8 @@ export class UIList<T extends IViewBased = IViewBased>
 	 * All buttons from list
 	 */
 	get buttons(): IUIButton[] {
-		return this.allChildren.filter(
-			elm => elm instanceof UIButton
+		return this.allChildren.filter(elm =>
+			Component.isInstanceOf(elm, UIButton)
 		) as IUIButton[];
 	}
 
@@ -99,7 +100,7 @@ export class UIList<T extends IViewBased = IViewBased>
 
 		let group: IUIGroup;
 
-		const addButton = (control: IControlTypeStrong) => {
+		const addButton = (control: IControlTypeStrong): void => {
 			let elm: Nullable<IUIElement> = null;
 
 			switch (control.name) {
@@ -146,7 +147,7 @@ export class UIList<T extends IViewBased = IViewBased>
 			}
 		};
 
-		const isNotRemoved = (b: IControlTypeStrong) =>
+		const isNotRemoved = (b: IControlTypeStrong): boolean =>
 			!this.removeButtons.includes(b.name);
 
 		items.forEach(item => {

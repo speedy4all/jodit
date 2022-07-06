@@ -20,7 +20,9 @@ export interface ISourceEditor extends IDestructible, IInitable {
 
 	setPlaceHolder(title: string): void;
 
+	readonly isFocused: boolean;
 	focus(): void;
+	blur(): void;
 
 	setReadOnly(isReadOnly: boolean): void;
 

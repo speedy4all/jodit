@@ -8,9 +8,8 @@
  * @module helpers/checker
  */
 
-import type { IJodit, IViewBased } from 'jodit/types';
+import type { IJodit } from 'jodit/types';
 import { isFunction } from './is-function';
-import { modules } from '../../global';
 
 /**
  * Check if element is instance of Jodit
@@ -23,17 +22,5 @@ export function isJoditObject(jodit: unknown): jodit is IJodit {
 			// @ts-ignore
 			((typeof Jodit !== 'undefined' && jodit instanceof Jodit) ||
 				(jodit as IJodit).isJodit)
-	);
-}
-
-/**
- * Check if element is instance of View
- */
-export function isViewObject(jodit: unknown): jodit is IViewBased {
-	return Boolean(
-		jodit &&
-			jodit instanceof Object &&
-			isFunction(jodit.constructor) &&
-			(jodit instanceof modules.View || (jodit as IViewBased).isView)
 	);
 }

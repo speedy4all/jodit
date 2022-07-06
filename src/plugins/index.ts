@@ -16,13 +16,18 @@ export { focus } from './focus/focus';
 export { classSpan } from './class-span/class-span';
 export { Backspace } from './keyboard/backspace/backspace';
 export { bold } from './bold/bold';
-export { cleanHtml } from './fix/clean-html';
-export { WrapTextNodes } from './fix/wrap-text-nodes';
-export { copyFormat, clipboard, paste, pasteStorage } from './clipboard';
+export { WrapNodes, cleanHtml } from './fix';
+export {
+	copyFormat,
+	clipboard,
+	paste,
+	pasteStorage,
+	DragAndDrop,
+	DragAndDropElement,
+	PasteFromWord
+} from './clipboard';
 export { color } from './color/color';
-export { DragAndDrop } from './clipboard/drag-and-drop';
-export { DragAndDropElement } from './clipboard/drag-and-drop-element';
-export { enter } from './keyboard/enter';
+export { enter } from './keyboard/enter/enter';
 export { KeyArrowOutside } from './keyboard/key-arrow-outside';
 export { errorMessages } from './error-messages/error-messages';
 export { font } from './font/font';
@@ -51,6 +56,7 @@ export { size, resizeHandler } from './size';
 export { source } from './source';
 export { stat } from './stat/stat';
 export { sticky } from './sticky/sticky';
+export { spellcheck } from './spellcheck/spellcheck';
 export { symbols } from './symbols/symbols';
 export * from './table';
 export { tooltip } from './tooltip/tooltip';

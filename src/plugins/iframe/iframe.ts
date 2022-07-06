@@ -9,158 +9,14 @@
  */
 
 import type { IJodit } from 'jodit/types';
-import { Config } from 'jodit/config';
 import { css, defaultLanguage, attr, callPromise } from 'jodit/core/helpers/';
 import { error } from 'jodit/core/helpers';
 import { MODE_SOURCE } from 'jodit/core/constants';
 
-declare module 'jodit/config' {
-	interface Config {
-		editHTMLDocumentMode: boolean;
-		iframeDefaultSrc: string;
-		iframeBaseUrl: string;
-		iframeTitle: string;
-		iframeDoctype: string;
-		iframeStyle: string;
-		iframeCSSLinks: string[];
-	}
-}
+import './config';
 
 /**
- * Base URL where the root directory for {@link Jodit.defaultOptions.iframe|iframe} mode
- *
- * @example
- * ```javascript
- * new Jodit('#editor', {
- *    iframe: true,
- *    iframeBaseUrl: 'http://xdsoft.net/jodit/docs/',
- * });
- * ```
- */
-Config.prototype.iframeBaseUrl = '';
-
-/**
- * Iframe title's content
- */
-Config.prototype.iframeTitle = 'Jodit Editor';
-
-/**
- * Iframe's DOCTYPE
- */
-Config.prototype.iframeDoctype = '<!DOCTYPE html>';
-
-/**
- * You can redefine default page
- *
- * @example
- * ```javascript
- * new Jodit('#editor', {
- *    iframe: true,
- *    iframeDefaultSrc: 'http://xdsoft.net/jodit/docs/',
- * });
- * ```
- */
-Config.prototype.iframeDefaultSrc = 'about:blank';
-
-/**
- * Custom style to be used inside the iframe to display content.
- * @example
- * ```javascript
- * new Jodit('#editor', {
- *    iframe: true,
- *    iframeStyle: 'html{margin: 0px;}',
- * })
- * ```
- */
-
-Config.prototype.iframeStyle =
-	'html{' +
-	'margin:0;' +
-	'padding:0;' +
-	'min-height: 100%;' +
-	'}' +
-	'body{' +
-	'box-sizing:border-box;' +
-	'font-size:13px;' +
-	'line-height:1.6;' +
-	'padding:10px;' +
-	'margin:0;' +
-	'background:transparent;' +
-	'color:#000;' +
-	'position:' +
-	'relative;' +
-	'z-index:2;' +
-	'user-select:auto;' +
-	'margin:0px;' +
-	'overflow:auto;' +
-	'outline:none;' +
-	'}' +
-	'table{' +
-	'width:100%;' +
-	'border:none;' +
-	'border-collapse:collapse;' +
-	'empty-cells: show;' +
-	'max-width: 100%;' +
-	'}' +
-	'th,td{' +
-	'padding: 2px 5px;' +
-	'border:1px solid #ccc;' +
-	'-webkit-user-select:text;' +
-	'-moz-user-select:text;' +
-	'-ms-user-select:text;' +
-	'user-select:text' +
-	'}' +
-	'p{' +
-	'margin-top:0;' +
-	'}' +
-	'.jodit_editor .jodit_iframe_wrapper{' +
-	'display: block;' +
-	'clear: both;' +
-	'user-select: none;' +
-	'position: relative;' +
-	'}' +
-	'.jodit_editor .jodit_iframe_wrapper:after {' +
-	'position:absolute;' +
-	'content:"";' +
-	'z-index:1;' +
-	'top:0;' +
-	'left:0;' +
-	'right: 0;' +
-	'bottom: 0;' +
-	'cursor: pointer;' +
-	'display: block;' +
-	'background: rgba(0, 0, 0, 0);' +
-	'} ' +
-	'.jodit_disabled{' +
-	'user-select: none;' +
-	'-o-user-select: none;' +
-	'-moz-user-select: none;' +
-	'-khtml-user-select: none;' +
-	'-webkit-user-select: none;' +
-	'-ms-user-select: none' +
-	'}';
-
-/**
- * Custom stylesheet files to be used inside the iframe to display content.
- *
- * @example
- * ```javascript
- * new Jodit('#editor', {
- *    iframe: true,
- *    iframeCSSLinks: ['styles/default.css'],
- * })
- * ```
- */
-
-Config.prototype.iframeCSSLinks = [];
-
-/**
- * Allow editing the entire HTML document(html, head)
- */
-Config.prototype.editHTMLDocumentMode = false;
-
-/**
- * Iframe plugin - use `iframe` instead of DIV in editor. It can be need when you want attach custom styles in editor
+ * Iframe plugin - use `iframe` instead of DIV in editor. It can be need when you want to attach custom styles in editor
  * in backend of you system
  */
 export function iframe(editor: IJodit): void {
@@ -244,9 +100,9 @@ export function iframe(editor: IJodit): void {
 				editor
 			);
 
-			const init = () => {
+			const init = (): boolean => {
 				if (!editor.iframe) {
-					return;
+					return false;
 				}
 
 				const doc = (editor.iframe.contentWindow as Window).document;
@@ -254,7 +110,7 @@ export function iframe(editor: IJodit): void {
 
 				const docMode = opt.editHTMLDocumentMode;
 
-				const toggleEditable = () => {
+				const toggleEditable = (): void => {
 					attr(
 						doc.body,
 						'contenteditable',
@@ -362,8 +218,7 @@ export function iframe(editor: IJodit): void {
 
 								return true;
 							},
-							undefined,
-							true
+							{ top: true }
 						);
 				}
 
@@ -384,10 +239,17 @@ export function iframe(editor: IJodit): void {
 							editor.iframe &&
 							opt.height === 'auto'
 						) {
+							const style = editor.ew.getComputedStyle(
+									editor.editor
+								),
+								marginOffset =
+									parseInt(style.marginTop || '0', 10) +
+									parseInt(style.marginBottom || '0', 10);
+
 							css(
 								editor.iframe,
 								'height',
-								editor.editor.offsetHeight
+								editor.editor.offsetHeight + marginOffset
 							);
 						}
 					}, editor.defaultTimeout / 2);
@@ -407,6 +269,14 @@ export function iframe(editor: IJodit): void {
 							'readystatechange DOMContentLoaded',
 							resizeIframe
 						);
+
+					if (typeof ResizeObserver === 'function') {
+						const resizeObserver = new ResizeObserver(resizeIframe);
+						resizeObserver.observe(doc.body);
+						editor.e.on('beforeDestruct', () => {
+							resizeObserver.unobserve(doc.body);
+						});
+					}
 				}
 
 				// throw events in our world

@@ -10,7 +10,8 @@
 
 import type { IViewBased } from 'jodit/types';
 import { completeUrl } from './complete-url';
-import { isFunction, isString } from '../checker';
+import { isFunction } from '../checker/is-function';
+import { isString } from '../checker/is-string';
 
 export type Loader = (jodit: IViewBased, url: string) => Promise<any>;
 
@@ -88,7 +89,7 @@ export const appendStyleAsync = cacheLoaders(
 			link.media = 'all';
 			link.crossOrigin = 'anonymous';
 
-			const callback = () => resolve(link);
+			const callback = (): void => resolve(link);
 
 			!jodit.isInDestruct &&
 				jodit.e.on(link, 'load', callback).on(link, 'error', reject);

@@ -225,5 +225,7 @@ module.exports = {
 	'Find Previous': 'Znaleźć Poprzednie',
 	'Find Next': 'Znajdź Dalej',
 	'Insert className': 'Wstaw nazwę zajęć',
-	'Line height': 'Wysokość linii'
+	'Line height': 'Wysokość linii',
+	Spellchecking: 'Sprawdzanie pisowni',
+	'Press Alt for custom resizing': 'Naciśnij Alt, aby zmienić rozmiar'
 };

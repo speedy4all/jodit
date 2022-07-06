@@ -30,7 +30,7 @@ declare module 'jodit/config' {
  *
  * @example
  * ```js
- * var jodit = new Jodit('#editor', {
+ * var jodit = Jodit.make('#editor', {
  *  commandToHotkeys: {
  *      bold: 'ctrl+shift+b',
  *      italic: ['ctrl+i', 'ctrl+b'],
@@ -183,8 +183,7 @@ export class hotkeys extends Plugin {
 						}
 					}
 				},
-				undefined,
-				true
+				{ top: true }
 			)
 			.on(
 				'keyup.hotkeys',
@@ -195,8 +194,7 @@ export class hotkeys extends Plugin {
 						return false;
 					}
 				},
-				undefined,
-				true
+				{ top: true }
 			);
 	}
 

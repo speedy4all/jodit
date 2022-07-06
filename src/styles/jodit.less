@@ -26,7 +26,7 @@
 }
 
 .jodit-wysiwyg {
-	*[contentEditable='false'] {
+	*[contenteditable='false'] {
 		cursor: default;
 	}
 }
@@ -48,6 +48,10 @@
 			opacity: 0.4;
 		}
 	}
+}
+
+.jodit_lock {
+	user-select: none !important;
 }
 
 .jodit_disabled {

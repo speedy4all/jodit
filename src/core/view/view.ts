@@ -11,7 +11,6 @@
  */
 
 import type {
-	IAsync,
 	IComponent,
 	ICreate,
 	IProgressBar,
@@ -41,7 +40,6 @@ import {
 	Dom,
 	ViewComponent
 } from '../../modules';
-import { Async } from '../async';
 import { modules } from '../global';
 import { hook } from 'jodit/core/decorators';
 import { Elms, Mods } from '../traits';
@@ -95,16 +93,15 @@ export abstract class View extends Component implements IViewBased, Mods, Elms {
 	}
 
 	readonly version: string = appVersion; // from webpack.config.js
+	static readonly esNext: boolean = isESNext; // from webpack.config.js
 
 	/**
 	 * Return default timeout period in milliseconds for some debounce or throttle functions.
-	 * By default return `{observer.timeout}` options
+	 * By default, `{history.timeout}` options
 	 */
 	get defaultTimeout(): number {
 		return isVoid(this.o.defaultTimeout) ? 100 : this.o.defaultTimeout;
 	}
-
-	readonly async: IAsync = new Async();
 
 	/**
 	 * Some extra data inside editor

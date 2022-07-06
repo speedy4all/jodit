@@ -12,7 +12,12 @@ import './source.less';
 
 import type { IJodit, ISourceEditor } from 'jodit/types';
 import * as consts from 'jodit/core/constants';
-import { INVISIBLE_SPACE, MODE_SOURCE, MODE_SPLIT } from 'jodit/core/constants';
+import {
+	INVISIBLE_SPACE,
+	KEY_ESC,
+	MODE_SOURCE,
+	MODE_SPLIT
+} from 'jodit/core/constants';
 import { Plugin } from 'jodit/core/plugin';
 import { Dom } from 'jodit/core/dom';
 import { isString, loadNext } from 'jodit/core/helpers';
@@ -86,7 +91,7 @@ export class source extends Plugin {
 		}
 
 		this.__lock = true;
-		this.j.setEditorValue(value);
+		this.j.value = value;
 		this.__lock = false;
 		this.__oldMirrorValue = value;
 	}
@@ -156,11 +161,11 @@ export class source extends Plugin {
 		return this.sourceEditor?.getValue() || '';
 	}
 
-	private setMirrorValue(value: string) {
+	private setMirrorValue(value: string): void {
 		this.sourceEditor?.setValue(value);
 	}
 
-	private setFocusToMirror() {
+	private setFocusToMirror(): void {
 		this.sourceEditor?.focus();
 	}
 
@@ -168,7 +173,7 @@ export class source extends Plugin {
 	protected saveSelection(): void {
 		if (this.j.getRealMode() === consts.MODE_WYSIWYG) {
 			this.j.s.save();
-			this.j.setEditorValue();
+			this.j.synchronizeValues();
 			this.fromWYSIWYG(true);
 		} else {
 			if (this.j.o.editHTMLDocumentMode) {
@@ -307,6 +312,12 @@ export class source extends Plugin {
 			this.fromWYSIWYG
 		);
 
+		editor.e.on(editor.ow, 'keydown', (e: KeyboardEvent) => {
+			if (e.key === KEY_ESC && this.sourceEditor?.isFocused) {
+				this.sourceEditor.blur();
+			}
+		});
+
 		this.onReadonlyReact();
 
 		editor.e
@@ -317,7 +328,7 @@ export class source extends Plugin {
 			.on('beautifyHTML', html => html);
 
 		if (editor.o.beautifyHTML) {
-			const addEventListener = () => {
+			const addEventListener = (): boolean => {
 				const html_beautify = (editor.ow as any).html_beautify;
 
 				if (html_beautify && !editor.isInDestruct) {
@@ -343,7 +354,7 @@ export class source extends Plugin {
 	}
 
 	@autobind
-	private syncValueFromWYSIWYG(force: boolean = false) {
+	private syncValueFromWYSIWYG(force: boolean = false): void {
 		const editor = this.j;
 
 		if (

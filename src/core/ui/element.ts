@@ -15,10 +15,10 @@ import type {
 	Nullable,
 	ModType
 } from 'jodit/types';
-import { ViewComponent } from 'jodit/core/component';
-import { Dom } from 'jodit/core/dom';
+import { Component, ViewComponent } from 'jodit/core/component';
+import { Dom } from 'jodit/core/dom/dom';
 import { Elms, Mods } from 'jodit/core/traits';
-import { isString } from 'jodit/core/helpers';
+import { isString } from 'jodit/core/helpers/checker/is-string';
 import { Icon } from 'jodit/core/ui/icon';
 
 export abstract class UIElement<T extends IViewBased = IViewBased>
@@ -71,8 +71,8 @@ export abstract class UIElement<T extends IViewBased = IViewBased>
 	closest<T extends IUIElement>(type: Function | T): Nullable<T> {
 		const c =
 			typeof type === 'object'
-				? (pe: IUIElement) => pe === type
-				: (pe: IUIElement) => pe instanceof type;
+				? (pe: IUIElement): boolean => pe === type
+				: (pe: IUIElement): boolean => Component.isInstanceOf(pe, type);
 
 		let pe = this.__parentElement;
 
@@ -101,7 +101,7 @@ export abstract class UIElement<T extends IViewBased = IViewBased>
 		const elm = Dom.up(node, elm => {
 			if (elm) {
 				const { component } = elm as HTMLElement;
-				return component && component instanceof type;
+				return component && Component.isInstanceOf(component, type);
 			}
 
 			return false;

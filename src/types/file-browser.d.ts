@@ -9,6 +9,7 @@
  */
 
 import type {
+	CanPromise,
 	IDestructible,
 	IDictionary,
 	ImageBox,
@@ -18,8 +19,8 @@ import type {
 import type { IUploader, IUploaderOptions } from './uploader';
 import type { IViewBased, IViewOptions } from './view';
 import type { IUIGroup } from './ui';
-import type { IObservable } from './observer';
-import type { IDialog } from './dialog';
+import type { IObservable } from './events';
+import type { IAjax } from './ajax';
 
 /**
  * The module creates a web browser dialog box. In a Web browser ,you can select an image, remove, drag it. Upload new
@@ -78,7 +79,9 @@ export interface IFileBrowserAjaxOptions {
 	processData?: boolean;
 	dataType?: string;
 
-	headers?: IDictionary<string>;
+	headers?:
+		| IDictionary<string>
+		| ((this: IAjax<any>) => CanPromise<IDictionary<string>>);
 
 	prepareData?: (data: IDictionary<string>) => IDictionary<string>;
 	process?: IFileBrowserProcessor;

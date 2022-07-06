@@ -6,14 +6,12 @@
 
 import type { CommitMode, IJodit } from 'jodit/types';
 import type { CommitStyle } from 'jodit/core/selection/style/commit-style';
-import {
-	attr,
-	css,
-	dataBind,
-	kebabCase,
-	normalizeCssValue,
-	size
-} from 'jodit/core/helpers';
+import { attr } from 'jodit/core/helpers/utils';
+import { css } from 'jodit/core/helpers/utils/css';
+import { dataBind } from 'jodit/core/helpers/utils/data-bind';
+import { kebabCase } from 'jodit/core/helpers/string/kebab-case';
+import { normalizeCssValue } from 'jodit/core/helpers/normalize/normalize-css-value';
+import { size } from 'jodit/core/helpers/size/object-size';
 import { Dom } from 'jodit/core/dom';
 import { CHANGE, UNSET, UNWRAP } from 'jodit/core/selection/style/commit-style';
 import { getContainer } from 'jodit/core/global';
@@ -45,12 +43,15 @@ export function toggleCSS(
 			) {
 				!dry && css(elm, rule, null);
 				mode = UNSET;
-				mode = removeExtraCSS(commitStyle, elm, mode);
+				mode = removeExtraStyleAttribute(commitStyle, elm, mode);
 				return;
 			}
 
 			mode = CHANGE;
 			!dry && css(elm, rule, style[rule]);
+			if (!dry) {
+				mode = removeExtraStyleAttribute(commitStyle, elm, mode);
+			}
 		});
 	}
 
@@ -71,7 +72,7 @@ export function toggleCSS(
  * If the element has an empty style attribute, it removes the attribute,
  * and if it is default, it removes the element itself
  */
-function removeExtraCSS(
+function removeExtraStyleAttribute(
 	commitStyle: CommitStyle,
 	elm: HTMLElement,
 	mode: CommitMode

@@ -224,5 +224,7 @@ module.exports = {
 	'Find Previous': 'Najít Předchozí',
 	'Find Next': 'Najít Další',
 	'Insert className': 'Vložte název třídy',
-	'Line height': 'Výška čáry'
+	'Line height': 'Výška čáry',
+	Spellchecking: 'Kontrola pravopisu',
+	'Press Alt for custom resizing': 'Stiskněte Alt pro vlastní změnu velikosti'
 };

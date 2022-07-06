@@ -41,8 +41,6 @@ export class ToolbarCollection<T extends IViewWithToolbar = IViewWithToolbar>
 		return 'ToolbarCollection';
 	}
 
-	override jodit!: T;
-
 	readonly listenEvents =
 		'updateToolbar changeStack mousedown mouseup keydown change afterInit readonly afterResize ' +
 		'selectionchange changeSelection focus afterSetMode touchstart focus blur';
@@ -112,7 +110,7 @@ export class ToolbarCollection<T extends IViewWithToolbar = IViewWithToolbar>
 		this.initEvents();
 	}
 
-	private initEvents() {
+	private initEvents(): void {
 		this.j.e
 			.on(this.listenEvents, this.update)
 			.on('afterSetMode focus', this.immediateUpdate);

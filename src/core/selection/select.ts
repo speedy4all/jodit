@@ -44,6 +44,7 @@ import {
 } from 'jodit/core/helpers';
 import { CommitStyle } from './style/commit-style';
 import { autobind } from 'jodit/core/decorators';
+import { moveTheNodeAlongTheEdgeOutward } from 'jodit/core/selection/helpers';
 
 export class Select implements ISelect {
 	constructor(readonly jodit: IJodit) {
@@ -55,7 +56,7 @@ export class Select implements ISelect {
 	/**
 	 * Short alias for this.jodit
 	 */
-	get j(): this['jodit'] {
+	private get j(): this['jodit'] {
 		return this.jodit;
 	}
 
@@ -71,7 +72,7 @@ export class Select implements ISelect {
 	/**
 	 * Return current work place - for Jodit is Editor
 	 */
-	get area(): HTMLElement {
+	private get area(): HTMLElement {
 		return this.j.editor;
 	}
 
@@ -110,6 +111,16 @@ export class Select implements ISelect {
 		const sel = this.sel;
 
 		return sel && sel.rangeCount ? sel.getRangeAt(0) : this.createRange();
+	}
+
+	/**
+	 * Checks if the selected text is currently inside the editor
+	 */
+	get isInsideArea(): boolean {
+		const { sel } = this;
+		const range = sel?.rangeCount ? sel.getRangeAt(0) : null;
+
+		return !(!range || !Dom.isOrContains(this.area, range.startContainer));
 	}
 
 	/**
@@ -178,7 +189,7 @@ export class Select implements ISelect {
 		try {
 			const rng = this.createRange();
 
-			(() => {
+			((): void => {
 				if (this.doc.caretPositionFromPoint) {
 					const caret = this.doc.caretPositionFromPoint(x, y);
 
@@ -232,7 +243,7 @@ export class Select implements ISelect {
 	 * Remove all markers
 	 */
 	removeMarkers(): void {
-		this.markers.forEach(Dom.safeRemove);
+		Dom.safeRemove.apply(null, this.markers);
 	}
 
 	/**
@@ -285,7 +296,7 @@ export class Select implements ISelect {
 	restore(): void {
 		let range: Range | false = false;
 
-		const markAttr = (start: boolean) =>
+		const markAttr = (start: boolean): string =>
 			`span[data-${consts.MARKER_CLASS}=${start ? 'start' : 'end'}]`;
 
 		const start = this.area.querySelector(markAttr(true)),
@@ -612,7 +623,7 @@ export class Select implements ISelect {
 		}
 
 		if (fireChange && this.j.events) {
-			this.j.e.fire('synchro');
+			this.j.__imdSynchronizeValues();
 		}
 
 		if (this.j.events) {
@@ -629,7 +640,10 @@ export class Select implements ISelect {
 	 * parent.s.insertHTML('<img src="image.png"/>');
 	 * ```
 	 */
-	insertHTML(html: number | string | Node): void {
+	insertHTML(
+		html: number | string | Node,
+		insertCursorAfter: boolean = true
+	): void {
 		if (html === '') {
 			return;
 		}
@@ -670,15 +684,16 @@ export class Select implements ISelect {
 
 		this.insertNode(fragment, false, false);
 
-		if (lastChild) {
-			this.setCursorAfter(lastChild);
-		} else {
-			this.setCursorIn(fragment);
+		if (insertCursorAfter) {
+			if (lastChild) {
+				this.setCursorAfter(lastChild);
+			} else {
+				this.setCursorIn(fragment);
+			}
 		}
 
-		if (this.j.e) {
-			this.j.e.fire('synchro');
-		}
+		// There is no need to use synchronizeValues because you need to apply the changes immediately
+		this.j.__imdSynchronizeValues();
 	}
 
 	/**
@@ -724,7 +739,7 @@ export class Select implements ISelect {
 			css(image, styles);
 		}
 
-		const onload = () => {
+		const onload = (): void => {
 			if (
 				image.naturalHeight < image.offsetHeight ||
 				image.naturalWidth < image.offsetWidth
@@ -749,7 +764,7 @@ export class Select implements ISelect {
 		 * {@link FileBrowser|FileBrowser} or {@link Uploader|Uploader}
 		 * @example
 		 * ```javascript
-		 * var editor = new Jodit("#redactor");
+		 * var editor = Jodit.make("#redactor");
 		 * editor.e.on('afterInsertImage', function (image) {
 		 *     image.className = 'bloghead4';
 		 * });
@@ -805,7 +820,7 @@ export class Select implements ISelect {
 				end = end.previousSibling;
 			}
 
-			const checkElm = (node: Nullable<Node>) => {
+			const checkElm = (node: Nullable<Node>): void => {
 				if (
 					node &&
 					node !== root &&
@@ -818,7 +833,7 @@ export class Select implements ISelect {
 
 			checkElm(start);
 
-			if (start !== end) {
+			if (start !== end && Dom.isOrContains(root, start, true)) {
 				Dom.find(
 					start,
 					node => {
@@ -899,8 +914,8 @@ export class Select implements ISelect {
 		const container = start ? range.startContainer : range.endContainer;
 		const offset = start ? range.startOffset : range.endOffset;
 
-		const check = (elm: Node | null) =>
-			elm && !Dom.isTag(elm, 'br') && !Dom.isEmptyTextNode(elm);
+		const check = (elm: Node | null): boolean =>
+			Boolean(elm && !Dom.isTag(elm, 'br') && !Dom.isEmptyTextNode(elm));
 
 		// check right offset
 		if (Dom.isText(container)) {
@@ -1064,7 +1079,7 @@ export class Select implements ISelect {
 	/**
 	 * Set range selection
 	 */
-	selectRange(range: Range, focus: boolean = true): void {
+	selectRange(range: Range, focus: boolean = true): this {
 		const sel = this.sel;
 
 		if (focus && !this.isFocused()) {
@@ -1080,6 +1095,8 @@ export class Select implements ISelect {
 		 * Fired after change selection
 		 */
 		this.j.e.fire('changeSelection');
+
+		return this;
 	}
 
 	/**
@@ -1089,7 +1106,7 @@ export class Select implements ISelect {
 	select(
 		node: Node | HTMLElement | HTMLTableElement | HTMLTableCellElement,
 		inward = false
-	): void {
+	): this {
 		this.errorNode(node);
 
 		if (
@@ -1107,14 +1124,14 @@ export class Select implements ISelect {
 
 		range[inward ? 'selectNodeContents' : 'selectNode'](node);
 
-		this.selectRange(range);
+		return this.selectRange(range);
 	}
 
 	/**
 	 * Return current selected HTML
 	 * @example
 	 * ```javascript
-	 * const editor = new jodit();
+	 * const editor = Jodit.make();
 	 * console.log(editor.s.html); // html
 	 * console.log(Jodit.modules.Helpers.stripTags(editor.s.html)); // plain text
 	 * ```
@@ -1315,7 +1332,7 @@ export class Select implements ISelect {
 				const clearBR = (
 					start: Node,
 					getNext: (node: Node) => Node | null
-				) => {
+				): void => {
 					let next = getNext(start);
 
 					while (next) {
@@ -1370,7 +1387,7 @@ export class Select implements ISelect {
 			}
 
 			// After splitting some part can be empty
-			const fillFakeParent = (fake: Node) => {
+			const fillFakeParent = (fake: Node): void => {
 				if (
 					fake?.parentNode?.firstChild === fake?.parentNode?.lastChild
 				) {
@@ -1386,5 +1403,89 @@ export class Select implements ISelect {
 		}
 
 		return currentBox.previousElementSibling;
+	}
+
+	expandSelection(): this {
+		if (this.isCollapsed()) {
+			return this;
+		}
+
+		const { range } = this,
+			c = range.cloneRange();
+
+		if (
+			!Dom.isOrContains(
+				this.j.editor,
+				range.commonAncestorContainer,
+				true
+			)
+		) {
+			return this;
+		}
+
+		const moveMaxEdgeFake = (start: boolean): Node => {
+			const fake = this.j.createInside.fake();
+			const r = range.cloneRange();
+
+			r.collapse(start);
+			r.insertNode(fake);
+
+			moveTheNodeAlongTheEdgeOutward(fake, start, this.j.editor);
+
+			return fake;
+		};
+
+		const leftFake = moveMaxEdgeFake(true);
+		const rightFake = moveMaxEdgeFake(false);
+
+		c.setStartAfter(leftFake);
+		c.setEndBefore(rightFake);
+
+		const leftBox = Dom.findSibling(leftFake, false);
+		const rightBox = Dom.findSibling(rightFake, true);
+
+		if (leftBox !== rightBox) {
+			const rightInsideLeft =
+					Dom.isElement(leftBox) &&
+					Dom.isOrContains(leftBox, rightFake),
+				leftInsideRight =
+					!rightInsideLeft &&
+					Dom.isElement(rightBox) &&
+					Dom.isOrContains(rightBox, leftFake);
+
+			if (rightInsideLeft || leftInsideRight) {
+				let child: Nullable<Element> = (
+						rightInsideLeft ? leftBox : rightBox
+					) as Element,
+					container = child;
+
+				while (Dom.isElement(child)) {
+					child = rightInsideLeft
+						? child.firstElementChild
+						: child.lastElementChild;
+
+					if (child) {
+						const isInside = rightInsideLeft
+							? Dom.isOrContains(child, rightFake)
+							: Dom.isOrContains(child, leftFake);
+
+						if (isInside) {
+							container = child;
+						}
+					}
+				}
+
+				if (rightInsideLeft) {
+					c.setStart(container, 0);
+				} else {
+					c.setEnd(container, container.childNodes.length);
+				}
+			}
+		}
+
+		this.selectRange(c);
+
+		Dom.safeRemove(leftFake, rightFake);
+		return this;
 	}
 }

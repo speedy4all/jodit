@@ -8,7 +8,12 @@
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
-	plugins: ['@typescript-eslint', 'header', 'eslint-plugin-tsdoc'],
+	plugins: [
+		'@typescript-eslint',
+		'header',
+		'eslint-plugin-tsdoc',
+		'eslint-plugin-import'
+	],
 	extends: [
 		'eslint:recommended',
 		'plugin:prettier/recommended',
@@ -22,6 +27,7 @@ module.exports = {
 	rules: {
 		'tsdoc/syntax': 'warn',
 		strict: ['error', 'never'],
+		'import/no-cycle': ['error', { maxDepth: 3 }],
 		'no-with': 'error',
 		'no-caller': 'error',
 		'no-delete-var': 'error',
@@ -63,9 +69,19 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 'off',
 		'@typescript-eslint/no-var-requires': 'off',
 		'@typescript-eslint/no-unused-vars': 'off',
+		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/explicit-module-boundary-types': 'error',
 		'no-fallthrough': 'off'
 	},
+	overrides: [
+		{
+			// enable the rule specifically for TypeScript files
+			files: ['*.ts', '*.tsx'],
+			rules: {
+				'@typescript-eslint/explicit-function-return-type': ['error']
+			}
+		}
+	],
 	globals: {
 		Set: true,
 		setCursorToChar: true,

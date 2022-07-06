@@ -15,15 +15,13 @@ import type {
 	DecoratorHandler,
 	IComponent,
 	IDictionary,
-	IViewComponent
+	IViewBased
 } from 'jodit/types';
-import {
-	isFunction,
-	isPlainObject,
-	isViewObject
-} from 'jodit/core/helpers/checker';
-import { observable } from 'jodit/core/event-emitter';
-import { STATUSES } from 'jodit/core/component';
+import { isFunction } from 'jodit/core/helpers/checker/is-function';
+import { isPlainObject } from 'jodit/core/helpers/checker/is-plain-object';
+import { isViewObject } from 'jodit/core/helpers/checker/is-view-object';
+import { observable } from 'jodit/core/event-emitter/observable';
+import { STATUSES } from 'jodit/core/component/statuses';
 import { splitArray } from 'jodit/core/helpers/array/split-array';
 import { error } from 'jodit/core/helpers/utils/error';
 
@@ -56,7 +54,7 @@ export function watch(
 			throw error('Handler must be a Function');
 		}
 
-		const process = (component: IComponent) => {
+		const process = (component: IComponent): void => {
 			const callback = (key: string, ...args: any[]): void | any => {
 				if (!component.isInDestruct) {
 					return (component as any)[propertyKey](key, ...args);
@@ -66,29 +64,30 @@ export function watch(
 			splitArray(observeFields).forEach(field => {
 				if (/:/.test(field)) {
 					const [objectPath, eventName] = field.split(':');
+					let ctx = context;
 
 					const view = isViewObject(component)
 						? component
-						: (component as unknown as IViewComponent).jodit;
+						: (component as unknown as { jodit: IViewBased }).jodit;
 
 					if (objectPath.length) {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						context = component.get<CanUndef<object>>(objectPath)!;
+						ctx = component.get<CanUndef<object>>(objectPath)!;
 					}
 
-					if (isFunction(context)) {
-						context = context(component);
+					if (isFunction(ctx)) {
+						ctx = ctx(component);
 					}
 
-					view.events.on(context || component, eventName, callback);
+					view.events.on(ctx || component, eventName, callback);
 
-					if (!context) {
+					if (!ctx) {
 						view.events.on(eventName, callback);
 					}
 
-					view.hookStatus('beforeDestruct', () => {
+					component.hookStatus('beforeDestruct', () => {
 						view.events
-							.off(context || component, eventName, callback)
+							.off(ctx || component, eventName, callback)
 							.off(eventName, callback);
 					});
 
