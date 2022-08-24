@@ -9,6 +9,10 @@
 > -   :house: [Internal]
 > -   :nail_care: [Polish]
 
+## 3.14.2
+
+### :version: Bump version
+
 ## 3.14.0
 
 #### :bug: Bug Fix

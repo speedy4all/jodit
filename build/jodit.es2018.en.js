@@ -1,7 +1,7 @@
 /*!
  * @speedy4all/jodit - Jodit is awesome and usefully wysiwyg editor with filebrowser
  * Author: Chupurnov <chupurnov@gmail.com> (https://xdsoft.net/)
- * Version: v3.14.0
+ * Version: v3.14.2
  * Url: https://xdsoft.net/jodit/
  * License(s): MIT
  */
@@ -353,51 +353,51 @@ Config.prototype.controls = {};
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ACCURACY": function() { return /* binding */ ACCURACY; },
+/* harmony export */   "BASE_PATH": function() { return /* binding */ BASE_PATH; },
+/* harmony export */   "BR": function() { return /* binding */ BR; },
+/* harmony export */   "COMMAND_KEYS": function() { return /* binding */ COMMAND_KEYS; },
+/* harmony export */   "EMULATE_DBLCLICK_TIMEOUT": function() { return /* binding */ EMULATE_DBLCLICK_TIMEOUT; },
+/* harmony export */   "INSEPARABLE_TAGS": function() { return /* binding */ INSEPARABLE_TAGS; },
+/* harmony export */   "INSERT_AS_HTML": function() { return /* binding */ INSERT_AS_HTML; },
+/* harmony export */   "INSERT_AS_TEXT": function() { return /* binding */ INSERT_AS_TEXT; },
+/* harmony export */   "INSERT_CLEAR_HTML": function() { return /* binding */ INSERT_CLEAR_HTML; },
+/* harmony export */   "INSERT_ONLY_TEXT": function() { return /* binding */ INSERT_ONLY_TEXT; },
 /* harmony export */   "INVISIBLE_SPACE": function() { return /* binding */ INVISIBLE_SPACE; },
-/* harmony export */   "NBSP_SPACE": function() { return /* binding */ NBSP_SPACE; },
 /* harmony export */   "INVISIBLE_SPACE_REG_EXP": function() { return /* binding */ INVISIBLE_SPACE_REG_EXP; },
 /* harmony export */   "INVISIBLE_SPACE_REG_EXP_END": function() { return /* binding */ INVISIBLE_SPACE_REG_EXP_END; },
 /* harmony export */   "INVISIBLE_SPACE_REG_EXP_START": function() { return /* binding */ INVISIBLE_SPACE_REG_EXP_START; },
-/* harmony export */   "SPACE_REG_EXP": function() { return /* binding */ SPACE_REG_EXP; },
-/* harmony export */   "SPACE_REG_EXP_START": function() { return /* binding */ SPACE_REG_EXP_START; },
-/* harmony export */   "SPACE_REG_EXP_END": function() { return /* binding */ SPACE_REG_EXP_END; },
 /* harmony export */   "IS_BLOCK": function() { return /* binding */ IS_BLOCK; },
-/* harmony export */   "IS_INLINE": function() { return /* binding */ IS_INLINE; },
-/* harmony export */   "INSEPARABLE_TAGS": function() { return /* binding */ INSEPARABLE_TAGS; },
-/* harmony export */   "MAY_BE_REMOVED_WITH_KEY": function() { return /* binding */ MAY_BE_REMOVED_WITH_KEY; },
-/* harmony export */   "KEY_BACKSPACE": function() { return /* binding */ KEY_BACKSPACE; },
-/* harmony export */   "KEY_TAB": function() { return /* binding */ KEY_TAB; },
-/* harmony export */   "KEY_ENTER": function() { return /* binding */ KEY_ENTER; },
-/* harmony export */   "KEY_ESC": function() { return /* binding */ KEY_ESC; },
-/* harmony export */   "KEY_LEFT": function() { return /* binding */ KEY_LEFT; },
-/* harmony export */   "KEY_UP": function() { return /* binding */ KEY_UP; },
-/* harmony export */   "KEY_RIGHT": function() { return /* binding */ KEY_RIGHT; },
-/* harmony export */   "KEY_DOWN": function() { return /* binding */ KEY_DOWN; },
-/* harmony export */   "KEY_SPACE": function() { return /* binding */ KEY_SPACE; },
-/* harmony export */   "KEY_DELETE": function() { return /* binding */ KEY_DELETE; },
-/* harmony export */   "KEY_F3": function() { return /* binding */ KEY_F3; },
-/* harmony export */   "NEARBY": function() { return /* binding */ NEARBY; },
-/* harmony export */   "ACCURACY": function() { return /* binding */ ACCURACY; },
-/* harmony export */   "COMMAND_KEYS": function() { return /* binding */ COMMAND_KEYS; },
-/* harmony export */   "BR": function() { return /* binding */ BR; },
-/* harmony export */   "PARAGRAPH": function() { return /* binding */ PARAGRAPH; },
-/* harmony export */   "MODE_WYSIWYG": function() { return /* binding */ MODE_WYSIWYG; },
-/* harmony export */   "MODE_SOURCE": function() { return /* binding */ MODE_SOURCE; },
-/* harmony export */   "MODE_SPLIT": function() { return /* binding */ MODE_SPLIT; },
 /* harmony export */   "IS_IE": function() { return /* binding */ IS_IE; },
-/* harmony export */   "TEXT_PLAIN": function() { return /* binding */ TEXT_PLAIN; },
-/* harmony export */   "TEXT_HTML": function() { return /* binding */ TEXT_HTML; },
-/* harmony export */   "MARKER_CLASS": function() { return /* binding */ MARKER_CLASS; },
-/* harmony export */   "EMULATE_DBLCLICK_TIMEOUT": function() { return /* binding */ EMULATE_DBLCLICK_TIMEOUT; },
-/* harmony export */   "INSERT_AS_HTML": function() { return /* binding */ INSERT_AS_HTML; },
-/* harmony export */   "INSERT_CLEAR_HTML": function() { return /* binding */ INSERT_CLEAR_HTML; },
-/* harmony export */   "INSERT_AS_TEXT": function() { return /* binding */ INSERT_AS_TEXT; },
-/* harmony export */   "INSERT_ONLY_TEXT": function() { return /* binding */ INSERT_ONLY_TEXT; },
-/* harmony export */   "SAFE_COUNT_CHANGE_CALL": function() { return /* binding */ SAFE_COUNT_CHANGE_CALL; },
+/* harmony export */   "IS_INLINE": function() { return /* binding */ IS_INLINE; },
 /* harmony export */   "IS_MAC": function() { return /* binding */ IS_MAC; },
 /* harmony export */   "KEY_ALIASES": function() { return /* binding */ KEY_ALIASES; },
-/* harmony export */   "BASE_PATH": function() { return /* binding */ BASE_PATH; },
-/* harmony export */   "TEMP_ATTR": function() { return /* binding */ TEMP_ATTR; }
+/* harmony export */   "KEY_BACKSPACE": function() { return /* binding */ KEY_BACKSPACE; },
+/* harmony export */   "KEY_DELETE": function() { return /* binding */ KEY_DELETE; },
+/* harmony export */   "KEY_DOWN": function() { return /* binding */ KEY_DOWN; },
+/* harmony export */   "KEY_ENTER": function() { return /* binding */ KEY_ENTER; },
+/* harmony export */   "KEY_ESC": function() { return /* binding */ KEY_ESC; },
+/* harmony export */   "KEY_F3": function() { return /* binding */ KEY_F3; },
+/* harmony export */   "KEY_LEFT": function() { return /* binding */ KEY_LEFT; },
+/* harmony export */   "KEY_RIGHT": function() { return /* binding */ KEY_RIGHT; },
+/* harmony export */   "KEY_SPACE": function() { return /* binding */ KEY_SPACE; },
+/* harmony export */   "KEY_TAB": function() { return /* binding */ KEY_TAB; },
+/* harmony export */   "KEY_UP": function() { return /* binding */ KEY_UP; },
+/* harmony export */   "MARKER_CLASS": function() { return /* binding */ MARKER_CLASS; },
+/* harmony export */   "MAY_BE_REMOVED_WITH_KEY": function() { return /* binding */ MAY_BE_REMOVED_WITH_KEY; },
+/* harmony export */   "MODE_SOURCE": function() { return /* binding */ MODE_SOURCE; },
+/* harmony export */   "MODE_SPLIT": function() { return /* binding */ MODE_SPLIT; },
+/* harmony export */   "MODE_WYSIWYG": function() { return /* binding */ MODE_WYSIWYG; },
+/* harmony export */   "NBSP_SPACE": function() { return /* binding */ NBSP_SPACE; },
+/* harmony export */   "NEARBY": function() { return /* binding */ NEARBY; },
+/* harmony export */   "PARAGRAPH": function() { return /* binding */ PARAGRAPH; },
+/* harmony export */   "SAFE_COUNT_CHANGE_CALL": function() { return /* binding */ SAFE_COUNT_CHANGE_CALL; },
+/* harmony export */   "SPACE_REG_EXP": function() { return /* binding */ SPACE_REG_EXP; },
+/* harmony export */   "SPACE_REG_EXP_END": function() { return /* binding */ SPACE_REG_EXP_END; },
+/* harmony export */   "SPACE_REG_EXP_START": function() { return /* binding */ SPACE_REG_EXP_START; },
+/* harmony export */   "TEMP_ATTR": function() { return /* binding */ TEMP_ATTR; },
+/* harmony export */   "TEXT_HTML": function() { return /* binding */ TEXT_HTML; },
+/* harmony export */   "TEXT_PLAIN": function() { return /* binding */ TEXT_PLAIN; }
 /* harmony export */ });
 /*!
  * Jodit Editor (https://xdsoft.net/jodit/)
@@ -1040,7 +1040,6 @@ function observable(obj) {
             const descriptor = (0,decorators.getPropertyDescriptor)(dict, key);
             Object.defineProperty(dict, key, {
                 set: (value) => {
-                    var _a;
                     const oldValue = store[key];
                     if (!(0,helpers.isFastEqual)(store[key], value)) {
                         fire([
@@ -1064,7 +1063,7 @@ function observable(obj) {
                                 rs.push(`change.${sum.join('.')}`);
                                 return rs;
                             }, [])
-                        ], prefix.join('.'), oldValue, ((_a = value) === null || _a === void 0 ? void 0 : _a.valueOf)
+                        ], prefix.join('.'), oldValue, (value === null || value === void 0 ? void 0 : value.valueOf)
                             ? value.valueOf()
                             : value);
                     }
@@ -2456,13 +2455,13 @@ const val = (elm, selector, value) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "RE": function() { return /* binding */ call; },
+/* harmony export */   "C6": function() { return /* binding */ callPromise; },
 /* harmony export */   "Lj": function() { return /* binding */ attr; },
 /* harmony export */   "MN": function() { return /* binding */ markOwner; },
-/* harmony export */   "C6": function() { return /* binding */ callPromise; },
+/* harmony export */   "RE": function() { return /* binding */ call; },
+/* harmony export */   "XP": function() { return /* binding */ keys; },
 /* harmony export */   "mc": function() { return /* binding */ reset; },
 /* harmony export */   "po": function() { return /* binding */ loadImage; },
-/* harmony export */   "XP": function() { return /* binding */ keys; },
 /* harmony export */   "u3": function() { return /* binding */ memorizeExec; }
 /* harmony export */ });
 /* harmony import */ var _checker_is_function__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
@@ -2836,13 +2835,13 @@ class ViewComponent extends Component {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "KQ": function() { return /* binding */ lang; },
+/* harmony export */   "TB": function() { return /* binding */ eventEmitter; },
+/* harmony export */   "ZO": function() { return /* binding */ getContainer; },
 /* harmony export */   "as": function() { return /* binding */ instances; },
 /* harmony export */   "fe": function() { return /* binding */ uniqueUid; },
 /* harmony export */   "pw": function() { return /* binding */ pluginSystem; },
-/* harmony export */   "qz": function() { return /* binding */ modules; },
-/* harmony export */   "KQ": function() { return /* binding */ lang; },
-/* harmony export */   "ZO": function() { return /* binding */ getContainer; },
-/* harmony export */   "TB": function() { return /* binding */ eventEmitter; }
+/* harmony export */   "qz": function() { return /* binding */ modules; }
 /* harmony export */ });
 /* unused harmony export extendLang */
 /* harmony import */ var _plugin_plugin_system__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
@@ -2971,13 +2970,12 @@ class PluginSystem {
     }
     init(jodit) {
         const extrasList = jodit.o.extraPlugins.map(s => (0,jodit_core_helpers__WEBPACK_IMPORTED_MODULE_0__.isString)(s) ? { name: s } : s), disableList = (0,jodit_core_helpers__WEBPACK_IMPORTED_MODULE_0__.splitArray)(jodit.o.disablePlugins).map(s => this.normalizeName(s)), doneList = [], promiseList = {}, plugins = [], pluginsMap = {}, makeAndInit = ([name, plugin]) => {
-            var _a;
             if (disableList.includes(name) ||
                 doneList.includes(name) ||
                 promiseList[name]) {
                 return;
             }
-            const requires = (_a = plugin) === null || _a === void 0 ? void 0 : _a.requires;
+            const requires = plugin === null || plugin === void 0 ? void 0 : plugin.requires;
             if (requires &&
                 (0,jodit_core_helpers__WEBPACK_IMPORTED_MODULE_0__.isArray)(requires) &&
                 this.hasDisabledRequires(disableList, requires)) {
@@ -6063,21 +6061,7 @@ function splitArray(a) {
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "gn": function() { return /* binding */ __decorate; }
 /* harmony export */ });
-/* unused harmony exports __extends, __assign, __rest, __param, __metadata, __awaiter, __generator, __createBinding, __exportStar, __values, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet */
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
+/* unused harmony exports __extends, __assign, __rest, __param, __metadata, __awaiter, __generator, __createBinding, __exportStar, __values, __read, __spread, __spreadArrays, __spreadArray, __await, __asyncGenerator, __asyncDelegator, __asyncValues, __makeTemplateObject, __importStar, __importDefault, __classPrivateFieldGet, __classPrivateFieldSet, __classPrivateFieldIn */
 var extendStatics = function (d, b) {
     extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6225,7 +6209,11 @@ function __generator(thisArg, body) {
 var __createBinding = Object.create ? (function (o, m, k, k2) {
     if (k2 === undefined)
         k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function () { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function () { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function (o, m, k, k2) {
     if (k2 === undefined)
         k2 = k;
@@ -6378,6 +6366,11 @@ function __classPrivateFieldSet(receiver, state, value, kind, f) {
         throw new TypeError("Cannot write private member to an object whose class did not declare it");
     return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
 }
+function __classPrivateFieldIn(state, receiver) {
+    if (receiver === null || (typeof receiver !== "object" && typeof receiver !== "function"))
+        throw new TypeError("Cannot use 'in' operator on non-object");
+    return typeof state === "function" ? receiver === state : state.has(receiver);
+}
 
 
 /***/ }),
@@ -6386,8 +6379,8 @@ function __classPrivateFieldSet(receiver, state, value, kind, f) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "k": function() { return /* binding */ keepNames; },
-/* harmony export */   "g": function() { return /* binding */ getClassName; }
+/* harmony export */   "g": function() { return /* binding */ getClassName; },
+/* harmony export */   "k": function() { return /* binding */ keepNames; }
 /* harmony export */ });
 /* harmony import */ var _checker_is_function__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 /*!
@@ -6594,8 +6587,8 @@ const i18n = (key, params, options) => {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "f": function() { return /* binding */ trim; },
-/* harmony export */   "a": function() { return /* binding */ trimInv; }
+/* harmony export */   "a": function() { return /* binding */ trimInv; },
+/* harmony export */   "f": function() { return /* binding */ trim; }
 /* harmony export */ });
 /* harmony import */ var jodit_core_constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 /*!
@@ -6622,8 +6615,8 @@ function trimInv(value) {
 
 "use strict";
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "i": function() { return /* binding */ css; },
-/* harmony export */   "b": function() { return /* binding */ clearCenterAlign; }
+/* harmony export */   "b": function() { return /* binding */ clearCenterAlign; },
+/* harmony export */   "i": function() { return /* binding */ css; }
 /* harmony export */ });
 /* harmony import */ var _checker___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(18);
 /* harmony import */ var _normalize___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(30);
@@ -11254,7 +11247,7 @@ class View extends component/* Component */.wA {
         this.isView = true;
         this.mods = {};
         this.components = new Set();
-        this.version = "3.14.0";
+        this.version = "3.14.2";
         this.async = new Async();
         this.buffer = Storage.makeStorage();
         this.storage = Storage.makeStorage(true, this.componentName);
@@ -11352,10 +11345,10 @@ class View extends component/* Component */.wA {
         return this.__isFullSize;
     }
     getVersion() {
-        return "3.14.0";
+        return "3.14.2";
     }
     static getVersion() {
-        return "3.14.0";
+        return "3.14.2";
     }
     initOptions(options) {
         this.options = (0,helpers.ConfigProto)(options || {}, (0,helpers.ConfigProto)(this.options || {}, View.defaultOptions));
@@ -27142,13 +27135,7 @@ config/* Config.prototype.controls.print */.D.prototype.controls.print = {
                     '</body></html>');
                 mywindow.document.close();
             }
-            if (editor.value.indexOf('<img') > -1) {
-                mywindow.window.addEventListener('load', printDocument);
-            }
-            else {
-                mywindow.focus();
-                mywindow.print();
-            }
+            mywindow.window.addEventListener('load', printDocument);
         }
     },
     mode: constants.MODE_SOURCE + constants.MODE_WYSIWYG,

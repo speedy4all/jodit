@@ -1084,6 +1084,7 @@ export class Jodit extends ViewWithToolbar implements IJodit {
 			);
 
 			if (Jodit.isJoditAssigned(elementSource)) {
+				// @ts-ignore
 				return elementSource.component;
 			}
 		} catch (e) {

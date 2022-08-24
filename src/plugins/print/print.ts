@@ -70,12 +70,7 @@ Config.prototype.controls.print = {
 				mywindow.document.close();
 			}
 
-			if (editor.value.indexOf('<img') > -1) {
-				mywindow.window.addEventListener('load', printDocument);
-			} else {
-				mywindow.focus();
-				mywindow.print();
-			}
+			mywindow.window.addEventListener('load', printDocument);
 		}
 	},
 	mode: consts.MODE_SOURCE + consts.MODE_WYSIWYG,
